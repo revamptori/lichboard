@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.LichboardIntegrationTest" tests="10" failures="3" errors="0" skipped="0" time="89.711" timestamp="2026-11-22T23:51:55" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 11" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="independentOverlayHasHonestClipboardDraft" classname="dev.lichboard.LichboardIntegrationTest" time="9.917" />
+  <testcase name="specialKeysReachRealRawInputTarget" classname="dev.lichboard.LichboardIntegrationTest" time="4.202" />
+  <testcase name="optionalAccessibilityEditsOnlyWithOptIn" classname="dev.lichboard.LichboardIntegrationTest" time="21.665">
+    <failure>java.lang.AssertionError: ACTION_SET_TEXT entered text
+at org.junit.Assert.fail(Assert.java:89)
+at org.junit.Assert.assertTrue(Assert.java:42)
+at dev.lichboard.LichboardIntegrationTest.condition(LichboardIntegrationTest.kt:83)
+at dev.lichboard.LichboardIntegrationTest.optionalAccessibilityEditsOnlyWithOptIn(LichboardIntegrationTest.kt:221)
+</failure>
+  </testcase>
+  <testcase name="overlaySurvivesSwitchingToAnotherApplication" classname="dev.lichboard.LichboardIntegrationTest" time="6.698" />
+  <testcase name="overlayKeepsEditorFocusAndUsesInputConnection" classname="dev.lichboard.LichboardIntegrationTest" time="6.619" />
+  <testcase name="bubbleDragsPersistsAndLongPressOpensControls" classname="dev.lichboard.LichboardIntegrationTest" time="11.807">
+    <failure>java.lang.IllegalStateException: Missing accessible view: Lichboard floating button; foreground=dev.lichboard; overlayRunning=true; imeVisible=false; settings=BoardSettings(onboarded=true, floatingEnabled=true, floatingKeyboard=true, startOnBoot=false, keyboardHeight=340, keyboardWidth=100, keyboardOpacity=0.98, buttonSize=56, buttonOpacity=0.92, theme=MIDNIGHT, customBackground=151A24, customAccent=C6F58B, vibration=false, sound=false, autoHide=false, inputMode=AUTO, accessibilityFallback=false, bubbleX=0.33744395, bubbleY=0.31592968, keyboardX=0.5, keyboardY=1.0)
+at dev.lichboard.LichboardIntegrationTest.await(LichboardIntegrationTest.kt:77)
+at dev.lichboard.LichboardIntegrationTest.bubbleDragsPersistsAndLongPressOpensControls(LichboardIntegrationTest.kt:175)
+</failure>
+  </testcase>
+  <testcase name="automaticWithoutAnEditorUsesDraftNotInjection" classname="dev.lichboard.LichboardIntegrationTest" time="8.968">
+    <failure>java.lang.AssertionError: No active editor connection
+at org.junit.Assert.fail(Assert.java:89)
+at org.junit.Assert.assertTrue(Assert.java:42)
+at dev.lichboard.LichboardIntegrationTest.condition(LichboardIntegrationTest.kt:83)
+at dev.lichboard.LichboardIntegrationTest.automaticWithoutAnEditorUsesDraftNotInjection(LichboardIntegrationTest.kt:119)
+</failure>
+  </testcase>
+  <testcase name="everyThemeAndResizeRendersWithoutLosingDraft" classname="dev.lichboard.LichboardIntegrationTest" time="7.275" />
+  <testcase name="normalImeTypesEditsAndCapitalizes" classname="dev.lichboard.LichboardIntegrationTest" time="6.118" />
+  <testcase name="longPressAlternativesAndAllFunctionKeysExist" classname="dev.lichboard.LichboardIntegrationTest" time="5.241" />
+</testsuite>

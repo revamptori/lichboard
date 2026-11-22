@@ -82,29 +82,36 @@ Daemon will be stopped at the end of the build
 Starting 10 tests on emulator-5554 - 11
 
 emulator-5554 - 11 Tests 1/10 completed. (0 skipped) (0 failed)
-
-> Task :app:connectedDebugAndroidTest
-
-dev.lichboard.LichboardIntegrationTest > specialKeysReachRealRawInputTarget[emulator-5554 - 11] [31mFAILED [0m
-	java.lang.AssertionError: Raw editor connection active
-	at org.junit.Assert.fail(Assert.java:89)
-
-emulator-5554 - 11 Tests 2/10 completed. (0 skipped) (1 failed)
+emulator-5554 - 11 Tests 2/10 completed. (0 skipped) (0 failed)
 
 > Task :app:connectedDebugAndroidTest
 
 dev.lichboard.LichboardIntegrationTest > optionalAccessibilityEditsOnlyWithOptIn[emulator-5554 - 11] [31mFAILED [0m
+	java.lang.AssertionError: ACTION_SET_TEXT entered text
+	at org.junit.Assert.fail(Assert.java:89)
 
-
-emulator-5554 - 11 Tests 3/10 completed. (0 skipped) (2 failed)
-Finished 3 tests on emulator-5554 - 11
+emulator-5554 - 11 Tests 3/10 completed. (0 skipped) (1 failed)
+emulator-5554 - 11 Tests 5/10 completed. (0 skipped) (1 failed)
 
 > Task :app:connectedDebugAndroidTest
-Tests on emulator-5554 - 11 failed: There was 2 failure(s).
-Test run failed to complete. Instrumentation run failed due to keyDispatchingTimedOut
+
+dev.lichboard.LichboardIntegrationTest > bubbleDragsPersistsAndLongPressOpensControls[emulator-5554 - 11] [31mFAILED [0m
+	java.lang.IllegalStateException: Missing accessible view: Lichboard floating button; foreground=dev.lichboard; overlayRunning=true; imeVisible=false; settings=BoardSettings(onboarded=true, floatingEnabled=true, floatingKeyboard=true, startOnBoot=false, keyboardHeight=340, keyboardWidth=100, keyboardOpacity=0.98, buttonSize=56, buttonOpacity=0.92, theme=MIDNIGHT, customBackground=151A24, customAccent=C6F58B, vibration=false, sound=false, autoHide=false, inputMode=AUTO, accessibilityFallback=false, bubbleX=0.33744395, bubbleY=0.31592968, keyboardX=0.5, keyboardY=1.0)
+	at dev.lichboard.LichboardIntegrationTest.await(LichboardIntegrationTest.kt:77)
+
+dev.lichboard.LichboardIntegrationTest > automaticWithoutAnEditorUsesDraftNotInjection[emulator-5554 - 11] [31mFAILED [0m
+	java.lang.AssertionError: No active editor connection
+	at org.junit.Assert.fail(Assert.java:89)
+
+emulator-5554 - 11 Tests 7/10 completed. (0 skipped) (3 failed)
+emulator-5554 - 11 Tests 8/10 completed. (0 skipped) (3 failed)
+Finished 10 tests on emulator-5554 - 11
+
+> Task :app:connectedDebugAndroidTest
+Tests on emulator-5554 - 11 failed: There was 3 failure(s).
 
 > Task :app:connectedDebugAndroidTest FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795390703348.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795391399670.json
 
 FAILURE: Build failed with an exception.
 
@@ -118,5 +125,5 @@ Execution failed for task ':app:connectedDebugAndroidTest'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 15s
+BUILD FAILED in 2m 4s
 67 actionable tasks: 1 executed, 66 up-to-date

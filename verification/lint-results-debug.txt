@@ -79,7 +79,7 @@ class BubbleView(
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyButton.kt:14: Warning: Custom view KeyButton is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
 class KeyButton(
       ~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:24: Warning: Custom view KeyboardPanel is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:32: Warning: Custom view KeyboardPanel is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
 class KeyboardPanel(
       ~~~~~~~~~~~~~
 
@@ -101,7 +101,7 @@ class KeyboardPanel(
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:256: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
         box.setOnTouchListener { _, event -> if (event.actionMasked == MotionEvent.ACTION_OUTSIDE) { hideQuick(); true } else false }
                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:122: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:145: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
             title.setOnTouchListener { view, event ->
             ^
 
@@ -112,13 +112,13 @@ class KeyboardPanel(
    actions should ideally be placed in View#performClick as some accessibility
    services invoke performClick when a click action should occur.
 
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:306: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:329: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:306: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:329: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
                     ~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:306: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:329: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
                                                                                                                                            ~~~~~~~~~~~~~~~~~~~
 /home/runner/work/lichboard/lichboard/app/src/debug/java/dev/lichboard/ProbeActivity.kt:30: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
