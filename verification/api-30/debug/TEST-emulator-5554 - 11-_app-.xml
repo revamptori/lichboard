@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.LichboardIntegrationTest" tests="3" failures="2" errors="0" skipped="0" time="47.543" timestamp="2026-11-22T23:39:32" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 11" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="independentOverlayHasHonestClipboardDraft" classname="dev.lichboard.LichboardIntegrationTest" time="9.407" />
+  <testcase name="specialKeysReachRealRawInputTarget" classname="dev.lichboard.LichboardIntegrationTest" time="9.088">
+    <failure>java.lang.AssertionError: Raw editor connection active
+at org.junit.Assert.fail(Assert.java:89)
+at org.junit.Assert.assertTrue(Assert.java:42)
+at dev.lichboard.LichboardIntegrationTest.condition(LichboardIntegrationTest.kt:81)
+at dev.lichboard.LichboardIntegrationTest.specialKeysReachRealRawInputTarget(LichboardIntegrationTest.kt:151)
+</failure>
+  </testcase>
+  <testcase name="optionalAccessibilityEditsOnlyWithOptIn" classname="dev.lichboard.LichboardIntegrationTest" time="18.05">
+    <failure></failure>
+  </testcase>
+  <system-err>Test run failed to complete. Instrumentation run failed due to keyDispatchingTimedOut
+</system-err>
+</testsuite>

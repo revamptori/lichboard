@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.lichboard.input.InputPolicyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-22T23:27:48" hostname="runnervmxfy6o" time="0.01">
+<testsuite name="dev.lichboard.input.InputPolicyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-22T23:36:19" hostname="runnervmxfy6o" time="0.018">
   <properties/>
-  <testcase name="clipboardNeverInjects" classname="dev.lichboard.input.InputPolicyTest" time="0.001"/>
-  <testcase name="assistRequiresFocusedEditableTarget" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
-  <testcase name="assistRequiresExplicitConsent" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
+  <testcase name="clipboardNeverInjects" classname="dev.lichboard.input.InputPolicyTest" time="0.007"/>
+  <testcase name="assistRequiresFocusedEditableTarget" classname="dev.lichboard.input.InputPolicyTest" time="0.001"/>
+  <testcase name="assistRequiresExplicitConsent" classname="dev.lichboard.input.InputPolicyTest" time="0.004"/>
   <testcase name="explicitAssistStillNeedsConsent" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
   <testcase name="automaticCanUseAssist" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
   <testcase name="explicitAssistNeverUsesIme" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
   <testcase name="automaticPrioritizesIme" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
-  <testcase name="imeOnlyNeverUsesAccessibility" classname="dev.lichboard.input.InputPolicyTest" time="0.001"/>
+  <testcase name="imeOnlyNeverUsesAccessibility" classname="dev.lichboard.input.InputPolicyTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

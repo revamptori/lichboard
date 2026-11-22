@@ -29,30 +29,19 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:javaPreCompileDebug
-> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugResources
+> Task :app:processDebugManifestForPackage
 > Task :app:checkDebugDuplicateClasses
-> Task :app:compileDebugKotlin
+> Task :app:processDebugResources
 > Task :app:mergeExtDexDebug
-
-> Task :app:compileDebugKotlin
-w: file:///home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/ime/LichboardImeService.kt:39:33 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
-
-> Task :app:compileDebugJavaWithJavac
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:processDebugJavaRes
-> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugJniLibFolders
-> Task :app:mergeProjectDexDebug
+> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugNativeLibs
-> Task :app:mergeDebugJavaResource
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 
@@ -61,7 +50,6 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:preDebugAndroidTestBuild SKIPPED
-> Task :app:bundleDebugClassesToCompileJar
 > Task :app:processDebugAndroidTestManifest
 > Task :app:generateDebugAndroidTestBuildConfig
 > Task :app:checkDebugAndroidTestAarMetadata
@@ -70,9 +58,6 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateDebugAndroidTestResources
 > Task :app:javaPreCompileDebugAndroidTest
 > Task :app:mergeDebugAndroidTestResources
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
 > Task :app:mergeDebugAndroidTestShaders
 > Task :app:compileDebugAndroidTestShaders NO-SOURCE
 > Task :app:generateDebugAndroidTestAssets UP-TO-DATE
@@ -80,11 +65,10 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:compressDebugAndroidTestAssets
 > Task :app:desugarDebugAndroidTestFileDependencies
 > Task :app:checkDebugAndroidTestDuplicateClasses
-> Task :app:mergeDebugAndroidTestJniLibFolders
 > Task :app:processDebugAndroidTestResources
-> Task :app:mergeExtDexDebugAndroidTest
-> Task :app:mergeLibDexDebugAndroidTest
+> Task :app:mergeDebugAndroidTestJniLibFolders
 > Task :app:mergeDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:mergeLibDexDebugAndroidTest
 > Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
 > Task :app:validateSigningDebugAndroidTest
 > Task :app:writeDebugAndroidTestSigningConfigVersions
@@ -95,15 +79,16 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateReleaseResValues
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
+> Task :app:mergeExtDexDebugAndroidTest
 > Task :app:packageReleaseResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
-> Task :app:mergeReleaseResources
 > Task :app:processReleaseManifest
-> Task :app:javaPreCompileRelease
+> Task :app:mergeReleaseResources
 > Task :app:processReleaseManifestForPackage
+> Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs
@@ -113,30 +98,36 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:desugarReleaseFileDependencies
-> Task :app:mergeReleaseStartupProfile
 > Task :app:extractReleaseNativeSymbolTables
-> Task :app:processReleaseResources
-> Task :app:compileDebugAndroidTestKotlin
-> Task :app:compileDebugAndroidTestJavaWithJavac
-> Task :app:dexBuilderDebugAndroidTest
-> Task :app:mergeDebugAndroidTestGlobalSynthetics
-> Task :app:processDebugAndroidTestJavaRes
-> Task :app:mergeProjectDexDebugAndroidTest
-> Task :app:mergeDebugAndroidTestJavaResource
+> Task :app:mergeReleaseStartupProfile
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:packageDebugAndroidTest
+> Task :app:processReleaseResources
+> Task :app:compileDebugKotlin
+> Task :app:mergeExtDexRelease
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/ime/LichboardImeService.kt:41:33 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
 > Task :app:mergeReleaseArtProfile
-> Task :app:createDebugAndroidTestApkListingFileRedirect
-> Task :app:assembleDebugAndroidTest
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:extractReleaseVersionControlInfo
+> Task :app:optimizeReleaseResources
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
-> Task :app:optimizeReleaseResources
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
@@ -144,20 +135,29 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
 > Task :app:javaPreCompileDebugUnitTest
 > Task :app:compileDebugUnitTestKotlin
-> Task :app:mergeExtDexRelease
+> Task :app:compileDebugAndroidTestKotlin
 > Task :app:generateDebugAndroidTestLintModel
+> Task :app:compileDebugAndroidTestJavaWithJavac
+> Task :app:dexBuilderDebugAndroidTest
+> Task :app:mergeDebugAndroidTestGlobalSynthetics
+> Task :app:processDebugAndroidTestJavaRes
 > Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes
+> Task :app:mergeProjectDexDebugAndroidTest
+> Task :app:mergeDebugAndroidTestJavaResource
 > Task :app:testDebugUnitTest
 > Task :app:generateDebugLintReportModel
 > Task :app:generateDebugUnitTestLintModel
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/ime/LichboardImeService.kt:39:33 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/ime/LichboardImeService.kt:41:33 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
 
 > Task :app:compileReleaseJavaWithJavac
 > Task :app:generateReleaseLintVitalReportModel
 > Task :app:dexBuilderRelease
+> Task :app:packageDebugAndroidTest
+> Task :app:createDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleDebugAndroidTest
 > Task :app:mergeReleaseGlobalSynthetics
 > Task :app:processReleaseJavaRes
 > Task :app:mergeDexRelease
@@ -177,7 +177,7 @@ w: file:///home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/
 Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-debug.html
 
 > Task :app:lintDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795389917940.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795390411216.json
 
-BUILD SUCCESSFUL in 3m 13s
+BUILD SUCCESSFUL in 3m 33s
 129 actionable tasks: 129 executed

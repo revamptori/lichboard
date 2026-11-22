@@ -1,0 +1,237 @@
+11-22 23:39:02.995  2463  2483 I TestRunner: started: optionalAccessibilityEditsOnlyWithOptIn(dev.lichboard.LichboardIntegrationTest)
+11-22 23:39:03.000  2463  2483 D UiDevice: Executing shell command: wm dismiss-keyguard
+11-22 23:39:03.003   511  2562 D EGL_emulation: eglCreateContext: 0x72f14898c0e0: maj 3 min 0 rcv 3
+11-22 23:39:03.013   511  2562 D EGL_emulation: eglMakeCurrent: 0x72f14898c0e0: ver 3 0 (tinfo 0x72f0e89e6a40) (first time)
+11-22 23:39:03.094  2602  2604 I cmd     : oneway function results will be dropped but finished with status OK and parcel size 4
+11-22 23:39:03.098  2463  2483 D UiDevice: Executing shell command: appops set dev.lichboard SYSTEM_ALERT_WINDOW allow
+11-22 23:39:03.151  2463  2483 D UiDevice: Executing shell command: ime enable dev.lichboard/.ime.LichboardImeService
+11-22 23:39:03.167   713   747 I ndroid.systemu: NativeAlloc concurrent copying GC freed 3270(284KB) AllocSpace objects, 2(40KB) LOS objects, 49% free, 7368KB/14MB, paused 29us total 276.680ms
+11-22 23:39:03.168  2612  2615 I cmd     : oneway function results will be dropped but finished with status OK and parcel size 4
+11-22 23:39:03.171  2463  2483 D UiDevice: Executing shell command: ime set dev.lichboard/.ime.LichboardImeService
+11-22 23:39:03.195  2463  2483 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+11-22 23:39:03.198   511   544 D EventSequenceValidator: Transition from ACTIVITY_CANCELLED to INTENT_STARTED
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_10 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_7 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_11 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_5 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_2 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_6 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_8 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_9 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_3 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_4 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_10 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_7 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_11 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_5 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_2 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_6 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_8 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_9 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_3 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.203   511  1028 W InputReader: Device virtio_input_multi_touch_4 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:03.207   511   544 D EventSequenceValidator: Transition from INTENT_STARTED to ACTIVITY_LAUNCHED
+11-22 23:39:03.210  2463  2463 W ActivityThread: handleConfigurationChanged for IME app but config seq is obsolete , config={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.25}, mConfiguration={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.27}
+11-22 23:39:03.215  2463  2463 D LifecycleMonitor: Lifecycle status change: dev.lichboard.ProbeActivity@92c722 in: PRE_ON_CREATE
+11-22 23:39:03.216  2463  2463 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+11-22 23:39:03.231   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f52ca000 0x3f5c2f000]
+11-22 23:39:03.315  2463  2463 D LifecycleMonitor: Lifecycle status change: dev.lichboard.ProbeActivity@92c722 in: CREATED
+11-22 23:39:03.315  2463  2463 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=dev.lichboard.ProbeActivity@92c722
+11-22 23:39:03.317  2463  2463 D LifecycleMonitor: Lifecycle status change: dev.lichboard.ProbeActivity@92c722 in: STARTED
+11-22 23:39:03.317  2463  2463 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=dev.lichboard.ProbeActivity@92c722
+11-22 23:39:03.319  2463  2463 D LifecycleMonitor: Lifecycle status change: dev.lichboard.ProbeActivity@92c722 in: RESUMED
+11-22 23:39:03.319  2463  2463 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=dev.lichboard.ProbeActivity@92c722
+11-22 23:39:03.373  2463  2463 D ActivityThread: ViewRootImpl.ConfigChangedCallback for IME, config={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.25}
+11-22 23:39:03.374   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5c2f000 0x3f6594000]
+11-22 23:39:03.383   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f6594000 0x3f6ef9000]
+11-22 23:39:03.410   298   333 D goldfish-address-space: claimShared: Ask to claim region [0x3f6ef9000 0x3f785e000]
+11-22 23:39:03.452   511   549 D ArtManagerInternalImpl: /data/misc/iorapd/dev.lichboard/1/dev.lichboard.ProbeActivity/compiled_traces/compiled_trace.pb doesn't exist
+11-22 23:39:03.453   511   549 I ActivityTaskManager: Displayed dev.lichboard/.ProbeActivity: +248ms
+11-22 23:39:03.453   511   544 D EventSequenceValidator: Transition from ACTIVITY_LAUNCHED to ACTIVITY_FINISHED
+11-22 23:39:03.497  2463  2483 D UiDevice: Executing shell command: settings get secure enabled_accessibility_services
+11-22 23:39:03.552  2463  2483 D UiDevice: Executing shell command: settings put secure enabled_accessibility_services dev.lichboard/.accessibility.LichboardAccessibilityService
+11-22 23:39:03.575  2463  2483 D UiDevice: Executing shell command: settings put secure accessibility_enabled 1
+11-22 23:39:03.587  2643  2645 I cmd     : oneway function results will be dropped but finished with status OK and parcel size 4
+11-22 23:39:03.622   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f785e000 0x3f7861000]
+11-22 23:39:03.627   713  1678 D HostConnection: HostConnection::get() New Host Connection established 0x72f1589117d0, tid 1678
+11-22 23:39:03.630   713  1678 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_color_transform ANDROID_EMU_hwc_display_power_mode GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0
+11-22 23:39:03.631   713  1678 D EGL_emulation: eglCreateContext: 0x72f1488f3fd0: maj 3 min 0 rcv 3
+11-22 23:39:03.631   713  1678 D EGL_emulation: eglMakeCurrent: 0x72f1488f3fd0: ver 3 0 (tinfo 0x72f0e8940ed0) (first time)
+11-22 23:39:03.641  2463  2463 D ActivityThread: ViewRootImpl.ConfigChangedCallback for IME, config={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.25}
+11-22 23:39:03.643   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7861000 0x3f7cc7000]
+11-22 23:39:03.644   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f52ca000 0x3f5730000]
+11-22 23:39:03.646   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5730000 0x3f5b96000]
+11-22 23:39:03.804   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f52ca000 0x3f5730000]
+11-22 23:39:03.832   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5730000 0x3f5b96000]
+11-22 23:39:03.852  2463  2483 D UiDevice: Waiting 8000ms for SearchCondition[findObject=BySelector [DESC='\QLichboard floating keyboard\E']].
+11-22 23:39:03.852  2463  2483 D UiDevice: Retrieving node with selector: BySelector [DESC='\QLichboard floating keyboard\E'].
+11-22 23:39:03.872   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7861000 0x3f7cc7000]
+11-22 23:39:03.918   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5730000 0x3f5b96000]
+11-22 23:39:03.983   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f4000000 0x3f4965000]
+11-22 23:39:04.086   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f6594000 0x3f6ef9000]
+11-22 23:39:04.105  2463  2463 D ActivityThread: ViewRootImpl.ConfigChangedCallback for IME, config={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.25}
+11-22 23:39:04.113   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7cc7000 0x3f7cee000]
+11-22 23:39:04.121   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7cee000 0x3f7d15000]
+11-22 23:39:04.124   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7d15000 0x3f7d3c000]
+11-22 23:39:04.135  2463  2463 D ActivityThread: ViewRootImpl.ConfigChangedCallback for IME, config={1.0 310mcc260mnc [en_US] ldltr sw392dp w392dp h750dp 440dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2280) mAppBounds=Rect(0, 0 - 1080, 2148) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.25}
+11-22 23:39:04.137   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5b96000 0x3f5f52000]
+11-22 23:39:04.139   713   713 D InterruptionStateProvider: No alerting: suppressed due to group alert behavior
+11-22 23:39:04.139   713   713 D InterruptionStateProvider: No alerting: suppressed due to group alert behavior
+11-22 23:39:04.148   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5f52000 0x3f630e000]
+11-22 23:39:04.153   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f52ca000 0x3f5686000]
+11-22 23:39:04.222   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f8000000 0x3f8965000]
+11-22 23:39:04.247   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7cee000 0x3f7d15000]
+11-22 23:39:04.287   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7d15000 0x3f7d3c000]
+11-22 23:39:04.308   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f5f52000 0x3f630e000]
+11-22 23:39:04.338   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f52ca000 0x3f5686000]
+11-22 23:39:04.411   713   713 D InterruptionStateProvider: No alerting: filtered notification: 0|android|0|com.android.server.wm.AlertWindowNotification - dev.lichboard|1000
+11-22 23:39:04.411   713   713 D InterruptionStateProvider: No alerting: filtered notification: 0|android|0|com.android.server.wm.AlertWindowNotification - dev.lichboard|1000
+11-22 23:39:04.815  2463  2483 D UiDevice: Waiting 8000ms for SearchCondition[findObject=BySelector [DESC='\QKey z\E']].
+11-22 23:39:04.815  2463  2483 D UiDevice: Retrieving node with selector: BySelector [DESC='\QKey z\E'].
+11-22 23:39:04.821  2463  2483 D UiObject2: Clicking on (221, 1814).
+11-22 23:39:04.872  2463  2483 W GestureController: Gestures took longer than expected (51ms >> 16ms), device might be in a busy state.
+11-22 23:39:04.874  2463  2483 D UiDevice: Waiting 8000ms for SearchCondition[findObject=BySelector [DESC='\QKey h\E']].
+11-22 23:39:04.874  2463  2483 D UiDevice: Retrieving node with selector: BySelector [DESC='\QKey h\E'].
+11-22 23:39:04.889   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f6ef9000 0x3f72b5000]
+11-22 23:39:04.897   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f7cc7000 0x3f7cee000]
+11-22 23:39:05.458  2463  2483 D UiObject2: Clicking on (643, 1694).
+11-22 23:39:05.517  2463  2483 W GestureController: Gestures took longer than expected (59ms >> 16ms), device might be in a busy state.
+11-22 23:39:07.451   398   398 I perfetto: probes_producer.cc:329  Producer stop (id=7)
+11-22 23:39:07.451   399   399 I perfetto: ng_service_impl.cc:1948 Tracing session 7 ended, total sessions:0
+11-22 23:39:07.452   398   398 I perfetto: ftrace_procfs.cc:183    disabled ftrace
+11-22 23:39:07.498   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.505   511  2650 I chatty  : uid=1000(system) BackgroundDexOp identical 11 lines
+11-22 23:39:07.506   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.507   511  2650 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~7ZSNVDr-52xgnwDY-ejC8A==/dev.lichboard.test-3twBtjHhyBkVOja-_6DRNg==/base.apk pkg=dev.lichboard.test isa=x86_64 dexoptFlags=boot_complete,debuggable,public,enable_hidden_api_checks targetFilter=verify oatDir=/data/app/~~7ZSNVDr-52xgnwDY-ejC8A==/dev.lichboard.test-3twBtjHhyBkVOja-_6DRNg==/oat classLoaderContext=PCL[]{PCL[/system/framework/android.test.base.jar]#PCL[/system/framework/android.test.mock.jar]{PCL[/system/framework/android.test.base.jar]}#PCL[/system/framework/android.test.runner.jar]{PCL[/system/framework/android.test.base.jar]#PCL[/system/framework/android.test.mock.jar]{PCL[/system/framework/android.test.base.jar]}}}
+11-22 23:39:07.509   426   588 V installd: DexInv: --- BEGIN '/data/app/~~7ZSNVDr-52xgnwDY-ejC8A==/dev.lichboard.test-3twBtjHhyBkVOja-_6DRNg==/base.apk' ---
+11-22 23:39:07.531   511   538 D WifiNl80211Manager: Scan result ready event
+11-22 23:39:07.531   511   538 D WifiNative: Scan result ready event
+11-22 23:39:07.558  2651  2651 W dex2oat32: Unexpected CPU variant for X86 using defaults: x86_64
+11-22 23:39:07.559  2651  2651 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=verify --debuggable --classpath-dir=/data/app/~~7ZSNVDr-52xgnwDY-ejC8A==/dev.lichboard.test-3twBtjHhyBkVOja-_6DRNg== --class-loader-context=PCL[]{PCL[/system/framework/android.test.base.jar]#PCL[/system/framework/android.test.mock.jar]{PCL[/system/framework/android.test.base.jar]}#PCL[/system/framework/android.test.runner.jar]{PCL[/system/framework/android.test.base.jar]#PCL[/system/framework/android.test.mock.jar]{PCL[/system/framework/android.test.base.jar]}}} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=boot
+11-22 23:39:07.562  2651  2651 I dex2oat32: setting boot class path to /apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/core-icu4j.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/framework-atb-backward-compatibility.jar
+11-22 23:39:07.609  2651  2651 I dex2oat32: Explicit concurrent copying GC freed 4165(644KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 15KB/1551KB, paused 12us total 1.228ms
+11-22 23:39:07.611  2651  2651 I dex2oat32: Explicit concurrent copying GC freed 65(31KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 15KB/1551KB, paused 5us total 864us
+11-22 23:39:07.613  2651  2651 I dex2oat32: Explicit concurrent copying GC freed 35(15KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 16KB/1552KB, paused 5us total 872us
+11-22 23:39:07.617  2651  2651 I dex2oat32: Explicit concurrent copying GC freed 220(47KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 17KB/1553KB, paused 5us total 861us
+11-22 23:39:07.621  2651  2651 I dex2oat32: dex2oat took 63.726ms (77.027ms cpu) (threads: 2) arena alloc=0B (0B) java alloc=17KB (18360B) native alloc=1869KB (1914480B) free=1485KB (1520896B)
+11-22 23:39:07.623   426   588 V installd: DexInv: --- END '/data/app/~~7ZSNVDr-52xgnwDY-ejC8A==/dev.lichboard.test-3twBtjHhyBkVOja-_6DRNg==/base.apk' (success) ---
+11-22 23:39:07.624   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.628   511  2650 I chatty  : uid=1000(system) BackgroundDexOp identical 5 lines
+11-22 23:39:07.629   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.634   426   588 V installd: DexInv: --- BEGIN '/apex/com.android.os.statsd/javalib/service-statsd.jar' ---
+11-22 23:39:07.640  2658  2658 W dex2oat32: Unexpected CPU variant for X86 using defaults: x86_64
+11-22 23:39:07.641  2658  2658 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=verify --classpath-dir=/apex/com.android.os.statsd/javalib --class-loader-context=PCL[];PCL[/system/framework/com.android.location.provider.jar:/system/framework/services.jar:/system/framework/ethernet-service.jar:/apex/com.android.permission/javalib/service-permission.jar:/apex/com.android.wifi/javalib/service-wifi.jar:/apex/com.android.ipsec/javalib/android.net.ipsec.ike.jar] --generate-mini-debug-info --compact-dex-level=none --compilation-reason=boot
+11-22 23:39:07.642  2658  2658 I dex2oat32: setting boot class path to /apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/core-icu4j.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/framework-atb-backward-compatibility.jar
+11-22 23:39:07.663  2658  2658 I dex2oat32: dex2oat took 22.920ms (22.076ms cpu) (threads: 2) arena alloc=0B (0B) java alloc=33KB (34600B) native alloc=1006KB (1030192B) free=1504KB (1540800B)
+11-22 23:39:07.664   426   588 V installd: DexInv: --- END '/apex/com.android.os.statsd/javalib/service-statsd.jar' (success) ---
+11-22 23:39:07.665   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.681   511  2650 I chatty  : uid=1000(system) BackgroundDexOp identical 29 lines
+11-22 23:39:07.681   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:07.682   511  2650 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~oYwqzKlwa_f0XAr_oiZ4sA==/dev.lichboard-SVEdaE8tktEOyPMg0djyEA==/base.apk pkg=dev.lichboard isa=x86_64 dexoptFlags=boot_complete,debuggable,public,enable_hidden_api_checks targetFilter=verify oatDir=/data/app/~~oYwqzKlwa_f0XAr_oiZ4sA==/dev.lichboard-SVEdaE8tktEOyPMg0djyEA==/oat classLoaderContext=PCL[]{}
+11-22 23:39:07.682   426   588 V installd: DexInv: --- BEGIN '/data/app/~~oYwqzKlwa_f0XAr_oiZ4sA==/dev.lichboard-SVEdaE8tktEOyPMg0djyEA==/base.apk' ---
+11-22 23:39:07.689  2662  2662 W dex2oat32: Unexpected CPU variant for X86 using defaults: x86_64
+11-22 23:39:07.689  2662  2662 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=verify --debuggable --classpath-dir=/data/app/~~oYwqzKlwa_f0XAr_oiZ4sA==/dev.lichboard-SVEdaE8tktEOyPMg0djyEA== --class-loader-context=PCL[]{} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=boot
+11-22 23:39:07.690  2662  2662 I dex2oat32: setting boot class path to /apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/core-icu4j.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/framework-atb-backward-compatibility.jar
+11-22 23:39:07.842  2662  2662 W dex2oat32: Could not reserve sentinel fault page
+11-22 23:39:07.858  2662  2662 I dex2oat32: Large app, accepted running with swap.
+11-22 23:39:08.085  2662  2664 W dex2oat32: Class androidx.compose.runtime.snapshots.SnapshotStateMap failed lock verification and will run slower.
+11-22 23:39:08.085  2662  2664 W dex2oat32: Common causes for lock verification issues are non-optimized dex code
+11-22 23:39:08.085  2662  2664 W dex2oat32: and incorrect proguard optimizations.
+11-22 23:39:08.087  2662  2662 W dex2oat32: Class androidx.compose.runtime.snapshots.SnapshotStateList failed lock verification and will run slower.
+11-22 23:39:08.150  2662  2662 W dex2oat32: Accessing hidden method Landroid/view/ScrollCaptureSession;->getSurface()Landroid/view/Surface; (blacklist, linking, denied)
+11-22 23:39:08.150  2662  2662 I chatty  : uid=50130(dev.lichboard) dex2oat identical 1 line
+11-22 23:39:08.150  2662  2662 W dex2oat32: Accessing hidden method Landroid/view/ScrollCaptureSession;->getSurface()Landroid/view/Surface; (blacklist, linking, denied)
+11-22 23:39:08.150  2662  2664 W dex2oat32: Accessing hidden method Landroid/view/ScrollCaptureTarget;-><init>(Landroid/view/View;Landroid/graphics/Rect;Landroid/graphics/Point;Landroid/view/ScrollCaptureCallback;)V (blacklist, linking, denied)
+11-22 23:39:08.150  2662  2664 W dex2oat32: Accessing hidden method Landroid/view/ScrollCaptureTarget;->setScrollBounds(Landroid/graphics/Rect;)V (blacklist, linking, denied)
+11-22 23:39:08.157  2662  2662 W dex2oat32: Accessing hidden method Landroid/graphics/Canvas;->drawPatch(Landroid/graphics/NinePatch;Landroid/graphics/Rect;Landroid/graphics/Paint;)V (greylist-max-o, linking, denied)
+11-22 23:39:08.157  2662  2662 W dex2oat32: Accessing hidden method Landroid/graphics/Canvas;->drawPatch(Landroid/graphics/NinePatch;Landroid/graphics/RectF;Landroid/graphics/Paint;)V (greylist-max-o, linking, denied)
+11-22 23:39:08.188  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 54371(7076KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 7600B/1543KB, paused 13us total 11.370ms
+11-22 23:39:08.190  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 279(62KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 8672B/1544KB, paused 5us total 961us
+11-22 23:39:08.195  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 421(128KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 9744B/1545KB, paused 8us total 954us
+11-22 23:39:08.197  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 114(36KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 13KB/1549KB, paused 5us total 896us
+11-22 23:39:08.201  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 746(219KB) AllocSpace objects, 0(0B) LOS objects, 99% free, 15KB/1551KB, paused 6us total 965us
+11-22 23:39:08.206  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 499(167KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 16KB/1552KB, paused 11us total 1.080ms
+11-22 23:39:08.217  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 1408(207KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 17KB/1553KB, paused 5us total 964us
+11-22 23:39:08.227  2662  2671 W dex2oat32: Accessing hidden method Landroid/graphics/Bitmap;->getHardwareBuffer()Landroid/hardware/HardwareBuffer; (blacklist, linking, denied)
+11-22 23:39:08.334  2662  2662 I dex2oat32: Explicit concurrent copying GC freed 15446(2156KB) AllocSpace objects, 0(0B) LOS objects, 98% free, 30KB/1566KB, paused 7us total 2.574ms
+11-22 23:39:08.340  2662  2662 I dex2oat32: dex2oat took 651.682ms (1.005s cpu) (threads: 2) arena alloc=0B (0B) java alloc=30KB (30880B) native alloc=7389KB (7566816B) free=1777KB (1820144B) swap=16MB (16777216B)
+11-22 23:39:08.343   426   588 V installd: DexInv: --- END '/data/app/~~oYwqzKlwa_f0XAr_oiZ4sA==/dev.lichboard-SVEdaE8tktEOyPMg0djyEA==/base.apk' (success) ---
+11-22 23:39:08.345   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:08.373   511  2650 I chatty  : uid=1000(system) BackgroundDexOp identical 38 lines
+11-22 23:39:08.374   511  2650 I system_server: The ClassLoaderContext is a special shared library.
+11-22 23:39:08.374   511  2650 I BackgroundDexOptService: Pinning optimized code {dev.lichboard.test, android, dev.lichboard}
+11-22 23:39:08.374   511  2650 D IorapForwardingService: onPackagesUpdated: dev.lichboard.test
+11-22 23:39:08.375   511  2650 D IorapForwardingService: onPackagesUpdated: android
+11-22 23:39:08.375   511  2650 D IorapForwardingService: onPackagesUpdated: dev.lichboard
+11-22 23:39:10.491  2463  2463 W dev.lichboard: Long monitor contention with owner UiAutomation (2485) at void android.view.accessibility.AccessibilityCache.onAccessibilityEvent(android.view.accessibility.AccessibilityEvent)(AccessibilityCache.java:229) waiters=0 in void android.view.accessibility.AccessibilityCache.add(android.view.accessibility.AccessibilityNodeInfo) for 5s
+11-22 23:39:10.494   511   604 I InputDispatcher: 4001f85 Lichboard floating keyboard (server) spent 5005ms processing MotionEvent(deviceId=-1, source=0x00001002, displayId=0, action=UP, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000000, classification=NONE, edgeFlags=0x00000000, xPrecision=1.0, yPrecision=1.0, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (643.0, 1694.0)]), policyFlags=0x6b000000
+11-22 23:39:15.494  2463  2463 W dev.lichboard: Long monitor contention with owner UiAutomation (2485) at void android.view.accessibility.AccessibilityCache.onAccessibilityEvent(android.view.accessibility.AccessibilityEvent)(AccessibilityCache.java:210) waiters=0 in void android.view.accessibility.AccessibilityCache.onAccessibilityEvent(android.view.accessibility.AccessibilityEvent) for 5s
+11-22 23:39:15.494  2463  2463 I Choreographer: Skipped 600 frames!  The application may be doing too much work on its main thread.
+11-22 23:39:15.505  2463  2515 I OpenGLRenderer: Davey! duration=10017ms; Flags=0, IntendedVsync=78886117183, Vsync=88886116783, OldestInputEvent=9223372036854775807, NewestInputEvent=0, HandleInputStart=88892522152, AnimationStart=88892524876, PerformTraversalsStart=88892643502, DrawStart=88892723821, SyncQueued=88893319524, SyncStart=88893998416, IssueDrawCommandsStart=88894088720, SwapBuffers=88899765647, FrameCompleted=88903936771, DequeueBufferDuration=125476, QueueBufferDuration=173968, GpuCompleted=0,
+11-22 23:39:15.508  2463  2483 D UiDevice: Waiting 8000ms for SearchCondition[findObject=BySelector [DESC='\QKey i\E']].
+11-22 23:39:15.508  2463  2483 D UiDevice: Retrieving node with selector: BySelector [DESC='\QKey i\E'].
+11-22 23:39:16.014  2463  2483 D UiObject2: Clicking on (794, 1574).
+11-22 23:39:16.064  2463  2483 W GestureController: Gestures took longer than expected (50ms >> 16ms), device might be in a busy state.
+11-22 23:39:17.642  1710  2078 I Dialer  : OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+11-22 23:39:17.642  1710  1710 I Dialer  : RetryPolicy - discarding deferred status: configuration_state=4
+11-22 23:39:17.642  1710  1710 I Dialer  : VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+11-22 23:39:17.643  1710  1710 I Dialer  : VvmTaskReceiver - task received
+11-22 23:39:17.643  1710  1710 I Dialer  : VvmTaskReceiver - TaskExecutor already running
+11-22 23:39:17.643  1710  1710 I Dialer  : Task.createTask - create task:com.android.voicemail.impl.ActivationTask
+11-22 23:39:17.643  1710  1710 I Dialer  : RetryPolicy - retry #1 for com.android.voicemail.impl.ActivationTask@f6e8808 queued, executing in 5000
+11-22 23:39:17.643  1710  1710 I Dialer  : VvmTaskExecutor - com.android.voicemail.impl.ActivationTask@f6e8808 added
+11-22 23:39:17.643  1710  1710 I Dialer  : VvmTaskExecutor - minimal wait time:5000
+11-22 23:39:17.643  1710  1710 I Dialer  : VvmTaskExecutor - sleep for 5000 millis
+11-22 23:39:21.045  2463  2463 W dev.lichboard: Long monitor contention with owner UiAutomation (2485) at void android.view.accessibility.AccessibilityCache.onAccessibilityEvent(android.view.accessibility.AccessibilityEvent)(AccessibilityCache.java:229) waiters=0 in void android.view.accessibility.AccessibilityCache.add(android.view.accessibility.AccessibilityNodeInfo) for 5s
+11-22 23:39:21.063  2448  2581 W Binder  : Caught a RuntimeException from the binder stub implementation.
+11-22 23:39:21.063  2448  2581 W Binder  : java.lang.SecurityException: Calling from not trusted UID!
+11-22 23:39:21.063  2448  2581 W Binder  : 	at android.app.UiAutomationConnection.throwIfCalledByNotTrustedUidLocked(UiAutomationConnection.java:525)
+11-22 23:39:21.063  2448  2581 W Binder  : 	at android.app.UiAutomationConnection.shutdown(UiAutomationConnection.java:429)
+11-22 23:39:21.063  2448  2581 W Binder  : 	at android.app.IUiAutomationConnection$Stub.onTransact(IUiAutomationConnection.java:390)
+11-22 23:39:21.063  2448  2581 W Binder  : 	at android.os.Binder.execTransactInternal(Binder.java:1159)
+11-22 23:39:21.063  2448  2581 W Binder  : 	at android.os.Binder.execTransact(Binder.java:1123)
+11-22 23:39:21.066  2448  2448 D AndroidRuntime: Shutting down VM
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_10 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_7 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_11 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_5 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_2 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_6 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_8 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_9 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_3 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_4 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_10 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_7 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_11 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_5 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_2 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_6 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_8 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_9 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_3 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.068   511   604 W InputReader: Device virtio_input_multi_touch_4 is associated with display ADISPLAY_ID_NONE.
+11-22 23:39:21.078   511   604 W InputDispatcher: Canceling events for 4001f85 Lichboard floating keyboard (server) because it is unresponsive
+11-22 23:39:21.085   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f8965000 0x3f92ca000]
+11-22 23:39:21.087   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f92ca000 0x3f9c2f000]
+11-22 23:39:21.088   298   342 D goldfish-address-space: claimShared: Ask to claim region [0x3f9c2f000 0x3fa594000]
+11-22 23:39:21.142   511   604 W InputDispatcher: channel '4001f85 Lichboard floating keyboard (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+11-22 23:39:21.142   511   604 E InputDispatcher: channel '4001f85 Lichboard floating keyboard (server)' ~ Channel is unrecoverably broken and will be disposed!
+11-22 23:39:21.142   511   604 W InputDispatcher: channel '43ca3d0 Lichboard floating button (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+11-22 23:39:21.142   511   604 E InputDispatcher: channel '43ca3d0 Lichboard floating button (server)' ~ Channel is unrecoverably broken and will be disposed!
+11-22 23:39:21.148   278   278 I Zygote  : Process 2463 exited due to signal 9 (Killed)
+11-22 23:39:21.162   511   552 I libprocessgroup: Successfully killed process cgroup uid 10130 pid 2463 in 96ms
+11-22 23:39:21.204   511  2649 W InputDispatcher: Attempted to unregister already unregistered input channel '8782b4a InputMethod (server)'
+11-22 23:39:21.211   511  1517 W InputDispatcher: Attempted to unregister already unregistered input channel '4001f85 Lichboard floating keyboard (server)'
+11-22 23:39:21.212   511  2649 W InputDispatcher: Attempted to unregister already unregistered input channel '43ca3d0 Lichboard floating button (server)'
+11-22 23:39:21.559  2680  2682 I cmd     : oneway function results will be dropped but finished with status OK and parcel size 4
+11-22 23:39:21.644  2692  2694 I cmd     : oneway function results will be dropped but finished with status OK and parcel size 4
+11-22 23:39:22.654  1710  2078 I Dialer  : VvmTaskExecutor - executing task com.android.voicemail.impl.ActivationTask@f6e8808
+11-22 23:39:22.654  1710  2078 I Dialer  : PreOMigrationHandler - ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, ***, UserHandle{0} already migrated
+11-22 23:39:22.662  1805  1933 I VoicemailNotifier: receivers for android.intent.action.PROVIDER_CHANGED :[]
+11-22 23:39:22.662  1710  2078 I Dialer  : VvmActivationTask - VVM content provider configured - vvm_type_cvvm
+11-22 23:39:22.662  1710  2078 I Dialer  : OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_ACTIVATING
+11-22 23:39:22.664  1805  1933 I VoicemailNotifier: receivers for android.intent.action.PROVIDER_CHANGED :[]
+11-22 23:39:22.669  1029  1268 D SmsNumberUtils: enter filterDestAddr. destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+11-22 23:39:22.670  1029  1268 D SmsNumberUtils: destAddr is not formatted.
+11-22 23:39:22.670  1029  1268 D SmsNumberUtils: leave filterDestAddr, new destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
