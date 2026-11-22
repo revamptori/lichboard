@@ -12,7 +12,7 @@ save_evidence() {
     # Full UTP/protobuf/device diagnostics remain in the downloadable Actions artifact.
   fi
   adb shell dumpsys activity lastanr > "verification/api-$api/last-anr.txt"
-  adb pull /sdcard/Android/data/dev.lichboard/files/screenshots "verification/api-$api/" >/dev/null 2>&1
+  adb pull /sdcard/Download/lichboard-tests "verification/api-$api/screenshots" || true
   return 0
 }
 trap save_evidence EXIT

@@ -24,7 +24,13 @@ class LichboardImeService : InputMethodService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var panel: KeyboardPanel? = null
     private var editorStarted = false
-    val hasEditor: Boolean get() = editorStarted && currentInputConnection != null
+    val hasEditor: Boolean get() {
+        if (!editorStarted) return false
+        val connection = currentInputConnection ?: return false
+        // Android exposes the window's fallback binding when no View supplied an editor IC.
+        // Do not mistake that fallback for a writable editor (TYPE_NULL can also be a real terminal).
+        return connection !== currentInputBinding?.connection
+    }
 
     override fun onCreate() {
         super.onCreate()

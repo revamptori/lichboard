@@ -90,6 +90,11 @@ class MainActivity : ComponentActivity() {
         val preferences = getSharedPreferences("permission_ui", MODE_PRIVATE)
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
             (force || !preferences.getBoolean("notification_prompted", false))) {
+            if (force && preferences.getBoolean("notification_prompted", false) &&
+                !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                openSettings(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
+                return
+            }
             preferences.edit().putBoolean("notification_prompted", true).apply()
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }

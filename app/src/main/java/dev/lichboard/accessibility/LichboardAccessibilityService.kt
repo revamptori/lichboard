@@ -54,12 +54,12 @@ class LichboardAccessibilityService : AccessibilityService() {
             EditCommand.COPY -> node.performAction(AccessibilityNodeInfo.ACTION_COPY)
             EditCommand.CUT -> node.performAction(AccessibilityNodeInfo.ACTION_CUT)
             EditCommand.PASTE -> node.performAction(AccessibilityNodeInfo.ACTION_PASTE)
-            EditCommand.SELECT_ALL -> setSelection(node, 0, node.text?.length ?: 0)
+            EditCommand.SELECT_ALL -> setSelection(node, 0, editableText(node).length)
         }
     }
     fun key(code: Int, meta: Int): Boolean = withEditor(false) { node ->
         if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return@withEditor false
-        val text = node.text?.toString().orEmpty()
+        val text = editableText(node)
         val start = node.textSelectionStart
         val end = node.textSelectionEnd
         if (start !in 0..text.length || end !in 0..text.length) return@withEditor false
@@ -92,8 +92,11 @@ class LichboardAccessibilityService : AccessibilityService() {
             else -> false
         }
     }
+    private fun editableText(node: AccessibilityNodeInfo): String =
+        if (node.isShowingHintText) "" else node.text?.toString().orEmpty()
+
     private fun replaceSelection(node: AccessibilityNodeInfo, value: String): Boolean {
-        val old = node.text?.toString().orEmpty()
+        val old = editableText(node)
         val a = node.textSelectionStart
         val b = node.textSelectionEnd
         if (a !in 0..old.length || b !in 0..old.length) return false

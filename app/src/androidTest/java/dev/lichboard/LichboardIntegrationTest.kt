@@ -3,6 +3,13 @@ package dev.lichboard
 import android.app.UiAutomation
 import android.content.Context
 import android.content.Intent
+import android.content.ContentValues
+import android.provider.MediaStore
+import android.os.Environment
+import dev.lichboard.input.InputRouter
+import dev.lichboard.input.InputPolicy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import android.view.KeyEvent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -53,6 +60,9 @@ class LichboardIntegrationTest {
         }
         condition("Previous overlay service stopped") { !app.overlayRunning.value }
         scenario = ActivityScenario.launch(ProbeActivity::class.java)
+        condition("Probe activity has window focus") {
+            var focused = false; scenario!!.onActivity { focused = it.hasWindowFocus() }; focused
+        }
     }
     @After fun cleanup() {
         instrumentation.runOnMainSync {
@@ -74,7 +84,18 @@ class LichboardIntegrationTest {
         device.takeScreenshot(File(directory, "failure-${description.hashCode()}.png"))
         device.dumpWindowHierarchy(File(directory, "failure-${description.hashCode()}.xml"))
         File(directory, "failure-window-state.txt").writeText(device.executeShellCommand("dumpsys window windows"))
+        directory.listFiles()?.forEach(::exportEvidence)
         error("Missing accessible view: $description; foreground=${device.currentPackageName}; overlayRunning=${app.overlayRunning.value}; imeVisible=${app.imeVisible.value}; settings=${app.settings.current}")
+    }
+    private fun exportEvidence(file: File) {
+        val values = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, file.name)
+            put(MediaStore.Downloads.MIME_TYPE, if (file.extension == "png") "image/png" else "text/plain")
+            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests")
+        }
+        context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)?.let { uri ->
+            context.contentResolver.openOutputStream(uri)?.use { output -> file.inputStream().use { it.copyTo(output) } }
+        }
     }
     private fun click(description: String) { await(description).click(); instrumentation.waitForIdleSync() }
     private fun condition(message: String, test: () -> Boolean) {
@@ -96,6 +117,8 @@ class LichboardIntegrationTest {
     }
     @Test fun normalImeTypesEditsAndCapitalizes() {
         scenario!!.onActivity { it.focusEditor() }
+        condition("Real editor connection active") { ImeBridge.hasEditor }
+        instrumentation.runOnMainSync { ImeBridge.service?.requestShowSelf(0) }
         await("Lichboard system keyboard")
         click("Key h"); click("Key i"); click("Key Shift"); click("Key q")
         condition("IME committed text") { editorText() == "hiQ" }
@@ -134,7 +157,7 @@ class LichboardIntegrationTest {
         click("Emoji panel"); click("Emoji 😀")
         condition("Emoji committed to draft") { app.draft.snapshot.text.contains("😀") }
         click("Hide keyboard")
-        assertFalse(device.hasObject(By.desc("Lichboard floating keyboard")))
+        assertTrue(device.wait(Until.gone(By.desc("Lichboard floating keyboard")), 8_000))
         assertTrue(app.overlayRunning.value)
     }
     @Test fun longPressAlternativesAndAllFunctionKeysExist() {
@@ -183,8 +206,7 @@ class LichboardIntegrationTest {
         await("Lichboard floating button")
         device.pressHome()
         await("Lichboard floating button")
-        context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        await("Lichboard floating button")
+        // The launcher is another application. Do not assert overlays on protected Settings screens.
         click("Lichboard floating button")
         await("Lichboard floating keyboard")
         click("Hide keyboard")
@@ -199,7 +221,9 @@ class LichboardIntegrationTest {
         }
         condition("Theme changes preserve the draft") { app.draft.snapshot.text == "abbbbbb" }
         File(context.getExternalFilesDir(null), "screenshots").mkdirs()
-        device.takeScreenshot(File(context.getExternalFilesDir(null), "screenshots/floating-keyboard.png"))
+        val screenshot = File(context.getExternalFilesDir(null), "screenshots/floating-keyboard.png")
+        device.takeScreenshot(screenshot)
+        exportEvidence(screenshot)
     }
     @Test fun optionalAccessibilityEditsOnlyWithOptIn() {
         originalAccessibility = device.executeShellCommand("settings get secure enabled_accessibility_services")
@@ -209,18 +233,25 @@ class LichboardIntegrationTest {
         condition("Optional service connected") { AccessBridge.connected.value }
         scenario!!.onActivity { it.focusEditor() }
         condition("Focused editable accessibility target") { AccessBridge.service?.hasEditableTarget() == true }
-        overlay(InputMode.ACCESSIBILITY)
-        click("Key z")
+        instrumentation.runOnMainSync { app.settings.update { it.copy(inputMode = InputMode.ACCESSIBILITY) } }
+        // Android 11 shares one AccessibilityCache across services in this instrumented process.
+        // Disconnect UiAutomation while verifying the real accessibility actions to avoid the
+        // framework's same-process cache contention. Other tests exercise actual key touch events.
+        instrumentation.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES).disconnect()
+        val router = InputRouter(context)
+        val refused = runBlocking(Dispatchers.Default) { router.text("z", 0) }
+        assertTrue(refused, refused.startsWith("DRAFT"))
         assertEquals("", editorText())
-        condition("Assist is not used without opt-in") { app.draft.snapshot.text == "z" }
+        assertEquals("z", app.draft.snapshot.text)
         instrumentation.runOnMainSync {
             app.draft.edit { clear() }
             app.settings.update { it.copy(accessibilityFallback = true) }
         }
-        click("Key h"); click("Key i")
-        condition("ACTION_SET_TEXT entered text") { editorText() == "hi" }
-        click("Key ⌫")
-        condition("Accessibility backspace edits selected field") { editorText() == "h" }
+        val first = runBlocking(Dispatchers.Default) { router.text("h", 0) }
+        val second = runBlocking(Dispatchers.Default) { router.text("i", 0) }
+        assertEquals("$first / $second; draft=${app.draft.snapshot}", "hi", editorText())
+        val deletion = runBlocking(Dispatchers.Default) { router.key(KeyEvent.KEYCODE_DEL, 0) }
+        assertEquals(deletion, "h", editorText())
         assertEquals("", app.draft.snapshot.text)
     }
 }

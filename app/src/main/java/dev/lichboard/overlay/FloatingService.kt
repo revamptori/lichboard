@@ -141,6 +141,7 @@ class FloatingService : Service() {
             val x = (p.x - area.left).toFloat() / (area.width() - p.width).coerceAtLeast(1)
             val y = (p.y - area.top).toFloat() / (area.height() - p.height).coerceAtLeast(1)
             lichboard.settings.update { if (button) it.copy(bubbleX = x, bubbleY = y) else it.copy(keyboardX = x, keyboardY = y) }
+            view.sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)
         }
     }
     private fun render(s: BoardSettings) {
