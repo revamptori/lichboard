@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.lichboard.input.DraftBufferTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-22T23:23:26" hostname="runnervmxfy6o" time="0.049">
+<testsuite name="dev.lichboard.input.DraftBufferTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-22T23:27:48" hostname="runnervmxfy6o" time="0.038">
   <properties/>
-  <testcase name="clampsAtStartAndEnd" classname="dev.lichboard.input.DraftBufferTest" time="0.038"/>
+  <testcase name="clampsAtStartAndEnd" classname="dev.lichboard.input.DraftBufferTest" time="0.024"/>
   <testcase name="limitNeverCutsSurrogatePair" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="movementDoesNotSplitEmoji" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="clearErasesAllState" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
@@ -10,7 +10,7 @@
   <testcase name="selectionCollapsesInDirectionOfMovement" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="deletesWholeSurrogatePairBackward" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="shiftSelectAndReplace" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
-  <testcase name="deletesWholeSurrogatePairForward" classname="dev.lichboard.input.DraftBufferTest" time="0.001"/>
+  <testcase name="deletesWholeSurrogatePairForward" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="selectAllAndDelete" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <testcase name="insertionTracksCursor" classname="dev.lichboard.input.DraftBufferTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
