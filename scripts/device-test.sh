@@ -8,9 +8,12 @@ save_evidence() {
   set +e
   adb logcat -d -s AndroidRuntime:E TestRunner:I > "verification/api-$api/runtime.log"
   if [ -d app/build/outputs/androidTest-results/connected ]; then
-    cp -r app/build/outputs/androidTest-results/connected/. "verification/api-$api/"
+    find app/build/outputs/androidTest-results/connected -name 'TEST-*.xml' -exec cp {} "verification/api-$api/" \;
+    # Full UTP/protobuf/device diagnostics remain in the downloadable Actions artifact.
   fi
+  adb shell dumpsys activity lastanr > "verification/api-$api/last-anr.txt"
   adb pull /sdcard/Android/data/dev.lichboard/files/screenshots "verification/api-$api/" >/dev/null 2>&1
+  return 0
 }
 trap save_evidence EXIT
 ./gradlew --no-daemon :app:connectedDebugAndroidTest 2>&1 | tee "ci-emulator-$api.log"

@@ -18,6 +18,8 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
       - name: Build, JVM tests and Android Lint
         id: build
         run: |
@@ -48,7 +50,7 @@ jobs:
           script: bash scripts/device-test.sh 30
       - name: Android 15 instrumented device tests and release smoke test
         id: api35
-        if: success() && steps.build.outcome == 'success'
+        if: always() && steps.build.outcome == 'success'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35

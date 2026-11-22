@@ -35,7 +35,7 @@ Android separates **drawing a keyboard** from **permission to deliver input**. L
 
 Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, input-assist-only, and clipboard-draft modes are selectable. The **system IME always uses its own active connection**, regardless of the selected floating-input route. If an editor rejects an operation, the keyboard reports that rejection; an accepted Android input call is not a guarantee that a particular game or remote desktop understands it.
 
-**Terminals, remote desktops, games:** Esc, Tab, Ctrl, Alt, Shift, arrows, Home, End, Page Up/Down, forward Delete, Insert and F1–F12 are real Android key events through the IME. The destination must expose an input connection and implement these key codes. For raw `TYPE_NULL` targets, first bring up the normal IME once; Lichboard conservatively avoids treating a non-editor window’s fallback connection as a raw editor. Input assist cannot provide raw key injection. Unsupported special keys report that an IME connection is required rather than pretending they were delivered.
+**Terminals, remote desktops, games:** Esc, Tab, Ctrl, Alt, Shift, arrows, Home, End, Page Up/Down, forward Delete, Insert and F1–F12 are real Android key events through the IME. The destination must expose an input connection and implement these key codes. Input assist cannot provide raw key injection. Unsupported special keys report that an IME connection is required rather than pretending they were delivered.
 
 **Secure/fullscreen screens:** normal fullscreen apps can show the overlay where Android permits. Secure apps can suppress it, system permission dialogs can reject overlay-covered touches, and the lockscreen hides Lichboard. Nothing attempts to evade these restrictions.
 
@@ -48,7 +48,7 @@ Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, in
 - Midnight (default), AMOLED Black, Dracula, Nord, Light and validated custom background/accent colors, rounded keys, short press/open transitions.
 - First-run guidance, real editor test area, live service status, geometry reset, haptic and system key-click toggles, optional boot restore.
 - Auto-hide means **hide the floating button while either Lichboard keyboard is visible**. The keyboard can still be closed from its toolbar or service notification; the button then returns. It is not an idle timer.
-- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press.
+- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Input assist runs off the UI thread through an ordered, bounded input queue so a slow accessibility target cannot freeze the keyboard.
 
 ## Optional accessibility setup
 

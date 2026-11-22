@@ -18,6 +18,14 @@ import dev.lichboard.input.EditCommand
 import dev.lichboard.input.InputRouter
 import dev.lichboard.lichboard
 import java.util.Locale
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 /** Shared, fully functional key surface used by the IME and the independent overlay. */
@@ -47,6 +55,8 @@ class KeyboardPanel(
     private lateinit var status: TextView
     private lateinit var body: LinearLayout
     private var alternatives: List<String>? = null
+    private val inputScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val requests = Channel<suspend () -> String>(64)
 
     init {
         orientation = VERTICAL
@@ -54,6 +64,19 @@ class KeyboardPanel(
         layoutDirection = View.LAYOUT_DIRECTION_LTR
         setPadding(dp(5), dp(4), dp(5), dp(5))
         build()
+        inputScope.launch {
+            for (request in requests) {
+                try {
+                    val result = withContext(Dispatchers.Default) { request() }
+                    refreshStatus(result)
+                    if (page == Page.CLIPBOARD) buildBody()
+                } catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { refreshStatus("Input unavailable · try an editor or clipboard draft") }
+            }
+        }
+    }
+    private fun submit(request: suspend () -> String) {
+        if (requests.trySend(request).isFailure) refreshStatus("Input queue busy · wait for the target app")
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
     private fun rounded(color: Int, radius: Int = 12) = GradientDrawable().apply {
@@ -177,7 +200,7 @@ class KeyboardPanel(
     }
     private fun keyCode(label: String, code: Int, weight: Float = 1f, line: LinearLayout) {
         line.addKey(key(label, special = true, repeat = code == KeyEvent.KEYCODE_DEL || code == KeyEvent.KEYCODE_FORWARD_DEL) {
-            feedback(); refreshStatus(router.key(code, meta())); consumeModifiers()
+            feedback(); val modifiers = meta(); submit { router.key(code, modifiers) }; consumeModifiers()
         }, weight)
     }
     private fun modifier(label: String): KeyButton = key(label, special = true, hold = {
@@ -241,7 +264,7 @@ class KeyboardPanel(
             addKey(modifier("Alt"), .9f)
             addKey(key("space", "Key Space") { sendText(" ") }, 3.3f)
             addKey(character("."), .7f)
-            addKey(key("↵", "Key Enter", accent = true) { feedback(); refreshStatus(router.key(KeyEvent.KEYCODE_ENTER, meta())); consumeModifiers() }, 1.35f)
+            addKey(key("↵", "Key Enter", accent = true) { feedback(); val modifiers = meta(); submit { router.key(KeyEvent.KEYCODE_ENTER, modifiers) }; consumeModifiers() }, 1.35f)
         }
     }
     private fun navigationRow() {
@@ -274,7 +297,7 @@ class KeyboardPanel(
         }
         row().apply {
             listOf("Copy" to EditCommand.COPY, "Cut" to EditCommand.CUT, "Paste" to EditCommand.PASTE, "Select all" to EditCommand.SELECT_ALL).forEach { (label, command) ->
-                addKey(key(label, special = true) { feedback(); refreshStatus(router.edit(command)) })
+                addKey(key(label, special = true) { feedback(); submit { router.edit(command) } })
             }
             keyCode("⌫", KeyEvent.KEYCODE_DEL, line = this)
         }
@@ -311,20 +334,20 @@ class KeyboardPanel(
         }
         body.addView(preview, LayoutParams(LayoutParams.MATCH_PARENT, 0, 3f))
         row().apply {
-            addKey(key("Paste", "Paste clipboard to target", accent = true) { feedback(); refreshStatus(router.edit(EditCommand.PASTE)) })
-            addKey(key("Copy draft", special = true) { feedback(); refreshStatus(router.copyDraft()) })
-            addKey(key("Clear draft", special = true) { refreshStatus(router.clearDraft()); buildBody() })
+            addKey(key("Paste", "Paste clipboard to target", accent = true) { feedback(); submit { router.edit(EditCommand.PASTE) } })
+            addKey(key("Copy draft", special = true) { feedback(); submit { router.copyDraft() } })
+            addKey(key("Clear draft", special = true) { submit { router.clearDraft() } })
         }
         row().apply {
             addKey(key("ABC", special = true) { setPage(Page.LETTERS) })
-            addKey(key("Copy", special = true) { refreshStatus(router.edit(EditCommand.COPY)) })
-            addKey(key("Cut", special = true) { refreshStatus(router.edit(EditCommand.CUT)) })
-            addKey(key("Select all", special = true) { refreshStatus(router.edit(EditCommand.SELECT_ALL)) })
+            addKey(key("Copy", special = true) { submit { router.edit(EditCommand.COPY) } })
+            addKey(key("Cut", special = true) { submit { router.edit(EditCommand.CUT) } })
+            addKey(key("Select all", special = true) { submit { router.edit(EditCommand.SELECT_ALL) } })
         }
     }
     private fun meta(): Int = (if (shift > 0) KeyEvent.META_SHIFT_ON else 0) or
         (if (ctrl) KeyEvent.META_CTRL_ON else 0) or (if (alt) KeyEvent.META_ALT_ON else 0)
-    private fun sendText(value: String) { feedback(); refreshStatus(router.text(value, meta())); consumeModifiers() }
+    private fun sendText(value: String) { feedback(); val modifiers = meta(); submit { router.text(value, modifiers) }; consumeModifiers() }
     private fun consumeModifiers() {
         if (shift == 1) shift = 0
         if (!ctrlLock) ctrl = false
@@ -351,8 +374,12 @@ class KeyboardPanel(
         if (settings.sound) context.getSystemService(AudioManager::class.java)?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, .3f)
     }
     private fun disposeButtons() { buttons.forEach { it.dispose() }; buttons.clear(); letters.clear(); modifiers.clear() }
-    fun dispose() { disposeButtons(); animate().cancel() }
-    override fun onDetachedFromWindow() { buttons.forEach { it.dispose() }; super.onDetachedFromWindow() }
+    fun dispose() { requests.close(); inputScope.cancel(); disposeButtons(); animate().cancel() }
+    override fun onDetachedFromWindow() {
+        buttons.forEach { it.dispose() }
+        while (requests.tryReceive().isSuccess) { /* Drop queued keys when their keyboard is hidden. */ }
+        super.onDetachedFromWindow()
+    }
 
     companion object {
         private val ALTERNATIVES = mapOf(

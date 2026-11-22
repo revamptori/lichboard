@@ -24,9 +24,7 @@ class LichboardImeService : InputMethodService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var panel: KeyboardPanel? = null
     private var editorStarted = false
-    private var rawInputViewStarted = false
-    val hasEditor: Boolean get() = editorStarted && currentInputConnection != null &&
-        currentInputEditorInfo?.let { it.inputType != InputType.TYPE_NULL || rawInputViewStarted } == true
+    val hasEditor: Boolean get() = editorStarted && currentInputConnection != null
 
     override fun onCreate() {
         super.onCreate()
@@ -38,7 +36,13 @@ class LichboardImeService : InputMethodService() {
                     params.height = keyboardHeight()
                     panel?.layoutParams = params
                 }
-                window?.window?.navigationBarColor = BoardPalette.from(settings).background
+                window?.window?.let { imeWindow ->
+                    val background = BoardPalette.from(settings).background
+                    @Suppress("DEPRECATION")
+                    run { imeWindow.navigationBarColor = background }
+                    androidx.core.view.WindowCompat.getInsetsController(imeWindow, imeWindow.decorView)
+                        .isAppearanceLightNavigationBars = androidx.core.graphics.ColorUtils.calculateLuminance(background) > .5
+                }
             }
         }
     }
@@ -58,12 +62,10 @@ class LichboardImeService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         editorStarted = true
-        rawInputViewStarted = false
         panel?.resetModifiers()
     }
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
-        rawInputViewStarted = true
         lichboard.imeVisible.value = true
         panel?.refreshStatus()
     }
@@ -73,7 +75,6 @@ class LichboardImeService : InputMethodService() {
     }
     override fun onFinishInput() {
         editorStarted = false
-        rawInputViewStarted = false
         lichboard.imeVisible.value = false
         super.onFinishInput()
     }

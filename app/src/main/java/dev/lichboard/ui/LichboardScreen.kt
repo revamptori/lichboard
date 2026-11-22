@@ -73,6 +73,8 @@ fun LichboardScreen(
     val isLight = androidx.core.graphics.ColorUtils.calculateLuminance(palette.background) > .5
     SideEffect {
         (context as? Activity)?.window?.let {
+            @Suppress("DEPRECATION")
+            run { it.statusBarColor = palette.background; it.navigationBarColor = palette.background }
             WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightStatusBars = isLight
             WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightNavigationBars = isLight
         }

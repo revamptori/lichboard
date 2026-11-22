@@ -45,11 +45,13 @@ class LichboardIntegrationTest {
         device.executeShellCommand("appops set dev.lichboard SYSTEM_ALERT_WINDOW allow")
         device.executeShellCommand("ime enable $component")
         device.executeShellCommand("ime set $component")
+        device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
         instrumentation.runOnMainSync {
             FloatingService.stop(context)
             app.settings.update { BoardSettings(onboarded = true, autoHide = false, vibration = false) }
             app.draft.edit { clear() }
         }
+        condition("Previous overlay service stopped") { !app.overlayRunning.value }
         scenario = ActivityScenario.launch(ProbeActivity::class.java)
     }
     @After fun cleanup() {
@@ -144,7 +146,7 @@ class LichboardIntegrationTest {
         for (n in 1..12) assertNotNull(await("Key F$n"))
         listOf("Esc", "Tab", "Home", "End", "Ins", "Del", "PgUp", "PgDn").forEach { assertNotNull(await("Key $it")) }
         click("Key F12")
-        assertTrue(device.hasObject(By.textContains("needs an active IME")))
+        condition("Unsupported draft special key is explained") { device.hasObject(By.textContains("needs an active IME")) }
     }
     @Test fun specialKeysReachRealRawInputTarget() {
         scenario!!.onActivity { it.focusRaw() }
@@ -195,7 +197,7 @@ class LichboardIntegrationTest {
             instrumentation.runOnMainSync { app.settings.update { it.copy(theme = theme, keyboardHeight = 360, keyboardWidth = 90, buttonSize = 64) } }
             click("Key b")
         }
-        assertEquals("abbbbbb", app.draft.snapshot.text)
+        condition("Theme changes preserve the draft") { app.draft.snapshot.text == "abbbbbb" }
         File(context.getExternalFilesDir(null), "screenshots").mkdirs()
         device.takeScreenshot(File(context.getExternalFilesDir(null), "screenshots/floating-keyboard.png"))
     }
@@ -210,7 +212,7 @@ class LichboardIntegrationTest {
         overlay(InputMode.ACCESSIBILITY)
         click("Key z")
         assertEquals("", editorText())
-        assertEquals("z", app.draft.snapshot.text)
+        condition("Assist is not used without opt-in") { app.draft.snapshot.text == "z" }
         instrumentation.runOnMainSync {
             app.draft.edit { clear() }
             app.settings.update { it.copy(accessibilityFallback = true) }
