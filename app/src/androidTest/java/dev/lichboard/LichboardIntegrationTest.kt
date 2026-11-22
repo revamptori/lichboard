@@ -1,0 +1,185 @@
+package dev.lichboard
+
+import android.content.Context
+import android.content.Intent
+import android.view.KeyEvent
+import androidx.test.core.app.ActivityScenario
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
+import dev.lichboard.accessibility.AccessBridge
+import dev.lichboard.data.BoardSettings
+import dev.lichboard.data.BoardTheme
+import dev.lichboard.data.InputMode
+import dev.lichboard.ime.ImeBridge
+import dev.lichboard.overlay.FloatingService
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+
+@RunWith(AndroidJUnit4::class)
+class LichboardIntegrationTest {
+    private val instrumentation = InstrumentationRegistry.getInstrumentation()
+    private val context: Context get() = instrumentation.targetContext
+    private val app get() = context.lichboard
+    private val device = UiDevice.getInstance(instrumentation)
+    private var scenario: ActivityScenario<ProbeActivity>? = null
+    private var originalAccessibility: String? = null
+    private var changedAccessibility = false
+    private val component = "dev.lichboard/.ime.LichboardImeService"
+
+    @Before fun setup() {
+        device.executeShellCommand("wm dismiss-keyguard")
+        device.executeShellCommand("appops set dev.lichboard SYSTEM_ALERT_WINDOW allow")
+        device.executeShellCommand("ime enable $component")
+        device.executeShellCommand("ime set $component")
+        instrumentation.runOnMainSync {
+            FloatingService.stop(context)
+            app.settings.update { BoardSettings(onboarded = true, autoHide = false, vibration = false) }
+            app.draft.edit { clear() }
+        }
+        scenario = ActivityScenario.launch(ProbeActivity::class.java)
+    }
+    @After fun cleanup() {
+        instrumentation.runOnMainSync {
+            app.settings.update { BoardSettings(onboarded = true, vibration = false) }
+            FloatingService.stop(context)
+        }
+        scenario?.close()
+        if (changedAccessibility) {
+            val original = originalAccessibility.orEmpty().trim().takeUnless { it == "null" }.orEmpty()
+            if (original.isEmpty()) {
+                device.executeShellCommand("settings delete secure enabled_accessibility_services")
+                device.executeShellCommand("settings put secure accessibility_enabled 0")
+            } else device.executeShellCommand("settings put secure enabled_accessibility_services $original")
+        }
+    }
+    private fun await(description: String): UiObject2 = requireNotNull(device.wait(Until.findObject(By.desc(description)), 8_000)) {
+        "Missing accessible view: $description\n${device.currentPackageName}"
+    }
+    private fun click(description: String) { await(description).click(); instrumentation.waitForIdleSync() }
+    private fun condition(message: String, test: () -> Boolean) {
+        val until = System.currentTimeMillis() + 8_000
+        while (System.currentTimeMillis() < until) { if (test()) return; Thread.sleep(80) }
+        assertTrue(message, test())
+    }
+    private fun overlay(mode: InputMode = InputMode.AUTO) {
+        instrumentation.runOnMainSync {
+            app.settings.update { it.copy(floatingEnabled = true, inputMode = mode) }
+            assertTrue(FloatingService.start(context, FloatingService.ACTION_SHOW))
+        }
+        await("Lichboard floating keyboard")
+    }
+    private fun editorText(): String {
+        var result = ""
+        scenario!!.onActivity { result = it.editor.text.toString() }
+        return result
+    }
+    @Test fun normalImeTypesEditsAndCapitalizes() {
+        scenario!!.onActivity { it.focusEditor() }
+        await("Lichboard system keyboard")
+        click("Key h"); click("Key i"); click("Key Shift"); click("Key q")
+        condition("IME committed text") { editorText() == "hiQ" }
+        click("Key ⌫")
+        condition("Backspace works") { editorText() == "hi" }
+        click("Key Space"); click("Key 1")
+        condition("Number and space work") { editorText() == "hi 1" }
+    }
+    @Test fun overlayKeepsEditorFocusAndUsesInputConnection() {
+        scenario!!.onActivity { it.focusEditor() }
+        condition("Editor connection active") { ImeBridge.hasEditor }
+        overlay()
+        click("Key q"); click("Key w"); click("Key ←"); click("Key e")
+        condition("Overlay typed through the active editor") { editorText() == "qew" }
+        click("Key Ctrl"); click("Key a"); click("Key x")
+        condition("Ctrl+A selected and replaced editor text") { editorText() == "x" }
+        assertEquals("", app.draft.snapshot.text)
+    }
+    @Test fun independentOverlayHasHonestClipboardDraft() {
+        scenario!!.onActivity { it.noEditor() }
+        overlay(InputMode.CLIPBOARD)
+        click("Key q"); click("Key w"); click("Key ←"); click("Key e")
+        condition("Draft editing works without an editor") { app.draft.snapshot.text == "qew" }
+        assertEquals("", editorText())
+        click("Clipboard"); click("Key Copy draft")
+        condition("Copy feedback shown") { device.hasObject(By.textContains("Copied")) }
+        click("Key ABC")
+        click("Emoji panel"); click("Emoji 😀")
+        condition("Emoji committed to draft") { app.draft.snapshot.text.contains("😀") }
+        click("Hide keyboard")
+        assertFalse(device.hasObject(By.desc("Lichboard floating keyboard")))
+        assertTrue(app.overlayRunning.value)
+    }
+    @Test fun longPressAlternativesAndAllFunctionKeysExist() {
+        overlay(InputMode.CLIPBOARD)
+        await("Key e").longClick()
+        click("Alternative é")
+        condition("Long-press alternative was inserted") { app.draft.snapshot.text == "é" }
+        click("Special keys")
+        for (n in 1..12) assertNotNull(await("Key F$n"))
+        listOf("Esc", "Tab", "Home", "End", "Ins", "Del", "PgUp", "PgDn").forEach { assertNotNull(await("Key $it")) }
+        click("Key F12")
+        assertTrue(device.hasObject(By.textContains("needs an active IME")))
+    }
+    @Test fun specialKeysReachRealRawInputTarget() {
+        scenario!!.onActivity { it.focusRaw() }
+        condition("Raw editor connection active") { ImeBridge.hasEditor }
+        overlay()
+        click("Special keys"); click("Key F12")
+        condition("F12 dispatched as a real key event") {
+            var code = -1; scenario!!.onActivity { code = it.raw.lastKey }; code == KeyEvent.KEYCODE_F12
+        }
+        click("Key Ctrl"); click("Key F1")
+        condition("Ctrl metadata delivered") {
+            var valid = false
+            scenario!!.onActivity { valid = it.raw.lastKey == KeyEvent.KEYCODE_F1 && it.raw.lastMeta and KeyEvent.META_CTRL_ON != 0 }
+            valid
+        }
+    }
+    @Test fun bubbleDragsPersistsAndLongPressOpensControls() {
+        instrumentation.runOnMainSync {
+            app.settings.update { it.copy(floatingEnabled = true) }; FloatingService.start(context)
+        }
+        val bubble = await("Lichboard floating button")
+        val before = app.settings.current.bubbleX
+        val bounds = bubble.visibleBounds
+        device.swipe(bounds.centerX(), bounds.centerY(), device.displayWidth / 3, device.displayHeight / 3, 35)
+        condition("Position saved after drag") { app.settings.current.bubbleX != before }
+        await("Lichboard floating button").longClick()
+        await("Lichboard quick settings")
+        click("Floating button opacity") // Seekbar receives a genuine user interaction.
+    }
+    @Test fun everyThemeAndResizeRendersWithoutLosingDraft() {
+        overlay(InputMode.CLIPBOARD)
+        click("Key a")
+        for (theme in BoardTheme.entries) {
+            instrumentation.runOnMainSync { app.settings.update { it.copy(theme = theme, keyboardHeight = 360, keyboardWidth = 90, buttonSize = 64) } }
+            click("Key b")
+        }
+        assertEquals("abbbbbb", app.draft.snapshot.text)
+        File(context.getExternalFilesDir(null), "screenshots").mkdirs()
+        device.takeScreenshot(File(context.getExternalFilesDir(null), "screenshots/floating-keyboard.png"))
+    }
+    @Test fun optionalAccessibilityEditsOnlyWithOptIn() {
+        originalAccessibility = device.executeShellCommand("settings get secure enabled_accessibility_services")
+        changedAccessibility = true
+        device.executeShellCommand("settings put secure enabled_accessibility_services dev.lichboard/.accessibility.LichboardAccessibilityService")
+        device.executeShellCommand("settings put secure accessibility_enabled 1")
+        condition("Optional service connected") { AccessBridge.connected.value }
+        scenario!!.onActivity { it.focusEditor() }
+        condition("Focused editable accessibility target") { AccessBridge.service?.hasEditableTarget() == true }
+        instrumentation.runOnMainSync { app.settings.update { it.copy(accessibilityFallback = true) } }
+        overlay(InputMode.ACCESSIBILITY)
+        click("Key h"); click("Key i")
+        condition("ACTION_SET_TEXT entered text") { editorText() == "hi" }
+        click("Key ⌫")
+        condition("Accessibility backspace edits selected field") { editorText() == "h" }
+        assertEquals("", app.draft.snapshot.text)
+    }
+}

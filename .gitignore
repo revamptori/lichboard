@@ -1,0 +1,16 @@
+*.iml
+.gradle/
+.kotlin/
+.idea/
+local.properties
+**/build/
+.cxx/
+.externalNativeBuild/
+*.jks
+*.keystore
+.signing/
+.toolchain/
+*.hprof
+.DS_Store
+ci-*.log
+!verification/*.log
