@@ -58,6 +58,13 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: bash scripts/device-test.sh 35
+      - name: Save deliverables and evidence on this branch
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          API30_OUTCOME: ${{ steps.api30.outcome }}
+          API35_OUTCOME: ${{ steps.api35.outcome }}
+        run: bash scripts/publish-ci.sh
       - name: Upload complete build artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -70,10 +77,3 @@ jobs:
             verification/
             ci-*.log
           retention-days: 14
-      - name: Save deliverables and evidence on this branch
-        if: always()
-        env:
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
-          API30_OUTCOME: ${{ steps.api30.outcome }}
-          API35_OUTCOME: ${{ steps.api35.outcome }}
-        run: bash scripts/publish-ci.sh

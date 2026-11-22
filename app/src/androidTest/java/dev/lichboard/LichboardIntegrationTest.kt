@@ -1,5 +1,6 @@
 package dev.lichboard
 
+import android.app.UiAutomation
 import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
@@ -7,6 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Configurator
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
@@ -28,7 +30,11 @@ class LichboardIntegrationTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context: Context get() = instrumentation.targetContext
     private val app get() = context.lichboard
-    private val device = UiDevice.getInstance(instrumentation)
+    private val device = run {
+        // UiAutomation otherwise suppresses the real service being tested.
+        Configurator.getInstance().uiAutomationFlags = UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES
+        UiDevice.getInstance(instrumentation)
+    }
     private var scenario: ActivityScenario<ProbeActivity>? = null
     private var originalAccessibility: String? = null
     private var changedAccessibility = false
@@ -60,8 +66,13 @@ class LichboardIntegrationTest {
             } else device.executeShellCommand("settings put secure enabled_accessibility_services $original")
         }
     }
-    private fun await(description: String): UiObject2 = requireNotNull(device.wait(Until.findObject(By.desc(description)), 8_000)) {
-        "Missing accessible view: $description\n${device.currentPackageName}"
+    private fun await(description: String): UiObject2 {
+        device.wait(Until.findObject(By.desc(description)), 8_000)?.let { return it }
+        val directory = File(context.getExternalFilesDir(null), "screenshots").apply { mkdirs() }
+        device.takeScreenshot(File(directory, "failure-${description.hashCode()}.png"))
+        device.dumpWindowHierarchy(File(directory, "failure-${description.hashCode()}.xml"))
+        File(directory, "failure-window-state.txt").writeText(device.executeShellCommand("dumpsys window windows"))
+        error("Missing accessible view: $description; foreground=${device.currentPackageName}; overlayRunning=${app.overlayRunning.value}; imeVisible=${app.imeVisible.value}; settings=${app.settings.current}")
     }
     private fun click(description: String) { await(description).click(); instrumentation.waitForIdleSync() }
     private fun condition(message: String, test: () -> Boolean) {
@@ -100,6 +111,14 @@ class LichboardIntegrationTest {
         click("Key Ctrl"); click("Key a"); click("Key x")
         condition("Ctrl+A selected and replaced editor text") { editorText() == "x" }
         assertEquals("", app.draft.snapshot.text)
+    }
+    @Test fun automaticWithoutAnEditorUsesDraftNotInjection() {
+        scenario!!.onActivity { it.noEditor() }
+        condition("No active editor connection") { !ImeBridge.hasEditor }
+        overlay()
+        click("Key q")
+        condition("Automatic route keeps no-target text in draft") { app.draft.snapshot.text == "q" }
+        assertEquals("", editorText())
     }
     @Test fun independentOverlayHasHonestClipboardDraft() {
         scenario!!.onActivity { it.noEditor() }
@@ -188,8 +207,14 @@ class LichboardIntegrationTest {
         condition("Optional service connected") { AccessBridge.connected.value }
         scenario!!.onActivity { it.focusEditor() }
         condition("Focused editable accessibility target") { AccessBridge.service?.hasEditableTarget() == true }
-        instrumentation.runOnMainSync { app.settings.update { it.copy(accessibilityFallback = true) } }
         overlay(InputMode.ACCESSIBILITY)
+        click("Key z")
+        assertEquals("", editorText())
+        assertEquals("z", app.draft.snapshot.text)
+        instrumentation.runOnMainSync {
+            app.draft.edit { clear() }
+            app.settings.update { it.copy(accessibilityFallback = true) }
+        }
         click("Key h"); click("Key i")
         condition("ACTION_SET_TEXT entered text") { editorText() == "hi" }
         click("Key ⌫")

@@ -35,7 +35,7 @@ Android separates **drawing a keyboard** from **permission to deliver input**. L
 
 Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, input-assist-only, and clipboard-draft modes are selectable. The **system IME always uses its own active connection**, regardless of the selected floating-input route. If an editor rejects an operation, the keyboard reports that rejection; an accepted Android input call is not a guarantee that a particular game or remote desktop understands it.
 
-**Terminals, remote desktops, games:** Esc, Tab, Ctrl, Alt, Shift, arrows, Home, End, Page Up/Down, forward Delete, Insert and F1–F12 are real Android key events through the IME. The destination must expose an input connection and implement these key codes. Input assist cannot provide raw key injection. Unsupported special keys report that an IME connection is required rather than pretending they were delivered.
+**Terminals, remote desktops, games:** Esc, Tab, Ctrl, Alt, Shift, arrows, Home, End, Page Up/Down, forward Delete, Insert and F1–F12 are real Android key events through the IME. The destination must expose an input connection and implement these key codes. For raw `TYPE_NULL` targets, first bring up the normal IME once; Lichboard conservatively avoids treating a non-editor window’s fallback connection as a raw editor. Input assist cannot provide raw key injection. Unsupported special keys report that an IME connection is required rather than pretending they were delivered.
 
 **Secure/fullscreen screens:** normal fullscreen apps can show the overlay where Android permits. Secure apps can suppress it, system permission dialogs can reject overlay-covered touches, and the lockscreen hides Lichboard. Nothing attempts to evade these restrictions.
 
@@ -106,11 +106,11 @@ Tests cover:
 - UTF-16/code-point-safe buffer editing, selections, limits, and all route-policy combinations.
 - Real normal-IME typing, Shift, backspace, numbers and Space.
 - Floating typing without stealing editor focus, cursor movement, Ctrl+A replacement.
-- No-editor clipboard draft, explicit copying, emoji and close lifecycle.
+- Automatic no-editor draft fallback, explicit clipboard draft/copy, emoji and close lifecycle.
 - Long-press accents, F1–F12/editing-key presence, rejection of unsupported draft special keys.
 - Actual raw F12 and Ctrl+F1 delivery to a receiving view.
 - Bubble drag/persistence, long-press controls, themes and geometry changes.
-- Opt-in accessibility text insertion and deletion using a real focused editor.
+- Accessibility refusal without in-app opt-in, then text insertion/deletion using a real focused editor.
 
 [The CI workflow](.github/workflows/android.yml) builds, runs JVM tests and Lint, boots **Android 11 (API 30)** and **Android 15 (API 35)** emulators, runs the device tests on each, then installs and launches the **non-debuggable release APK** on each. It verifies APK signing/badging and records reports, screenshots and runtime crash logs in [`verification/`](verification/). A build is only marked verified when all stages succeed; inspect `latest.json` for the current result. CI publishes evidence/APK back to **this working branch only**, with `[skip ci]` to avoid loops, and retains the complete Actions artifact for 14 days.
 

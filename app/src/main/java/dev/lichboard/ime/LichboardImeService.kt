@@ -24,7 +24,9 @@ class LichboardImeService : InputMethodService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var panel: KeyboardPanel? = null
     private var editorStarted = false
-    val hasEditor: Boolean get() = editorStarted && currentInputConnection != null
+    private var rawInputViewStarted = false
+    val hasEditor: Boolean get() = editorStarted && currentInputConnection != null &&
+        currentInputEditorInfo?.let { it.inputType != InputType.TYPE_NULL || rawInputViewStarted } == true
 
     override fun onCreate() {
         super.onCreate()
@@ -56,10 +58,12 @@ class LichboardImeService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         editorStarted = true
+        rawInputViewStarted = false
         panel?.resetModifiers()
     }
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        rawInputViewStarted = true
         lichboard.imeVisible.value = true
         panel?.refreshStatus()
     }
@@ -69,6 +73,7 @@ class LichboardImeService : InputMethodService() {
     }
     override fun onFinishInput() {
         editorStarted = false
+        rawInputViewStarted = false
         lichboard.imeVisible.value = false
         super.onFinishInput()
     }

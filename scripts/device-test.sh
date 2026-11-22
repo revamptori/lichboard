@@ -3,11 +3,17 @@ set -euo pipefail
 api="$1"
 mkdir -p "verification/api-$api"
 adb logcat -c
-# Save logcat even if an instrumented test fails.
-trap 'adb logcat -d -s AndroidRuntime:E Lichboard:E > "verification/api-'"$api"'/runtime.log" || true' EXIT
+save_evidence() {
+  # Preserve failure stack traces as well as successful results.
+  set +e
+  adb logcat -d -s AndroidRuntime:E TestRunner:I > "verification/api-$api/runtime.log"
+  if [ -d app/build/outputs/androidTest-results/connected ]; then
+    cp -r app/build/outputs/androidTest-results/connected/. "verification/api-$api/"
+  fi
+  adb pull /sdcard/Android/data/dev.lichboard/files/screenshots "verification/api-$api/" >/dev/null 2>&1
+}
+trap save_evidence EXIT
 ./gradlew --no-daemon :app:connectedDebugAndroidTest 2>&1 | tee "ci-emulator-$api.log"
-cp -r app/build/outputs/androidTest-results/connected/* "verification/api-$api/"
-adb pull /sdcard/Android/data/dev.lichboard/files/screenshots "verification/api-$api/" || true
 # Test the actual non-debuggable release artifact, not only the instrumentation build.
 adb install -r app/build/outputs/apk/release/app-release.apk
 adb shell am force-stop dev.lichboard

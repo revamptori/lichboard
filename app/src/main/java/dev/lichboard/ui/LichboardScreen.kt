@@ -70,7 +70,7 @@ fun LichboardScreen(
     val running by app.overlayRunning.collectAsStateWithLifecycle()
     val assist by AccessBridge.connected.collectAsStateWithLifecycle()
     val palette = BoardPalette.from(settings)
-    val isLight = settings.theme == BoardTheme.LIGHT
+    val isLight = androidx.core.graphics.ColorUtils.calculateLuminance(palette.background) > .5
     SideEffect {
         (context as? Activity)?.window?.let {
             WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightStatusBars = isLight
