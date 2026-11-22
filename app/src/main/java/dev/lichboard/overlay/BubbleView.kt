@@ -42,7 +42,6 @@ class BubbleView(
         canvas.drawCircle(width / 2f, height / 2f, radius, paint)
         paint.style = Paint.Style.FILL
         val inset = (width * .22f).toInt()
-        icon.setTint(palette.accent)
         icon.setBounds(inset, inset, width - inset, height - inset)
         icon.draw(canvas)
     }

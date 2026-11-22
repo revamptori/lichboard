@@ -12,16 +12,19 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build, JVM tests and Android Lint
         id: build
         run: |
           set -o pipefail
+          mkdir -p verification
+          rm -rf verification/api-30 verification/api-35 verification/unit-tests
+          rm -f verification/ci-*.log verification/apk-signature.txt verification/apk-badging.txt
           ./gradlew --no-daemon :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleRelease :app:testDebugUnitTest :app:lintDebug 2>&1 | tee ci-build.log
           $ANDROID_HOME/build-tools/35.0.0/apksigner verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk > verification/apk-signature.txt
           $ANDROID_HOME/build-tools/35.0.0/aapt dump badging app/build/outputs/apk/release/app-release.apk > verification/apk-badging.txt
@@ -57,7 +60,7 @@ jobs:
           script: bash scripts/device-test.sh 35
       - name: Upload complete build artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: lichboard-apk-and-verification
           path: |

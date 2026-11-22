@@ -91,7 +91,7 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
                 val selected = app.draft.selectedText()
                 if (selected.isEmpty()) return "Select draft text first (Ctrl+A selects all)"
                 val result = copy(selected)
-                app.draft.edit { insert("") }
+                if (result.startsWith("Copied")) app.draft.edit { insert("") }
                 return result
             }
             EditCommand.PASTE -> {

@@ -155,6 +155,20 @@ class LichboardIntegrationTest {
         await("Lichboard quick settings")
         click("Floating button opacity") // Seekbar receives a genuine user interaction.
     }
+    @Test fun overlaySurvivesSwitchingToAnotherApplication() {
+        instrumentation.runOnMainSync {
+            app.settings.update { it.copy(floatingEnabled = true) }; FloatingService.start(context)
+        }
+        await("Lichboard floating button")
+        device.pressHome()
+        await("Lichboard floating button")
+        context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        await("Lichboard floating button")
+        click("Lichboard floating button")
+        await("Lichboard floating keyboard")
+        click("Hide keyboard")
+        await("Lichboard floating button")
+    }
     @Test fun everyThemeAndResizeRendersWithoutLosingDraft() {
         overlay(InputMode.CLIPBOARD)
         click("Key a")

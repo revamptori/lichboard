@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "dev.lichboard"
     compileSdk = 35
+    buildToolsVersion = "35.0.0"
     defaultConfig {
         applicationId = "dev.lichboard"
         minSdk = 30

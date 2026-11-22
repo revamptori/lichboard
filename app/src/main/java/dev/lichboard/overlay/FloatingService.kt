@@ -124,6 +124,7 @@ class FloatingService : Service() {
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
         PixelFormat.TRANSLUCENT).apply {
         gravity = Gravity.TOP or Gravity.START
+        setFitInsetsTypes(0)
         softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING
     }
     private fun place(p: WindowManager.LayoutParams, x: Float, y: Float) {

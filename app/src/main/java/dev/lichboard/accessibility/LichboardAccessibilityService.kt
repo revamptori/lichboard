@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import dev.lichboard.input.EditCommand
 
 /** Explicit user-triggered focused text editing only. Never caches nodes, reads passwords, or polls. */
@@ -15,8 +16,19 @@ class LichboardAccessibilityService : AccessibilityService() {
     override fun onDestroy() { AccessBridge.detach(this); super.onDestroy() }
 
     @Suppress("DEPRECATION")
+    private fun focusedApplicationRoot(): AccessibilityNodeInfo? {
+        // A touched non-focusable overlay can become the accessibility "active" window.
+        // Keep targeting the input-focused APPLICATION window, never the overlay itself.
+        val interactive = windows
+        return try {
+            interactive.firstOrNull { it.type == AccessibilityWindowInfo.TYPE_APPLICATION && it.isFocused }?.root
+                ?: rootInActiveWindow
+        } finally { interactive.forEach { it.recycle() } }
+    }
+
+    @Suppress("DEPRECATION")
     private inline fun <T> withEditor(default: T, action: (AccessibilityNodeInfo) -> T): T {
-        val root = rootInActiveWindow ?: return default
+        val root = focusedApplicationRoot() ?: return default
         var node: AccessibilityNodeInfo? = null
         return try {
             node = root.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)

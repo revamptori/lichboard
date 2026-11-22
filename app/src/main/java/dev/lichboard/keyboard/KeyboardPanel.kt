@@ -62,8 +62,18 @@ class KeyboardPanel(
     }
     fun updateSettings(value: BoardSettings) {
         val next = BoardPalette.from(value)
+        val heightChanged = settings.keyboardHeight != value.keyboardHeight
         settings = value
+        if (heightChanged) requestLayout()
         if (palette != next) { palette = next; build() }
+    }
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // InputMethodService wraps its input view in WRAP_CONTENT, overriding LayoutParams.
+        // Supply an explicit measured height so weighted rows remain visible on every attach.
+        if (!floating) {
+            val desired = minOf(dp(settings.keyboardHeight), (resources.displayMetrics.heightPixels * .7f).roundToInt())
+            super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(desired, View.MeasureSpec.EXACTLY))
+        } else super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
     private fun build() {
         disposeButtons()

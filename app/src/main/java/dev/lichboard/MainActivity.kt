@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 },
                 openFloating = { requestFloating(true) },
                 openAccessibility = { openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
-                requestNotifications = { requestNotifications() })
+                requestNotifications = { requestNotifications(force = true) })
         }
     }
     override fun onResume() {
@@ -86,8 +86,11 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, "Android could not start the overlay. Reopen Lichboard and try again.", Toast.LENGTH_LONG).show()
         } else requestNotifications()
     }
-    private fun requestNotifications() {
-        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+    private fun requestNotifications(force: Boolean = false) {
+        val preferences = getSharedPreferences("permission_ui", MODE_PRIVATE)
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+            (force || !preferences.getBoolean("notification_prompted", false))) {
+            preferences.edit().putBoolean("notification_prompted", true).apply()
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
