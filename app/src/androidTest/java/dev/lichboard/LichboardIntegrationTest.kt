@@ -2,6 +2,7 @@ package dev.lichboard
 
 import android.app.UiAutomation
 import android.content.Context
+import android.content.ComponentName
 import android.content.Intent
 import android.content.ContentValues
 import android.provider.MediaStore
@@ -23,6 +24,7 @@ import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.BoardTheme
 import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
+import dev.lichboard.ime.LichboardImeService
 import dev.lichboard.input.InputRouter
 import dev.lichboard.keyboard.KeyboardPanel
 import dev.lichboard.overlay.FloatingService
@@ -44,13 +46,15 @@ class LichboardIntegrationTest {
         UiDevice.getInstance(instrumentation)
     }
     private var scenario: ActivityScenario<ProbeActivity>? = null
-    private val component get() = "${context.packageName}/dev.lichboard.ime.LichboardImeService"
+    private val component get() = ComponentName(context, LichboardImeService::class.java).flattenToShortString()
 
     @Before fun setup() {
         device.executeShellCommand("wm dismiss-keyguard")
         device.executeShellCommand("appops set ${context.packageName} SYSTEM_ALERT_WINDOW allow")
         device.executeShellCommand("ime enable $component")
         device.executeShellCommand("ime set $component")
+        assertEquals("Select the canonical Android IME ID before testing", component,
+            device.executeShellCommand("settings get secure default_input_method").trim())
         device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
         instrumentation.runOnMainSync {
             FloatingService.stop(context)

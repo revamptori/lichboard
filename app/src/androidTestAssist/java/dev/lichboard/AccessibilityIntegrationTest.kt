@@ -2,6 +2,7 @@ package dev.lichboard
 
 import android.app.UiAutomation
 import android.content.Context
+import android.content.ComponentName
 import android.os.ParcelFileDescriptor
 import android.text.InputType
 import android.view.KeyEvent
@@ -9,6 +10,8 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.lichboard.accessibility.AccessBridge
+import dev.lichboard.accessibility.LichboardAccessibilityService
+import dev.lichboard.ime.LichboardImeService
 import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.InputMode
 import dev.lichboard.input.InputRouter
@@ -55,9 +58,11 @@ class AccessibilityIntegrationTest {
         try {
             shell("wm dismiss-keyguard")
             shell("appops set ${context.packageName} SYSTEM_ALERT_WINDOW allow")
-            shell("ime enable ${context.packageName}/dev.lichboard.ime.LichboardImeService")
-            shell("ime set ${context.packageName}/dev.lichboard.ime.LichboardImeService")
-            shell("settings put secure enabled_accessibility_services ${context.packageName}/dev.lichboard.accessibility.LichboardAccessibilityService")
+            val ime = ComponentName(context, LichboardImeService::class.java).flattenToShortString()
+            val assist = ComponentName(context, LichboardAccessibilityService::class.java).flattenToShortString()
+            shell("ime enable $ime")
+            shell("ime set $ime")
+            shell("settings put secure enabled_accessibility_services $assist")
             shell("settings put secure accessibility_enabled 1")
             condition("Real accessibility service connected") { AccessBridge.connected.value }
             instrumentation.runOnMainSync {

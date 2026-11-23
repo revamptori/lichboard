@@ -50,7 +50,7 @@ jobs:
           script: bash scripts/device-test.sh 30
       - name: Android 15 instrumented device tests and release smoke test
         id: api35
-        if: always() && steps.build.outcome == 'success'
+        if: always() && !cancelled() && steps.build.outcome == 'success'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
