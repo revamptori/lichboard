@@ -1,12 +1,258 @@
 {
-  "sourceCommit": "817ca29520410efb0178284bad95d292e834a127",
-  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45088740213",
-  "timestampUtc": "2026-11-23T00:32:25.625645+00:00",
+  "sourceCommit": "9ee3a47ea02161918b06514867dc9173492eb73f",
+  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45111190485",
+  "timestampUtc": "2026-11-23T04:31:46.188806+00:00",
+  "versionName": "1.2.0",
   "buildUnitTestsLint": "success",
   "android11Api30": "success",
   "android15Api35": "success",
-  "signing": "Evaluation release; Android development certificate. Use your own keystore for production.",
-  "apkSha256": "9ac59587beb4561edce150f957031f6b1db3472b8c7686ad244965f3272cf475",
-  "apkBytes": 18438279,
+  "signing": "Non-debuggable evaluation releases; Android development certificate. Use your own private keystore for production and stable updates.",
+  "playProtectAcceptance": "Not verified. Stock Android emulator tests do not include Google Play Protect or OEM installation policy. Do not disable device protections.",
+  "variants": {
+    "standard": {
+      "applicationId": "dev.lichboard",
+      "versionName": "1.2.0",
+      "versionCode": 3,
+      "accessibilityServiceDeclared": false,
+      "accessibilityImplementationIncluded": false,
+      "accessibilityMetadataIncluded": false,
+      "debuggable": false,
+      "internetPermission": false,
+      "apkSha256": "07b3d4ae485ab08d768d6b0e1b622c8133bdd74e2e94f4eed01a7cb720a7a154",
+      "apkBytes": 18452243,
+      "deviceTests": {
+        "api30": {
+          "tests": 23,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": true,
+          "inputPerformancePassed": true,
+          "passed": true
+        },
+        "api35": {
+          "tests": 23,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": true,
+          "inputPerformancePassed": true,
+          "passed": true
+        }
+      },
+      "inputPerformance": {
+        "api30": {
+          "input-burst": {
+            "test": "actual-ime-burst",
+            "characters": 520,
+            "backspaces": 128,
+            "loss": 0,
+            "orderMatches": true,
+            "selectedTextQueries": 0,
+            "codePointDeletes": 128,
+            "dispatchCallMs": {
+              "p50": 1.027533,
+              "p95": 1.469222,
+              "max": 17.518489
+            },
+            "sameProcessTarget": true,
+            "scope": "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency.",
+            "apiLevel": 30,
+            "edition": "standard"
+          },
+          "input-latency": {
+            "test": "actual-ime-activation-to-target-commit",
+            "samples": 105,
+            "cadenceMs": 8,
+            "loss": 0,
+            "orderMatches": true,
+            "dispatchCallMs": {
+              "p50": 2.999273,
+              "p95": 21.503823,
+              "max": 29.991283
+            },
+            "activationToCommitMs": {
+              "p50": 0.199938,
+              "p95": 0.286497,
+              "max": 6.557281
+            },
+            "regressionBudgetP95Ms": 100,
+            "sameProcessTarget": true,
+            "sessionChanges": 0,
+            "scope": "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee.",
+            "apiLevel": 30,
+            "edition": "standard"
+          }
+        },
+        "api35": {
+          "input-burst": {
+            "test": "actual-ime-burst",
+            "characters": 520,
+            "backspaces": 128,
+            "loss": 0,
+            "orderMatches": true,
+            "selectedTextQueries": 0,
+            "codePointDeletes": 128,
+            "dispatchCallMs": {
+              "p50": 0.767235,
+              "p95": 2.843802,
+              "max": 7.021603
+            },
+            "sameProcessTarget": true,
+            "scope": "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency.",
+            "apiLevel": 35,
+            "edition": "standard"
+          },
+          "input-latency": {
+            "test": "actual-ime-activation-to-target-commit",
+            "samples": 105,
+            "cadenceMs": 8,
+            "loss": 0,
+            "orderMatches": true,
+            "dispatchCallMs": {
+              "p50": 4.688173,
+              "p95": 17.798236,
+              "max": 35.013488
+            },
+            "activationToCommitMs": {
+              "p50": 0.128431,
+              "p95": 0.205256,
+              "max": 1.184607
+            },
+            "regressionBudgetP95Ms": 100,
+            "sameProcessTarget": true,
+            "sessionChanges": 0,
+            "scope": "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee.",
+            "apiLevel": 35,
+            "edition": "standard"
+          }
+        }
+      },
+      "published": true,
+      "apkPath": "releases/Lichboard-1.2.0-standard.apk"
+    },
+    "assist": {
+      "applicationId": "dev.lichboard.assist",
+      "versionName": "1.2.0-assist",
+      "versionCode": 3,
+      "accessibilityServiceDeclared": true,
+      "accessibilityImplementationIncluded": true,
+      "accessibilityMetadataIncluded": true,
+      "debuggable": false,
+      "internetPermission": false,
+      "apkSha256": "db1c874a3f79042875023e527a2f0dcf91142ec65d481a00876d4bc8b63cde9c",
+      "apkBytes": 18471063,
+      "deviceTests": {
+        "api30": {
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": true,
+          "inputPerformancePassed": true,
+          "passed": true
+        },
+        "api35": {
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": true,
+          "inputPerformancePassed": true,
+          "passed": true
+        }
+      },
+      "inputPerformance": {
+        "api30": {
+          "input-burst": {
+            "test": "actual-ime-burst",
+            "characters": 520,
+            "backspaces": 128,
+            "loss": 0,
+            "orderMatches": true,
+            "selectedTextQueries": 0,
+            "codePointDeletes": 128,
+            "dispatchCallMs": {
+              "p50": 1.042184,
+              "p95": 1.557463,
+              "max": 8.664834
+            },
+            "sameProcessTarget": true,
+            "scope": "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency.",
+            "apiLevel": 30,
+            "edition": "assist"
+          },
+          "input-latency": {
+            "test": "actual-ime-activation-to-target-commit",
+            "samples": 105,
+            "cadenceMs": 8,
+            "loss": 0,
+            "orderMatches": true,
+            "dispatchCallMs": {
+              "p50": 3.311069,
+              "p95": 24.574284,
+              "max": 30.61965
+            },
+            "activationToCommitMs": {
+              "p50": 0.20792,
+              "p95": 0.319176,
+              "max": 5.956805
+            },
+            "regressionBudgetP95Ms": 100,
+            "sameProcessTarget": true,
+            "sessionChanges": 0,
+            "scope": "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee.",
+            "apiLevel": 30,
+            "edition": "assist"
+          }
+        },
+        "api35": {
+          "input-burst": {
+            "test": "actual-ime-burst",
+            "characters": 520,
+            "backspaces": 128,
+            "loss": 0,
+            "orderMatches": true,
+            "selectedTextQueries": 0,
+            "codePointDeletes": 128,
+            "dispatchCallMs": {
+              "p50": 0.791751,
+              "p95": 2.328803,
+              "max": 8.988086
+            },
+            "sameProcessTarget": true,
+            "scope": "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency.",
+            "apiLevel": 35,
+            "edition": "assist"
+          },
+          "input-latency": {
+            "test": "actual-ime-activation-to-target-commit",
+            "samples": 105,
+            "cadenceMs": 8,
+            "loss": 0,
+            "orderMatches": true,
+            "dispatchCallMs": {
+              "p50": 3.72797,
+              "p95": 21.062771,
+              "max": 34.470334
+            },
+            "activationToCommitMs": {
+              "p50": 0.136363,
+              "p95": 0.189983,
+              "max": 2.087283
+            },
+            "regressionBudgetP95Ms": 100,
+            "sameProcessTarget": true,
+            "sessionChanges": 0,
+            "scope": "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee.",
+            "apiLevel": 35,
+            "edition": "assist"
+          }
+        }
+      },
+      "published": true,
+      "apkPath": "releases/Lichboard-1.2.0-assist.apk"
+    }
+  },
   "verifiedReleasePublished": true
 }

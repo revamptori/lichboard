@@ -1,0 +1,18 @@
+{
+  "test": "actual-ime-burst",
+  "characters": 520,
+  "backspaces": 128,
+  "loss": 0,
+  "orderMatches": true,
+  "selectedTextQueries": 0,
+  "codePointDeletes": 128,
+  "dispatchCallMs": {
+    "p50": 1.042184,
+    "p95": 1.557463,
+    "max": 8.664834
+  },
+  "sameProcessTarget": true,
+  "scope": "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency.",
+  "apiLevel": 30,
+  "edition": "assist"
+}

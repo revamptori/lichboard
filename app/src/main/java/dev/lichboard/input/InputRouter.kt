@@ -4,55 +4,95 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.KeyEvent
+import dev.lichboard.BuildConfig
 import dev.lichboard.accessibility.AccessBridge
+import dev.lichboard.accessibility.AssistResult
 import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
+import dev.lichboard.ime.LichboardImeService
 import dev.lichboard.lichboard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
-/** Routes on every explicit key action; never assumes an overlay confers injection privileges. */
-class InputRouter(private val context: Context, private val forceIme: Boolean = false) {
-    private val app get() = context.lichboard
-    private val clipboard get() = context.getSystemService(ClipboardManager::class.java)
-    private suspend fun route(): InputRoute {
+/** IME and memory editing stay on Main.immediate; only actual assist/clipboard IPC leaves it. */
+class InputRouter(context: Context, private val forceIme: Boolean = false) {
+    private val context = context.applicationContext
+    private val app = context.lichboard
+    private val clipboard by lazy { context.getSystemService(ClipboardManager::class.java) }
+    private data class Session(val editor: Any?, val mode: InputMode, val assist: Any?, val force: Boolean)
+    fun session(): Any {
         val settings = app.settings.current
-        val hasIme = withContext(Dispatchers.Main.immediate) { ImeBridge.hasEditor }
-        if (forceIme) return if (hasIme) InputRoute.IME else InputRoute.DRAFT
-        val allowAssist = settings.accessibilityFallback && (settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.ACCESSIBILITY)
-        val shouldProbeAssist = allowAssist && (settings.inputMode == InputMode.ACCESSIBILITY || !hasIme)
-        val result = InputPolicy.choose(settings.inputMode, hasIme, allowAssist,
-            shouldProbeAssist && AccessBridge.service?.hasEditableTarget() == true)
-        // A hidden/destroyed panel may have been cancelled during a slow node query.
-        currentCoroutineContext().ensureActive()
-        return result
+        val usesIme = forceIme || settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.IME
+        val usesAssist = !forceIme && BuildConfig.INPUT_ASSIST_AVAILABLE && settings.accessibilityFallback &&
+            (settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.ACCESSIBILITY)
+        return Session(if (usesIme) ImeBridge.service?.inputSession else null, settings.inputMode,
+            if (usesAssist) AccessBridge.inputSession else null, forceIme)
     }
-    // Status never performs accessibility IPC on the rendering thread.
+    // Status never probes nodes, reads an editor, or performs IPC during rendering.
     fun status(): String {
         val s = app.settings.current
         return when {
             (forceIme || s.inputMode == InputMode.AUTO || s.inputMode == InputMode.IME) && ImeBridge.hasEditor -> "IME · focused editor"
-            !forceIme && (s.inputMode == InputMode.AUTO || s.inputMode == InputMode.ACCESSIBILITY) &&
+            BuildConfig.INPUT_ASSIST_AVAILABLE && !forceIme && (s.inputMode == InputMode.AUTO || s.inputMode == InputMode.ACCESSIBILITY) &&
                 s.accessibilityFallback && AccessBridge.connected.value -> "ASSIST · supported focused fields only"
-            else -> "DRAFT · copy to paste elsewhere"
+            s.inputMode == InputMode.CLIPBOARD -> "DRAFT · copy to paste elsewhere"
+            else -> "DRAFT · select Lichboard and focus an editor to send input"
         }
     }
-    suspend fun text(value: String, meta: Int): String {
-        return when (route()) {
-            InputRoute.IME -> if (withContext(Dispatchers.Main.immediate) { ImeBridge.service?.text(value, meta) == true }) "IME · focused editor" else fallbackText(value, meta)
-            InputRoute.ACCESSIBILITY -> if (AccessBridge.service?.text(value, meta) == true) "ASSIST · focused text field" else "ASSIST · ${AccessBridge.service?.lastFailure ?: "Service disconnected"} · use draft"
-            InputRoute.DRAFT -> draftText(value, meta)
+    suspend fun text(value: String, meta: Int): String = execute(InputAction.Text(value, meta))
+    suspend fun key(code: Int, meta: Int): String = execute(InputAction.Key(code, meta))
+    suspend fun edit(command: EditCommand): String = execute(InputAction.Edit(command))
+
+    suspend fun execute(action: InputAction): String = withContext(Dispatchers.Main.immediate) {
+        currentCoroutineContext().ensureActive()
+        if (action == InputAction.CopyDraft) return@withContext withContext(Dispatchers.IO) { copyDraft() }
+        if (action == InputAction.ClearDraft) return@withContext clearDraft()
+        val settings = app.settings.current
+        val ime = ImeBridge.service?.takeIf { it.hasEditor }
+        val assistAllowed = BuildConfig.INPUT_ASSIST_AVAILABLE && !forceIme && settings.accessibilityFallback
+        val assist = if (assistAllowed) AccessBridge.service else null
+        val assistSession = AccessBridge.inputSession
+        val route = if (forceIme) {
+            if (ime != null) InputRoute.IME else InputRoute.DRAFT
+        } else InputPolicy.choose(settings.inputMode, ime != null, assistAllowed, assist != null)
+        when (route) {
+            InputRoute.IME -> if (sendIme(requireNotNull(ime), action)) "IME · focused editor" else {
+                // Do not replay a possibly accepted key through a second backend or another app.
+                if (action is InputAction.Text && action.meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) == 0) {
+                    applyDraft(action)
+                    "DRAFT · editor rejected input; text kept here, check the target"
+                } else "IME · editor rejected this key/action; refocus the field"
+            }
+            InputRoute.ACCESSIBILITY -> when (val response = withContext(Dispatchers.IO) { requireNotNull(assist).execute(action, assistSession) }) {
+                AssistResult.Applied -> "ASSIST · focused text field"
+                AssistResult.NoTarget -> applyDraft(action)
+                AssistResult.TargetChanged -> "ASSIST · editor changed; refocus and type again"
+                is AssistResult.Rejected -> "ASSIST · ${response.reason} · use clipboard draft"
+            }
+            InputRoute.DRAFT -> applyDraft(action)
         }
     }
-    private suspend fun fallbackText(value: String, meta: Int): String {
-        currentCoroutineContext().ensureActive()
-        val s = app.settings.current
-        if (!forceIme && s.inputMode == InputMode.AUTO && s.accessibilityFallback &&
-            AccessBridge.service?.text(value, meta) == true) return "ASSIST · focused text field"
-        currentCoroutineContext().ensureActive()
-        return draftText(value, meta)
+    private fun sendIme(ime: LichboardImeService, action: InputAction): Boolean = when (action) {
+        is InputAction.Text -> ime.text(action.value, action.meta)
+        is InputAction.Key -> ime.key(action.code, action.meta)
+        is InputAction.Edit -> ime.edit(action.command)
+        else -> false
+    }
+    private suspend fun applyDraft(action: InputAction): String {
+        val clipboardAction = (action is InputAction.Edit && action.command != EditCommand.SELECT_ALL) ||
+            (action is InputAction.Text && action.meta and KeyEvent.META_CTRL_ON != 0 && action.value.lowercase() in listOf("c", "x", "v"))
+        val operation = {
+            when (action) {
+                is InputAction.Text -> draftText(action.value, action.meta)
+                is InputAction.Key -> draftKey(action.code, action.meta)
+                is InputAction.Edit -> draftEdit(action.command)
+                InputAction.CopyDraft -> copyDraft()
+                InputAction.ClearDraft -> clearDraft()
+            }
+        }
+        return if (clipboardAction) withContext(Dispatchers.IO) { operation() } else operation()
     }
     private fun draftText(value: String, meta: Int): String {
         if (meta and KeyEvent.META_ALT_ON != 0) return "Alt combinations need an active IME connection"
@@ -67,16 +107,6 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
         }
         app.draft.edit { insert(value) }
         return "DRAFT · saved in memory, not sent to an app"
-    }
-    suspend fun key(code: Int, meta: Int): String = when (route()) {
-        InputRoute.IME -> if (withContext(Dispatchers.Main.immediate) { ImeBridge.service?.key(code, meta) == true }) "IME · focused editor" else "Editor did not accept this key"
-        InputRoute.ACCESSIBILITY -> if (AccessBridge.service?.key(code, meta) == true) "ASSIST · focused text field" else "This key needs an active IME connection"
-        InputRoute.DRAFT -> draftKey(code, meta)
-    }
-    suspend fun edit(command: EditCommand): String = when (route()) {
-        InputRoute.IME -> if (withContext(Dispatchers.Main.immediate) { ImeBridge.service?.edit(command) == true }) "IME · focused editor" else "Editor did not accept this action"
-        InputRoute.ACCESSIBILITY -> if (AccessBridge.service?.edit(command) == true) "ASSIST · focused text field" else "Field did not accept this action"
-        InputRoute.DRAFT -> draftEdit(command)
     }
     private fun draftKey(code: Int, meta: Int): String {
         if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return "This key combination needs an active IME connection"

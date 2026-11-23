@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.LichboardIntegrationTest" tests="21" failures="0" errors="0" skipped="0" time="85.674" timestamp="2026-11-23T04:31:18" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 15" />
+    <property name="flavor" value="assist" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="independentOverlayHasHonestClipboardDraft" classname="dev.lichboard.LichboardIntegrationTest" time="9.687" />
+  <testcase name="specialKeysReachRealRawInputTarget" classname="dev.lichboard.LichboardIntegrationTest" time="3.625" />
+  <testcase name="composeSettingsNavigateAndApplyTheme" classname="dev.lichboard.LichboardIntegrationTest" time="12.304" />
+  <testcase name="realImeAcceptsA520CharacterBurstWithoutOverflowAndDeletesWithoutSelectionQueries" classname="dev.lichboard.LichboardIntegrationTest" time="2.981" />
+  <testcase name="overlaySurvivesSwitchingToAnotherApplication" classname="dev.lichboard.LichboardIntegrationTest" time="3.57" />
+  <testcase name="overlayKeepsEditorFocusAndUsesInputConnection" classname="dev.lichboard.LichboardIntegrationTest" time="6.113" />
+  <testcase name="pageRebuildsAndReattachmentDoNotDropReadyInputOrSendDetachedKeys" classname="dev.lichboard.LichboardIntegrationTest" time="2.084" />
+  <testcase name="bubbleDragsPersistsAndLongPressOpensControls" classname="dev.lichboard.LichboardIntegrationTest" time="5.428" />
+  <testcase name="automaticWithoutAnEditorUsesDraftNotInjection" classname="dev.lichboard.LichboardIntegrationTest" time="1.821" />
+  <testcase name="recordsActivationToRealInputConnectionLatencyAtRapidCadence" classname="dev.lichboard.LichboardIntegrationTest" time="6.157" />
+  <testcase name="everyThemeAndResizeRendersWithoutLosingDraft" classname="dev.lichboard.LichboardIntegrationTest" time="6.337" />
+  <testcase name="normalImeTypesEditsAndCapitalizes" classname="dev.lichboard.LichboardIntegrationTest" time="5.36" />
+  <testcase name="imeUnicodeDeletionAndSelectionReplacementRemainCorrect" classname="dev.lichboard.LichboardIntegrationTest" time="4.455" />
+  <testcase name="longPressAlternativesAndAllFunctionKeysExist" classname="dev.lichboard.LichboardIntegrationTest" time="4.639" />
+  <testcase name="changingRealEditorsNeverReplaysOldKeysIntoTheNewField" classname="dev.lichboard.LichboardIntegrationTest" time="2.463" />
+  <testcase name="slightEdgeDriftIsAcceptedButMovingAwayAndCancellationDoNotType" classname="dev.lichboard.KeyboardTouchTest" time="1.168" />
+  <testcase name="editorSessionChangesDiscardHeldTapsAlternativesAndRepeatsButNotFreshClicks" classname="dev.lichboard.KeyboardTouchTest" time="1.265" />
+  <testcase name="repeatingDeleteStartsImmediatelyAndStopsOnRelease" classname="dev.lichboard.KeyboardTouchTest" time="1.408" />
+  <testcase name="unambiguousKeysActivateOnDownExactlyOnceAndAccessibilityClickStillWorks" classname="dev.lichboard.KeyboardTouchTest" time="0.799" />
+  <testcase name="longPressDoesNotInsertTheBaseKeyAndDisposalCancelsHoldTimers" classname="dev.lichboard.KeyboardTouchTest" time="1.761" />
+  <testcase name="fullKeyCellsAndOverlappingFingersPreserveDownOrderAndOneShotShift" classname="dev.lichboard.KeyboardTouchTest" time="1.137" />
+</testsuite>

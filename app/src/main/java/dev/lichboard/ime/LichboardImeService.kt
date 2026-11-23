@@ -24,6 +24,10 @@ class LichboardImeService : InputMethodService() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var panel: KeyboardPanel? = null
     private var editorStarted = false
+    var inputSession: Any = Any()
+        private set
+    private var selectionState = 0 // 0 unknown, 1 collapsed, 2 selected; never query text per key.
+    private val characterMap by lazy { KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD) }
     val hasEditor: Boolean get() {
         if (!editorStarted) return false
         val connection = currentInputConnection ?: return false
@@ -68,6 +72,12 @@ class LichboardImeService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         editorStarted = true
+        inputSession = Any()
+        selectionState = when {
+            attribute == null || attribute.initialSelStart < 0 || attribute.initialSelEnd < 0 -> 0
+            attribute.initialSelStart == attribute.initialSelEnd -> 1
+            else -> 2
+        }
         panel?.discardPendingInput()
         panel?.resetModifiers()
     }
@@ -82,6 +92,8 @@ class LichboardImeService : InputMethodService() {
         super.onFinishInputView(finishingInput)
     }
     override fun onFinishInput() {
+        inputSession = Any()
+        selectionState = 0
         panel?.discardPendingInput()
         editorStarted = false
         lichboard.imeVisible.value = false
@@ -93,13 +105,24 @@ class LichboardImeService : InputMethodService() {
         super.onWindowHidden()
     }
 
+    override fun onUpdateSelection(oldSelStart: Int, oldSelEnd: Int, newSelStart: Int, newSelEnd: Int,
+                                   candidatesStart: Int, candidatesEnd: Int) {
+        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
+        selectionState = when {
+            newSelStart < 0 || newSelEnd < 0 -> 0
+            newSelStart == newSelEnd -> 1
+            else -> 2
+        }
+    }
+
     private val rawEditor get() = currentInputEditorInfo?.inputType == InputType.TYPE_NULL
     fun text(value: String, meta: Int): Boolean {
         val ic = if (hasEditor) currentInputConnection else null
         ic ?: return false
         return runCatching {
             if (rawEditor || meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) {
-                val events = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD).getEvents(value.toCharArray())
+                selectionState = 0
+                val events = characterMap.getEvents(value.toCharArray())
                     ?: return false
                 withModifiers(meta and KeyEvent.META_SHIFT_ON.inv()) {
                     var ok = true
@@ -110,7 +133,7 @@ class LichboardImeService : InputMethodService() {
                     }
                     ok
                 }
-            } else ic.commitText(value, 1)
+            } else ic.commitText(value, 1).also { if (it) selectionState = 1 }
         }.getOrDefault(false)
     }
     fun key(code: Int, meta: Int): Boolean {
@@ -120,12 +143,12 @@ class LichboardImeService : InputMethodService() {
             if (meta == 0 && !rawEditor) {
                 when (code) {
                     KeyEvent.KEYCODE_DEL -> {
-                        if (!ic.getSelectedText(0).isNullOrEmpty()) return ic.commitText("", 1)
-                        if (ic.deleteSurroundingTextInCodePoints(1, 0)) return true
+                        if (selectionState == 2) return ic.commitText("", 1).also { if (it) selectionState = 1 }
+                        if (selectionState == 1 && ic.deleteSurroundingTextInCodePoints(1, 0)) return true
                     }
                     KeyEvent.KEYCODE_FORWARD_DEL -> {
-                        if (!ic.getSelectedText(0).isNullOrEmpty()) return ic.commitText("", 1)
-                        if (ic.deleteSurroundingTextInCodePoints(0, 1)) return true
+                        if (selectionState == 2) return ic.commitText("", 1).also { if (it) selectionState = 1 }
+                        if (selectionState == 1 && ic.deleteSurroundingTextInCodePoints(0, 1)) return true
                     }
                     KeyEvent.KEYCODE_ENTER -> {
                         val info = currentInputEditorInfo
@@ -137,6 +160,7 @@ class LichboardImeService : InputMethodService() {
                     }
                 }
             }
+            selectionState = 0
             withModifiers(meta) { send(code, KeyEvent.ACTION_DOWN, meta) and send(code, KeyEvent.ACTION_UP, meta) }
         }.getOrDefault(false)
     }
@@ -148,6 +172,7 @@ class LichboardImeService : InputMethodService() {
             EditCommand.PASTE -> android.R.id.paste
             EditCommand.SELECT_ALL -> android.R.id.selectAll
         }
+        if (command != EditCommand.COPY) selectionState = 0
         return runCatching { currentInputConnection?.performContextMenuAction(id) == true }.getOrDefault(false)
     }
     private fun send(code: Int, action: Int, meta: Int): Boolean {

@@ -7,7 +7,7 @@ import org.junit.Test
 class InputPolicyTest {
     @Test fun automaticPrioritizesIme() = assertEquals(InputRoute.IME, InputPolicy.choose(InputMode.AUTO, true, true, true))
     @Test fun assistRequiresExplicitConsent() = assertEquals(InputRoute.DRAFT, InputPolicy.choose(InputMode.AUTO, false, false, true))
-    @Test fun assistRequiresFocusedEditableTarget() = assertEquals(InputRoute.DRAFT, InputPolicy.choose(InputMode.AUTO, false, true, false))
+    @Test fun assistRequiresAvailableBackend() = assertEquals(InputRoute.DRAFT, InputPolicy.choose(InputMode.AUTO, false, true, false))
     @Test fun automaticCanUseAssist() = assertEquals(InputRoute.ACCESSIBILITY, InputPolicy.choose(InputMode.AUTO, false, true, true))
     @Test fun imeOnlyNeverUsesAccessibility() = assertEquals(InputRoute.DRAFT, InputPolicy.choose(InputMode.IME, false, true, true))
     @Test fun clipboardNeverInjects() = assertEquals(InputRoute.DRAFT, InputPolicy.choose(InputMode.CLIPBOARD, true, true, true))

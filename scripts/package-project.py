@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the complete Android Studio project only after verified CI evidence exists."""
+"""Package both verified editions and the complete Android Studio project."""
 import hashlib
 import json
 import os
@@ -10,33 +10,40 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
 report = json.loads((ROOT / "verification/latest.json").read_text())
-if not report.get("verifiedReleasePublished"):
-    raise SystemExit("Refusing to package: the latest release did not pass all verification stages.")
+variants = report.get("variants", {})
+if not report.get("verifiedReleasePublished") or set(variants) != {"standard", "assist"}:
+    raise SystemExit("Refusing to package: both editions must pass all verification stages first.")
+apks = []
+for variant, info in variants.items():
+    if not info.get("published") or not info.get("apkPath"):
+        raise SystemExit(f"Refusing to package: {variant} was not published by verified CI.")
+    apk = ROOT / info["apkPath"]
+    if hashlib.sha256(apk.read_bytes()).hexdigest() != info["apkSha256"]:
+        raise SystemExit(f"Refusing to package: {variant} APK checksum differs from CI.")
+    apks.append(apk)
+if variants["standard"]["accessibilityServiceDeclared"] or variants["standard"]["accessibilityImplementationIncluded"]:
+    raise SystemExit("Refusing to package: Standard unexpectedly includes accessibility input assist.")
 
-apk = ROOT / "releases/Lichboard-1.0.0.apk"
-if hashlib.sha256(apk.read_bytes()).hexdigest() != report["apkSha256"]:
-    raise SystemExit("Refusing to package: APK checksum differs from the verified CI result.")
-
-# Evidence is committed after the tested source. Documentation may also advance, but
-# the app, resources, tests, build configuration, and Gradle wrapper must match exactly.
 source_paths = ["app", "build.gradle.kts", "settings.gradle.kts", "gradle.properties",
-                "gradle", "gradlew", "gradlew.bat"]
+                "gradle", "gradlew", "gradlew.bat", "scripts", ".github/workflows/android.yml"]
 if subprocess.run(["git", "diff", "--quiet", report["sourceCommit"], "--", *source_paths]).returncode:
-    raise SystemExit("Refusing to package: application sources differ from the tested commit.")
+    raise SystemExit("Refusing to package: application/build sources differ from the tested commit.")
 if subprocess.run(["git", "diff", "--quiet", "HEAD"]).returncode:
-    raise SystemExit("Commit tracked-file changes before packaging so the archive has clear provenance.")
+    raise SystemExit("Commit tracked changes before packaging so the archive has clear provenance.")
 
 files = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
 output = ROOT / "deliverables"
 output.mkdir(exist_ok=True)
-archive = output / "Lichboard-1.0.0-AndroidStudio.zip"
+archive = output / f"Lichboard-{report['versionName']}-AndroidStudio.zip"
 provenance = {
     "packagedCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
     "testedSourceCommit": report["sourceCommit"],
     "verificationRun": report["runUrl"],
-    "apkSha256": report["apkSha256"],
+    "recommendedEdition": "standard",
+    "variants": variants,
     "signing": report["signing"],
-    "openInAndroidStudio": "Open the Lichboard folder containing settings.gradle.kts; use JDK 17 and SDK 35.",
+    "playProtectAcceptance": report["playProtectAcceptance"],
+    "openInAndroidStudio": "Open the Lichboard folder with JDK 17 and SDK 35. Choose standardDebug by default; assistDebug explicitly adds accessibility input assist.",
 }
 with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as bundle:
     for name in sorted(filter(None, files)):
@@ -48,12 +55,13 @@ with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as bun
 with zipfile.ZipFile(archive) as bundle:
     if bundle.testzip() is not None:
         raise SystemExit("Archive integrity check failed.")
-    assert bundle.read("Lichboard/releases/Lichboard-1.0.0.apk") == apk.read_bytes()
+    for apk in apks:
+        assert bundle.read("Lichboard/" + apk.relative_to(ROOT).as_posix()) == apk.read_bytes()
 
 checksums = output / "SHA256SUMS"
 checksums.write_text("".join(
     f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.relative_to(ROOT).as_posix()}\n"
-    for path in (apk, archive)
+    for path in (*apks, archive)
 ))
 print(f"Created {archive.relative_to(ROOT)} ({archive.stat().st_size:,} bytes)")
 print(checksums.read_text(), end="")

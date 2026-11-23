@@ -2,10 +2,13 @@ package dev.lichboard
 
 import android.app.UiAutomation
 import android.content.Context
+import android.content.ComponentName
 import android.content.Intent
 import android.content.ContentValues
 import android.provider.MediaStore
 import android.os.Environment
+import android.os.Build
+import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Configurator
+import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
@@ -22,6 +26,7 @@ import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.BoardTheme
 import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
+import dev.lichboard.ime.LichboardImeService
 import dev.lichboard.input.InputRouter
 import dev.lichboard.keyboard.KeyboardPanel
 import dev.lichboard.overlay.FloatingService
@@ -31,6 +36,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import org.json.JSONObject
 
 @RunWith(AndroidJUnit4::class)
 class LichboardIntegrationTest {
@@ -43,13 +49,15 @@ class LichboardIntegrationTest {
         UiDevice.getInstance(instrumentation)
     }
     private var scenario: ActivityScenario<ProbeActivity>? = null
-    private val component = "dev.lichboard/.ime.LichboardImeService"
+    private val component get() = ComponentName(context, LichboardImeService::class.java).flattenToShortString()
 
     @Before fun setup() {
         device.executeShellCommand("wm dismiss-keyguard")
-        device.executeShellCommand("appops set dev.lichboard SYSTEM_ALERT_WINDOW allow")
+        device.executeShellCommand("appops set ${context.packageName} SYSTEM_ALERT_WINDOW allow")
         device.executeShellCommand("ime enable $component")
         device.executeShellCommand("ime set $component")
+        assertEquals("Select the canonical Android IME ID before testing", component,
+            device.executeShellCommand("settings get secure default_input_method").trim())
         device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
         instrumentation.runOnMainSync {
             FloatingService.stop(context)
@@ -81,8 +89,13 @@ class LichboardIntegrationTest {
     private fun exportEvidence(file: File) {
         val values = ContentValues().apply {
             put(MediaStore.Downloads.DISPLAY_NAME, file.name)
-            put(MediaStore.Downloads.MIME_TYPE, if (file.extension == "png") "image/png" else "text/plain")
-            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests")
+            put(MediaStore.Downloads.MIME_TYPE, when (file.extension) {
+                "png" -> "image/png"
+                "json" -> "application/json"
+                "xml" -> "text/xml"
+                else -> "text/plain"
+            })
+            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests-${BuildConfig.FLAVOR}")
         }
         context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)?.let { uri ->
             context.contentResolver.openOutputStream(uri)?.use { output -> file.inputStream().use { it.copyTo(output) } }
@@ -104,6 +117,29 @@ class LichboardIntegrationTest {
             assertTrue(FloatingService.start(context, FloatingService.ACTION_SHOW))
         }
         await("Lichboard floating keyboard")
+    }
+    private fun views(root: View): List<View> = listOf(root) + if (root is ViewGroup) {
+        (0 until root.childCount).flatMap { views(root.getChildAt(it)) }
+    } else emptyList()
+    private fun systemPanel(): KeyboardPanel = views(requireNotNull(ImeBridge.service?.window?.window?.decorView))
+        .filterIsInstance<KeyboardPanel>().first()
+    private fun key(root: View, description: String): View = requireNotNull(views(root).firstOrNull { it.contentDescription == description })
+    private fun showIme() {
+        scenario!!.onActivity { it.focusEditor() }
+        condition("Real editor connection active") { ImeBridge.hasEditor }
+        instrumentation.runOnMainSync { ImeBridge.service?.requestShowSelf(0) }
+        await("Lichboard system keyboard")
+    }
+    private fun distribution(values: List<Double>): JSONObject {
+        val sorted = values.sorted()
+        fun percentile(p: Double) = sorted[kotlin.math.ceil(p * sorted.size).toInt().coerceIn(1, sorted.size) - 1]
+        return JSONObject().put("p50", percentile(.50)).put("p95", percentile(.95)).put("max", sorted.last())
+    }
+    private fun performanceReport(name: String, report: JSONObject) {
+        report.put("apiLevel", Build.VERSION.SDK_INT).put("edition", BuildConfig.FLAVOR)
+        val file = File(context.cacheDir, name)
+        file.writeText(report.toString(2))
+        exportEvidence(file)
     }
     private fun editorText(): String {
         var result = ""
@@ -222,14 +258,29 @@ class LichboardIntegrationTest {
             condition("Compose theme control updates real preferences") { app.settings.current.theme == BoardTheme.DRACULA }
             requireNotNull(device.findObject(By.text("Controls"))).click()
             assertNotNull(device.wait(Until.findObject(By.textContains("At your")), 8_000))
+            val editionControl = if (BuildConfig.INPUT_ASSIST_AVAILABLE) "Input assist setup  ↗" else "Standard edition · no accessibility service"
+            for (attempt in 0 until 6) {
+                val candidate = device.findObject(By.text(editionControl))
+                if (candidate != null && !candidate.visibleBounds.isEmpty) break
+                requireNotNull(device.findObject(By.scrollable(true))).scroll(Direction.DOWN, .65f)
+            }
+            assertNotNull("Edition-specific controls are visible", device.findObject(By.text(editionControl)))
+            if (BuildConfig.INPUT_ASSIST_AVAILABLE) {
+                requireNotNull(device.findObject(By.text(editionControl))).click()
+                assertNotNull(device.wait(Until.findObject(By.text("Optional input assistance")), 8_000))
+                assertFalse("Consent is not granted by merely opening the dialog", app.settings.current.accessibilityFallback)
+                requireNotNull(device.findObject(By.text("Not now"))).click()
+            } else {
+                assertFalse(device.hasObject(By.text("Allow input assist")))
+                assertFalse(device.hasObject(By.text("Input assist")))
+            }
+            val controlsScreenshot = File(context.cacheDir, "settings-controls.png")
+            device.takeScreenshot(controlsScreenshot); exportEvidence(controlsScreenshot)
         }
     }
-    @Test fun pageRebuildsAndReattachmentDiscardStaleQueuedKeys() {
+    @Test fun pageRebuildsAndReattachmentDoNotDropReadyInputOrSendDetachedKeys() {
         lateinit var panel: KeyboardPanel
         lateinit var host: FrameLayout
-        fun views(root: View): List<View> = listOf(root) + if (root is ViewGroup) {
-            (0 until root.childCount).flatMap { views(root.getChildAt(it)) }
-        } else emptyList()
         fun press(description: String) {
             requireNotNull(views(panel).firstOrNull { it.contentDescription == description }).performClick()
         }
@@ -249,20 +300,156 @@ class LichboardIntegrationTest {
                 press("Key ?123"); press("Key ABC")
             }
             assertEquals("Only the current page belongs to the view hierarchy", initialViews, views(panel).size)
-            // Keep Main busy while requests are queued. Their route cannot query the IME
-            // until Main is released, so removing the panel must cancel all of them first.
-            repeat(50) { press("Key q") }
+            // Ready actions now complete on this Main turn, rather than waiting on a CPU
+            // worker to bounce back here. A detach must not retroactively discard sent input.
+            repeat(512) { press("Key q") }
+            assertEquals("q".repeat(512), app.draft.snapshot.text)
             host.removeView(panel)
+            repeat(50) { press("Key x") } // Detached callbacks must not send anything.
         }
         instrumentation.waitForIdleSync()
-        assertEquals("Detached keys never reach the draft", "", app.draft.snapshot.text)
+        assertEquals("Detached keys never reach the draft", "q".repeat(512), app.draft.snapshot.text)
         scenario!!.onActivity {
             host.addView(panel)
             press("Key w")
         }
-        condition("A reattached panel accepts fresh input only") { app.draft.snapshot.text == "w" }
+        condition("A reattached panel accepts fresh input only") { app.draft.snapshot.text == "q".repeat(512) + "w" }
         scenario!!.onActivity { panel.dispose(); host.removeView(panel) }
     }
+    @Test fun realImeAcceptsA520CharacterBurstWithoutOverflowAndDeletesWithoutSelectionQueries() {
+        showIme()
+        val expected = "qwertyuiopasdfghjklzxcvbnm".repeat(20)
+        val dispatchMs = mutableListOf<Double>()
+        scenario!!.onActivity { it.editor.recording = true }
+        instrumentation.runOnMainSync {
+            val panel = systemPanel()
+            val keys = expected.toSet().associateWith { key(panel, "Key $it") }
+            expected.forEach { char ->
+                val start = SystemClock.elapsedRealtimeNanos()
+                keys.getValue(char).performClick()
+                dispatchMs += (SystemClock.elapsedRealtimeNanos() - start) / 1_000_000.0
+            }
+        }
+        condition("All 520 burst characters reach the real editor in order") { editorText() == expected }
+        instrumentation.runOnMainSync {
+            val backspace = key(systemPanel(), "Key ⌫")
+            repeat(128) { backspace.performClick() }
+        }
+        condition("128 rapid backspaces are not dropped") { editorText() == expected.dropLast(128) }
+        var queries = -1
+        var deletes = 0
+        scenario!!.onActivity { queries = it.editor.selectedTextQueries; deletes = it.editor.codePointDeletes }
+        performanceReport("input-burst.json", JSONObject()
+            .put("test", "actual-ime-burst").put("characters", expected.length).put("backspaces", 128)
+            .put("loss", 0).put("orderMatches", true).put("selectedTextQueries", queries)
+            .put("codePointDeletes", deletes).put("dispatchCallMs", distribution(dispatchMs))
+            .put("sameProcessTarget", true)
+            .put("scope", "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency."))
+        assertEquals("Backspace must not perform synchronous selected-text IPC per key", 0, queries)
+        assertTrue("Known collapsed cursor uses code-point-safe deletion", deletes > 0)
+        assertEquals("", app.draft.snapshot.text)
+    }
+
+    @Test fun recordsActivationToRealInputConnectionLatencyAtRapidCadence() {
+        showIme()
+        // Warm the path before recording. The timing includes the actual target IC receiving
+        // commitText, not just offer() returning, but excludes touch recognition and rendering.
+        click("Key q")
+        condition("Warm-up delivered") { editorText() == "q" }
+        val expected = "thequickbrownfoxjumpsoverthelazydog".repeat(3)
+        lateinit var keys: Map<Char, View>
+        // Keep the warm-up prefix. TextView.setText schedules invalidateInput on modern Android,
+        // racing the benchmark with a new connection. This test measures a stable focused field;
+        // explicit restart/focus switching is covered separately, not mixed into these samples.
+        scenario!!.onActivity { it.editor.commits.clear(); it.editor.recording = true }
+        var session: Any? = null
+        var sessionChanges = 0
+        instrumentation.runOnMainSync {
+            keys = expected.toSet().associateWith { key(systemPanel(), "Key $it") }
+            session = ImeBridge.service?.inputSession
+        }
+        val pressed = mutableListOf<Long>()
+        val dispatchMs = mutableListOf<Double>()
+        expected.forEach { char ->
+            instrumentation.runOnMainSync {
+                val current = ImeBridge.service?.inputSession
+                if (current !== session) { sessionChanges++; session = current }
+                val start = SystemClock.elapsedRealtimeNanos()
+                pressed += start
+                keys.getValue(char).performClick()
+                dispatchMs += (SystemClock.elapsedRealtimeNanos() - start) / 1_000_000.0
+            }
+            Thread.sleep(8) // Instrumentation thread only; no production debounce or timer.
+        }
+        try {
+            condition("Every rapidly activated key reaches the target in order") { editorText() == "q" + expected }
+        } catch (failure: AssertionError) {
+            var commits = emptyList<ProbeActivity.RecordingEditor.Commit>()
+            scenario!!.onActivity { commits = it.editor.commits.toList() }
+            val observed = editorText()
+            val diagnostic = JSONObject().put("test", "actual-ime-latency-failure").put("sessionChanges", sessionChanges)
+                .put("expectedSyntheticText", "q" + expected).put("observedSyntheticText", observed)
+                .put("receivedCommits", commits.size).put("draftUnits", app.draft.snapshot.text.length)
+            performanceReport("input-latency-failure.json", diagnostic)
+            throw AssertionError("Rapid input mismatch: $diagnostic", failure)
+        }
+        var commits = emptyList<ProbeActivity.RecordingEditor.Commit>()
+        scenario!!.onActivity { commits = it.editor.commits.toList() }
+        assertEquals(expected.map { it.toString() }, commits.map { it.value })
+        val deliveryMs = commits.indices.map { (commits[it].receivedNanos - pressed[it]) / 1_000_000.0 }
+        assertTrue(deliveryMs.all { it >= 0 })
+        val delivery = distribution(deliveryMs)
+        performanceReport("input-latency.json", JSONObject()
+            .put("test", "actual-ime-activation-to-target-commit").put("samples", expected.length).put("cadenceMs", 8)
+            .put("loss", 0).put("orderMatches", true).put("dispatchCallMs", distribution(dispatchMs))
+            .put("activationToCommitMs", delivery).put("regressionBudgetP95Ms", 100)
+            .put("sameProcessTarget", true).put("sessionChanges", sessionChanges)
+            .put("scope", "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee."))
+        assertTrue("Gross dispatch/backlog regression: $delivery", delivery.getDouble("p95") < 100)
+    }
+
+    @Test fun imeUnicodeDeletionAndSelectionReplacementRemainCorrect() {
+        showIme()
+        var session: Any? = null
+        instrumentation.runOnMainSync { session = ImeBridge.service?.inputSession }
+        scenario!!.onActivity {
+            it.editor.setText("a😀b"); it.editor.setSelection(it.editor.length()); it.focusEditor()
+        }
+        condition("New editor state delivered to IME") { ImeBridge.service?.inputSession !== session }
+        click("Key ⌫"); condition("ASCII deleted") { editorText() == "a😀" }
+        click("Key ⌫"); condition("Entire supplementary code point deleted") { editorText() == "a" }
+        instrumentation.runOnMainSync { session = ImeBridge.service?.inputSession }
+        scenario!!.onActivity {
+            it.editor.setText("abcd"); it.editor.setSelection(1, 3); it.focusEditor()
+        }
+        condition("Selection delivered on restarted connection") { ImeBridge.service?.inputSession !== session }
+        click("Key ⌫"); condition("Backspace deletes selected text, not the preceding character") { editorText() == "ad" }
+        click("Key q"); condition("Typing after deletion uses the correct cursor") { editorText() == "aqd" }
+    }
+
+    @Test fun changingRealEditorsNeverReplaysOldKeysIntoTheNewField() {
+        showIme()
+        click("Key a"); condition("First field received input") { editorText() == "a" }
+        var session: Any? = null
+        instrumentation.runOnMainSync {
+            session = ImeBridge.service?.inputSession
+            // The already-sent q can only belong to the old InputConnection. It may be
+            // accepted there or invalidated by Android; it must not be retried in field two.
+            key(systemPanel(), "Key q").performClick()
+        }
+        scenario!!.onActivity { it.focusOtherEditor() }
+        condition("IME started the second editor") { ImeBridge.hasEditor && ImeBridge.service?.inputSession !== session }
+        await("Lichboard system keyboard")
+        instrumentation.runOnMainSync {
+            val panel = systemPanel()
+            "new".forEach { key(panel, "Key $it").performClick() }
+        }
+        condition("Only fresh keys reach the second field") {
+            var text = ""; scenario!!.onActivity { text = it.otherEditor.text.toString() }; text == "new"
+        }
+        assertEquals("No old input is replayed through a fallback backend", "", app.draft.snapshot.text)
+    }
+
     @Test fun everyThemeAndResizeRendersWithoutLosingDraft() {
         overlay(InputMode.CLIPBOARD)
         click("Key a")

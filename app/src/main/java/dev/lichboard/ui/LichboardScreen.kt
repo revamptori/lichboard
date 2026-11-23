@@ -41,10 +41,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.lichboard.R
+import dev.lichboard.BuildConfig
 import dev.lichboard.accessibility.AccessBridge
 import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.BoardTheme
 import dev.lichboard.data.InputMode
+import dev.lichboard.data.availableInputModes
 import dev.lichboard.input.InputRouter
 import dev.lichboard.keyboard.BoardPalette
 import dev.lichboard.lichboard
@@ -131,7 +133,7 @@ fun LichboardScreen(
                                 reset = { app.settings.resetPositions() }, requestNotifications, onGuide = { guide = true })
                         }
                         Spacer(Modifier.height(28.dp))
-                        Text("LICHBOARD  /  1.0.0", fontSize = 10.sp, letterSpacing = 2.sp, color = scheme.onSurfaceVariant,
+                        Text("LICHBOARD  /  ${BuildConfig.VERSION_NAME}  /  ${BuildConfig.EDITION_NAME.uppercase()}", fontSize = 10.sp, letterSpacing = 2.sp, color = scheme.onSurfaceVariant,
                             modifier = Modifier.align(Alignment.CenterHorizontally))
                         Spacer(Modifier.height(22.dp))
                     }
@@ -142,16 +144,21 @@ fun LichboardScreen(
             text = { Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Text("1. Active editor", fontWeight = FontWeight.SemiBold)
                 Text("Enable and select Lichboard as your Android keyboard. With a focused editor, the floating keyboard can use its active InputConnection without stealing focus.")
-                Text("2. Optional input assist", fontWeight = FontWeight.SemiBold)
-                Text("With your explicit consent, accessibility can read and replace the selected text of a focused, non-password editable field. Custom editors may reject these actions. It cannot send arbitrary hardware keys.")
-                Text("3. No input target? Use a draft.", fontWeight = FontWeight.SemiBold)
+                if (BuildConfig.INPUT_ASSIST_AVAILABLE) {
+                    Text("2. Optional input assist · Assist edition", fontWeight = FontWeight.SemiBold)
+                    Text("With your explicit consent, accessibility can read and replace the selected text of a focused, non-password editable field. Custom editors may reject these actions. It cannot send arbitrary hardware keys.")
+                } else {
+                    Text("Standard edition", fontWeight = FontWeight.SemiBold)
+                    Text("This APK contains no accessibility service. Select Lichboard as your Android keyboard and focus a compatible editor, or compose an explicit clipboard draft.")
+                }
+                Text("No input target? Use a draft.", fontWeight = FontWeight.SemiBold)
                 Text("Type into an in-memory draft, open Clipboard, and tap Copy draft. Focus a field in the other app and use its Paste action. Android may block clipboard reads while an overlay is in the background.")
                 Text("Terminals, remote desktops & games", fontWeight = FontWeight.SemiBold)
                 Text("Ctrl, Alt, arrows and F1–F12 are genuine Android KeyEvents through an active IME connection. The receiving app must support them. Overlays cannot bypass secure screens, force-stops, or Android’s injection restrictions.")
                 Text("Privacy", fontWeight = FontWeight.SemiBold)
                 Text("No internet permission, accounts, analytics, typing history, or saved drafts. Clipboard reads happen only after your explicit action. Drafts disappear when the app process ends.")
             } }, confirmButton = { TextButton(onClick = { guide = false }) { Text("Got it") } })
-        if (consent) AlertDialog(onDismissRequest = { consent = false }, title = { Text("Optional input assistance") },
+        if (consent && BuildConfig.INPUT_ASSIST_AVAILABLE) AlertDialog(onDismissRequest = { consent = false }, title = { Text("Optional input assistance") },
             text = { Text("Lichboard can use Android Accessibility to read the text and selection in the currently focused editable field, and replace that text when you press a floating key.\n\nIt does not monitor your screen, store field contents, read password fields, or send data. Special hardware keys still require an IME connection.\n\nThis is optional. You can use the normal keyboard and clipboard draft without it. Enable “Lichboard input assist” on the next screen. You can revoke access in Android Settings at any time.") },
             confirmButton = { TextButton(onClick = {
                 update { it.copy(accessibilityFallback = true, inputMode = assistMode ?: it.inputMode) }
@@ -165,7 +172,10 @@ private fun BrandHeader(running: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         Logo(Modifier.size(36.dp))
         Spacer(Modifier.width(10.dp))
-        Text("lichboard", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-.6).sp)
+        Column {
+            Text("lichboard", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-.6).sp)
+            Text("${BuildConfig.EDITION_NAME.uppercase()} EDITION", fontSize = 8.sp, letterSpacing = 1.2.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
         Spacer(Modifier.weight(1f))
         Row(Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.surfaceVariant).padding(horizontal = 10.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(5.dp).background(if (running) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, CircleShape))
@@ -377,20 +387,28 @@ private fun ControlsPage(s: BoardSettings, p: PlatformState, assist: Boolean, up
     }
     SectionTitle("Input routing")
     Panel {
-        InputMode.entries.forEachIndexed { index, mode ->
+        availableInputModes.forEachIndexed { index, mode ->
             Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).clickable { onMode(mode) }.padding(vertical = 9.dp), verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(selected = s.inputMode == mode, onClick = null)
-                Spacer(Modifier.width(13.dp)); Column { Text(mode.title, fontSize = 14.sp, fontWeight = FontWeight.Medium); Spacer(Modifier.height(3.dp)); Description(mode.description) }
+                Spacer(Modifier.width(13.dp)); Column { Text(mode.title, fontSize = 14.sp, fontWeight = FontWeight.Medium); Spacer(Modifier.height(3.dp)); Description(if (!BuildConfig.INPUT_ASSIST_AVAILABLE && mode == InputMode.AUTO) "Active Lichboard IME first. Otherwise compose a clipboard draft." else mode.description) }
             }
-            if (index < InputMode.entries.lastIndex) SettingDivider()
+            if (index < availableInputModes.lastIndex) SettingDivider()
         }
     }
     Spacer(Modifier.height(12.dp))
     Panel {
-        ToggleSetting("Allow input assist", "Optional accessibility fallback for supported text fields. Does not inject arbitrary keys.", s.accessibilityFallback, onAssist)
-        Spacer(Modifier.height(10.dp))
-        Description(if (assist) "Android service connected${if (!s.accessibilityFallback) " · disabled inside Lichboard" else ""}" else "Android service not connected · optional")
-        TextButton(onClick = openAccessibility) { Text("Input assist setup  ↗") }
+        if (BuildConfig.INPUT_ASSIST_AVAILABLE) {
+            Text("Assist edition · optional sensitive capability", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(10.dp))
+            ToggleSetting("Allow input assist", "Optional accessibility fallback for supported text fields. Does not inject arbitrary keys.", s.accessibilityFallback, onAssist)
+            Spacer(Modifier.height(10.dp))
+            Description(if (assist) "Android service connected${if (!s.accessibilityFallback) " · disabled inside Lichboard" else ""}" else "Android service not connected · optional")
+            TextButton(onClick = openAccessibility) { Text("Input assist setup  ↗") }
+        } else {
+            Text("Standard edition · no accessibility service", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(8.dp))
+            Description("Direct input uses Lichboard’s active IME connection. Without an editor, use a clipboard draft. Optional accessibility input assist is available only in the separately installed Lichboard Assist app.")
+        }
     }
     SectionTitle("Key feedback")
     Panel {
@@ -421,7 +439,7 @@ private fun Onboarding(p: PlatformState, enable: () -> Unit, choose: () -> Unit,
     var step by rememberSaveable { mutableIntStateOf(0) }
     var startFloating by rememberSaveable { mutableStateOf(true) }
     Column(Modifier.fillMaxSize().systemBarsPadding().padding(26.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) { Logo(Modifier.size(36.dp)); Spacer(Modifier.width(10.dp)); Text("lichboard", fontSize = 21.sp, fontWeight = FontWeight.SemiBold); Spacer(Modifier.weight(1f)); Text("0${step + 1} / 04", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, fontFamily = FontFamily.Monospace) }
+        Row(verticalAlignment = Alignment.CenterVertically) { Logo(Modifier.size(36.dp)); Spacer(Modifier.width(10.dp)); Text(if (BuildConfig.INPUT_ASSIST_AVAILABLE) "lichboard assist" else "lichboard", fontSize = 21.sp, fontWeight = FontWeight.SemiBold); Spacer(Modifier.weight(1f)); Text("0${step + 1} / 04", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, fontFamily = FontFamily.Monospace) }
         Spacer(Modifier.height(32.dp))
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             AnimatedContent(targetState = step, label = "Setup step") { current -> Column {
@@ -436,7 +454,7 @@ private fun Onboarding(p: PlatformState, enable: () -> Unit, choose: () -> Unit,
                         Text("Your keyboard.\nUnbound.", style = MaterialTheme.typography.headlineLarge, fontSize = 42.sp, lineHeight = 47.sp, modifier = Modifier.padding(vertical = 16.dp))
                         Description("Bring up a full keyboard above your apps—even when there’s no text field. Move it, make it yours, and keep your flow.")
                         Spacer(Modifier.height(24.dp))
-                        Panel { Text("Built for real Android", fontWeight = FontWeight.SemiBold); Spacer(Modifier.height(8.dp)); Description("Overlays control visibility, not input permission. Type through a focused editor, optional input assist, or an explicit clipboard draft.") }
+                        Panel { Text("Built for real Android", fontWeight = FontWeight.SemiBold); Spacer(Modifier.height(8.dp)); Description(if (BuildConfig.INPUT_ASSIST_AVAILABLE) "Assist edition adds optional accessibility input. Overlays control visibility, not input permission. Use a focused editor, consent-based input assist, or an explicit clipboard draft." else "Standard edition contains no accessibility service. Overlays control visibility, not input permission. Use a focused IME editor or an explicit clipboard draft.") }
                         Spacer(Modifier.height(16.dp)); Description("Local only  ·  No accounts  ·  No typing history")
                     }
                     1 -> {

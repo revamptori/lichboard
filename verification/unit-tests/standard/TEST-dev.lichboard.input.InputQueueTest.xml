@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.lichboard.input.InputQueueTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-23T04:20:59" hostname="runnervmxfy6o" time="0.625">
+  <properties/>
+  <testcase name="stopDiscardsPendingKeysAndCancelsAnUnsentSuspendedActionButAllowsFreshInput" classname="dev.lichboard.input.InputQueueTest" time="0.331"/>
+  <testcase name="reentrantOffersPreserveOrder" classname="dev.lichboard.input.InputQueueTest" time="0.006"/>
+  <testcase name="disposedScopeCannotSendNewInput" classname="dev.lichboard.input.InputQueueTest" time="0.006"/>
+  <testcase name="fullSlowQueueExplicitlyRejectsActionsRatherThanReorderingOrGrowingWithoutBound" classname="dev.lichboard.input.InputQueueTest" time="0.005"/>
+  <testcase name="suspendedBackendCombines4096CharactersWithoutLosingOrReorderingEditsOrModifiers" classname="dev.lichboard.input.InputQueueTest" time="0.043"/>
+  <testcase name="reentrantStopDoesNotPublishOldStatusOrConsumeNewGenerationsRequests" classname="dev.lichboard.input.InputQueueTest" time="0.011"/>
+  <testcase name="aFailedActionDoesNotPoisonFollowingInput" classname="dev.lichboard.input.InputQueueTest" time="0.007"/>
+  <testcase name="readyBackendExecutesEveryKeyBeforeOfferReturnsWithoutTheOld64KeyLimit" classname="dev.lichboard.input.InputQueueTest" time="0.177"/>
+  <testcase name="newEditorDoesNotWaitForOrReceivePreviousEditorsPendingKeys" classname="dev.lichboard.input.InputQueueTest" time="0.016"/>
+  <testcase name="aSessionChangeWithoutAnotherPressStillDiscardsTheBacklogAndStaleFeedback" classname="dev.lichboard.input.InputQueueTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

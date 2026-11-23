@@ -1,0 +1,96 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preStandardDebugBuild UP-TO-DATE
+> Task :app:generateStandardDebugBuildConfig UP-TO-DATE
+> Task :app:checkStandardDebugAarMetadata UP-TO-DATE
+> Task :app:generateStandardDebugResValues UP-TO-DATE
+> Task :app:mapStandardDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateStandardDebugResources UP-TO-DATE
+> Task :app:mergeStandardDebugResources UP-TO-DATE
+> Task :app:packageStandardDebugResources UP-TO-DATE
+> Task :app:parseStandardDebugLocalResources UP-TO-DATE
+> Task :app:createStandardDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksStandardDebug UP-TO-DATE
+> Task :app:processStandardDebugMainManifest UP-TO-DATE
+> Task :app:processStandardDebugManifest UP-TO-DATE
+> Task :app:processStandardDebugManifestForPackage UP-TO-DATE
+> Task :app:processStandardDebugResources UP-TO-DATE
+> Task :app:compileStandardDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileStandardDebug UP-TO-DATE
+> Task :app:compileStandardDebugJavaWithJavac UP-TO-DATE
+> Task :app:bundleStandardDebugClassesToCompileJar UP-TO-DATE
+> Task :app:preStandardDebugAndroidTestBuild SKIPPED
+> Task :app:processStandardDebugAndroidTestManifest UP-TO-DATE
+> Task :app:generateStandardDebugAndroidTestBuildConfig UP-TO-DATE
+> Task :app:checkStandardDebugAndroidTestAarMetadata UP-TO-DATE
+> Task :app:generateStandardDebugAndroidTestResValues UP-TO-DATE
+> Task :app:mapStandardDebugAndroidTestSourceSetPaths UP-TO-DATE
+> Task :app:generateStandardDebugAndroidTestResources UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestResources UP-TO-DATE
+> Task :app:processStandardDebugAndroidTestResources UP-TO-DATE
+> Task :app:compileStandardDebugAndroidTestKotlin UP-TO-DATE
+> Task :app:javaPreCompileStandardDebugAndroidTest UP-TO-DATE
+> Task :app:compileStandardDebugAndroidTestJavaWithJavac UP-TO-DATE
+> Task :app:mergeStandardDebugShaders UP-TO-DATE
+> Task :app:compileStandardDebugShaders NO-SOURCE
+> Task :app:generateStandardDebugAssets UP-TO-DATE
+> Task :app:mergeStandardDebugAssets UP-TO-DATE
+> Task :app:compressStandardDebugAssets UP-TO-DATE
+> Task :app:checkStandardDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarStandardDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexStandardDebug UP-TO-DATE
+> Task :app:mergeLibDexStandardDebug UP-TO-DATE
+> Task :app:dexBuilderStandardDebug UP-TO-DATE
+> Task :app:mergeProjectDexStandardDebug UP-TO-DATE
+> Task :app:mergeStandardDebugGlobalSynthetics UP-TO-DATE
+> Task :app:processStandardDebugJavaRes UP-TO-DATE
+> Task :app:mergeStandardDebugJavaResource UP-TO-DATE
+> Task :app:mergeStandardDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeStandardDebugNativeLibs UP-TO-DATE
+> Task :app:stripStandardDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningStandardDebug UP-TO-DATE
+> Task :app:writeStandardDebugAppMetadata UP-TO-DATE
+> Task :app:writeStandardDebugSigningConfigVersions UP-TO-DATE
+> Task :app:packageStandardDebug UP-TO-DATE
+> Task :app:createStandardDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestShaders UP-TO-DATE
+> Task :app:compileStandardDebugAndroidTestShaders NO-SOURCE
+> Task :app:generateStandardDebugAndroidTestAssets UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestAssets UP-TO-DATE
+> Task :app:compressStandardDebugAndroidTestAssets UP-TO-DATE
+> Task :app:checkStandardDebugAndroidTestDuplicateClasses UP-TO-DATE
+> Task :app:desugarStandardDebugAndroidTestFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexStandardDebugAndroidTest UP-TO-DATE
+> Task :app:mergeLibDexStandardDebugAndroidTest UP-TO-DATE
+> Task :app:dexBuilderStandardDebugAndroidTest UP-TO-DATE
+> Task :app:mergeProjectDexStandardDebugAndroidTest UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestGlobalSynthetics UP-TO-DATE
+> Task :app:processStandardDebugAndroidTestJavaRes UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestJavaResource UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestJniLibFolders UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripStandardDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningStandardDebugAndroidTest UP-TO-DATE
+> Task :app:writeStandardDebugAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :app:packageStandardDebugAndroidTest UP-TO-DATE
+> Task :app:createStandardDebugAndroidTestApkListingFileRedirect UP-TO-DATE
+[EmulatorConsole]: Failed to start Emulator console for 5554
+
+> Task :app:connectedStandardDebugAndroidTest
+Starting 23 tests on emulator-5554 - 11
+
+emulator-5554 - 11 Tests 1/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 2/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 4/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 7/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 9/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 11/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 13/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 19/23 completed. (0 skipped) (0 failed)
+Finished 23 tests on emulator-5554 - 11
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795407782730.json
+
+BUILD SUCCESSFUL in 1m 40s
+67 actionable tasks: 1 executed, 66 up-to-date
