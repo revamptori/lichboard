@@ -343,7 +343,8 @@ class LichboardIntegrationTest {
             .put("test", "actual-ime-burst").put("characters", expected.length).put("backspaces", 128)
             .put("loss", 0).put("orderMatches", true).put("selectedTextQueries", queries)
             .put("codePointDeletes", deletes).put("dispatchCallMs", distribution(dispatchMs))
-            .put("scope", "Debug AOSP emulator. Direct key activation through actual IME to real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency."))
+            .put("sameProcessTarget", true)
+            .put("scope", "Debug AOSP emulator. Direct key activation through actual IME to same-process real EditText. Burst deliberately keeps Main busy; not touch-to-pixel latency."))
         assertEquals("Backspace must not perform synchronous selected-text IPC per key", 0, queries)
         assertTrue("Known collapsed cursor uses code-point-safe deletion", deletes > 0)
         assertEquals("", app.draft.snapshot.text)
@@ -357,12 +358,22 @@ class LichboardIntegrationTest {
         condition("Warm-up delivered") { editorText() == "q" }
         val expected = "thequickbrownfoxjumpsoverthelazydog".repeat(3)
         lateinit var keys: Map<Char, View>
-        scenario!!.onActivity { it.editor.setText(""); it.editor.commits.clear(); it.editor.recording = true }
-        instrumentation.runOnMainSync { keys = expected.toSet().associateWith { key(systemPanel(), "Key $it") } }
+        // Keep the warm-up prefix. TextView.setText schedules invalidateInput on modern Android,
+        // racing the benchmark with a new connection. This test measures a stable focused field;
+        // explicit restart/focus switching is covered separately, not mixed into these samples.
+        scenario!!.onActivity { it.editor.commits.clear(); it.editor.recording = true }
+        var session: Any? = null
+        var sessionChanges = 0
+        instrumentation.runOnMainSync {
+            keys = expected.toSet().associateWith { key(systemPanel(), "Key $it") }
+            session = ImeBridge.service?.inputSession
+        }
         val pressed = mutableListOf<Long>()
         val dispatchMs = mutableListOf<Double>()
         expected.forEach { char ->
             instrumentation.runOnMainSync {
+                val current = ImeBridge.service?.inputSession
+                if (current !== session) { sessionChanges++; session = current }
                 val start = SystemClock.elapsedRealtimeNanos()
                 pressed += start
                 keys.getValue(char).performClick()
@@ -370,7 +381,18 @@ class LichboardIntegrationTest {
             }
             Thread.sleep(8) // Instrumentation thread only; no production debounce or timer.
         }
-        condition("Every rapidly activated key reaches the target in order") { editorText() == expected }
+        try {
+            condition("Every rapidly activated key reaches the target in order") { editorText() == "q" + expected }
+        } catch (failure: AssertionError) {
+            var commits = emptyList<ProbeActivity.RecordingEditor.Commit>()
+            scenario!!.onActivity { commits = it.editor.commits.toList() }
+            val observed = editorText()
+            val diagnostic = JSONObject().put("test", "actual-ime-latency-failure").put("sessionChanges", sessionChanges)
+                .put("expectedSyntheticText", "q" + expected).put("observedSyntheticText", observed)
+                .put("receivedCommits", commits.size).put("draftUnits", app.draft.snapshot.text.length)
+            performanceReport("input-latency-failure.json", diagnostic)
+            throw AssertionError("Rapid input mismatch: $diagnostic", failure)
+        }
         var commits = emptyList<ProbeActivity.RecordingEditor.Commit>()
         scenario!!.onActivity { commits = it.editor.commits.toList() }
         assertEquals(expected.map { it.toString() }, commits.map { it.value })
@@ -381,7 +403,8 @@ class LichboardIntegrationTest {
             .put("test", "actual-ime-activation-to-target-commit").put("samples", expected.length).put("cadenceMs", 8)
             .put("loss", 0).put("orderMatches", true).put("dispatchCallMs", distribution(dispatchMs))
             .put("activationToCommitMs", delivery).put("regressionBudgetP95Ms", 100)
-            .put("scope", "Debug AOSP emulator, actual IME and real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency or a phone speed guarantee."))
+            .put("sameProcessTarget", true).put("sessionChanges", sessionChanges)
+            .put("scope", "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee."))
         assertTrue("Gross dispatch/backlog regression: $delivery", delivery.getDouble("p95") < 100)
     }
 

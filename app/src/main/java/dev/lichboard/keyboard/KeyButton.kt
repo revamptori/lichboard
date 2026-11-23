@@ -61,7 +61,11 @@ class KeyButton(
         shape.setColor(if (down) pressedColor else keyColor)
         setTextColor(text)
     }
-    override fun performClick(): Boolean { super.performClick(); activate(); return true }
+    override fun performClick(): Boolean {
+        activate() // Dispatch before accessibility bookkeeping, like a native click listener.
+        super.performClick()
+        return true
+    }
     override fun performLongClick(): Boolean {
         if (hold != null) { hold.invoke(); return true }
         return super.performLongClick()

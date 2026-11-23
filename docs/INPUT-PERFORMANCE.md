@@ -23,7 +23,9 @@ Both editions use the same input surface and normal-IME implementation. CI runs 
 - **Lifecycle/editing:** 512 immediate draft activations survive a later detach; detached callbacks are ignored and reattachment accepts fresh input. Separate suspended-queue tests ensure genuinely pending input is discarded. Real editor switching checks that old input is not replayed in the next field. Real selection replacement, supplementary-code-point deletion, Ctrl shortcuts and raw F-keys remain covered.
 - **Assist only:** consent/password/privacy checks, real text insertion/deletion, a 480-character queued burst into a supported editor, and rejection of a stale focus token. This stays in a separate, quiet-accessibility instrumentation invocation to avoid Android 11 UiAutomation/node-cache contention.
 
-The debug-only `ProbeActivity`/recording target is excluded from release APKs. Test recording is temporary in-process state, not a shipping input logger. Reports contain counts/timing and no private user text.
+The timing test keeps its warm-up prefix instead of calling `setText` immediately before sampling. Modern Android [schedules input invalidation when replacing an editable buffer](https://github.com/aosp-mirror/platform_frameworks_base/blob/android-15.0.0_r1/core/java/android/widget/TextView.java#L7347); [Editor delivers that invalidation to InputMethodManager](https://github.com/aosp-mirror/platform_frameworks_base/blob/android-15.0.0_r1/core/java/android/widget/Editor.java#L1931). Mixing that asynchronous reset into a stable-field benchmark can discard in-flight old-connection work. Exact loss/order assertions remain, input-session changes are recorded, and separate tests still exercise explicit restart/focus changes. Failed latency checks export diagnostics rather than only a timeout.
+
+The debug-only `ProbeActivity`/recording target is excluded from release APKs. Test recording is temporary in-process state, not a shipping input logger. Reports contain counts/timing and no private user text; failure diagnostics may contain the known synthetic test string.
 
 ## Where to find observed results
 
