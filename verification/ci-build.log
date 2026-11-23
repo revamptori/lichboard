@@ -1,164 +1,370 @@
+Downloading https://services.gradle.org/distributions/gradle-8.9-bin.zip
+............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.9!
+
+Here are the highlights of this release:
+ - Enhanced Error and Warning Messages
+ - IDE Integration Improvements
+ - Daemon JVM Information
+
+For more details see https://docs.gradle.org/8.9/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 > Task :app:preBuild UP-TO-DATE
-> Task :app:preDebugBuild UP-TO-DATE
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:preStandardDebugBuild UP-TO-DATE
+> Task :app:mergeStandardDebugNativeDebugMetadata NO-SOURCE
 > Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
-> Task :app:generateDebugBuildConfig FROM-CACHE
-> Task :app:generateDebugResValues FROM-CACHE
-> Task :app:checkDebugAarMetadata
-> Task :app:mapDebugSourceSetPaths
-> Task :app:generateDebugResources FROM-CACHE
-> Task :app:mergeDebugResources FROM-CACHE
-> Task :app:packageDebugResources FROM-CACHE
-> Task :app:parseDebugLocalResources FROM-CACHE
-> Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug FROM-CACHE
-> Task :app:processDebugMainManifest FROM-CACHE
-> Task :app:processDebugManifest FROM-CACHE
-> Task :app:processDebugManifestForPackage FROM-CACHE
-> Task :app:processDebugResources FROM-CACHE
-> Task :app:javaPreCompileDebug FROM-CACHE
-> Task :app:mergeDebugShaders
-> Task :app:compileDebugShaders NO-SOURCE
-> Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets FROM-CACHE
-> Task :app:desugarDebugFileDependencies FROM-CACHE
-> Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugNativeLibs
-> Task :app:mergeExtDexDebug FROM-CACHE
-> Task :app:mergeLibDexDebug FROM-CACHE
+> Task :app:generateStandardDebugBuildConfig
+> Task :app:generateStandardDebugResValues
+> Task :app:checkStandardDebugAarMetadata
+> Task :app:mapStandardDebugSourceSetPaths
+> Task :app:generateStandardDebugResources
+> Task :app:packageStandardDebugResources
+> Task :app:mergeStandardDebugResources
+> Task :app:createStandardDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksStandardDebug
+> Task :app:parseStandardDebugLocalResources
+> Task :app:processStandardDebugMainManifest
+> Task :app:processStandardDebugManifest
+> Task :app:processStandardDebugManifestForPackage
+> Task :app:javaPreCompileStandardDebug
+> Task :app:mergeStandardDebugShaders
+> Task :app:compileStandardDebugShaders NO-SOURCE
+> Task :app:generateStandardDebugAssets UP-TO-DATE
+> Task :app:mergeStandardDebugAssets
+> Task :app:compressStandardDebugAssets
+> Task :app:processStandardDebugResources
+> Task :app:checkStandardDebugDuplicateClasses
+> Task :app:desugarStandardDebugFileDependencies
+> Task :app:compileStandardDebugKotlin
+> Task :app:mergeExtDexStandardDebug
+> Task :app:compileStandardDebugJavaWithJavac
+> Task :app:mergeLibDexStandardDebug
+> Task :app:dexBuilderStandardDebug
+> Task :app:mergeStandardDebugGlobalSynthetics
+> Task :app:processStandardDebugJavaRes
+> Task :app:mergeProjectDexStandardDebug
+> Task :app:mergeStandardDebugJniLibFolders
+> Task :app:mergeStandardDebugNativeLibs
+> Task :app:mergeStandardDebugJavaResource
+> Task :app:validateSigningStandardDebug
+> Task :app:writeStandardDebugAppMetadata
+> Task :app:writeStandardDebugSigningConfigVersions
+> Task :app:preStandardDebugAndroidTestBuild SKIPPED
 
-> Task :app:stripDebugDebugSymbols
+> Task :app:stripStandardDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:preDebugAndroidTestBuild SKIPPED
-> Task :app:processDebugAndroidTestManifest
-> Task :app:generateDebugAndroidTestBuildConfig FROM-CACHE
-> Task :app:generateDebugAndroidTestResValues FROM-CACHE
-> Task :app:checkDebugAndroidTestAarMetadata
-> Task :app:mapDebugAndroidTestSourceSetPaths
-> Task :app:generateDebugAndroidTestResources FROM-CACHE
-> Task :app:mergeDebugAndroidTestResources FROM-CACHE
-> Task :app:processDebugAndroidTestResources FROM-CACHE
-> Task :app:javaPreCompileDebugAndroidTest FROM-CACHE
-> Task :app:mergeDebugAndroidTestShaders
-> Task :app:compileDebugAndroidTestShaders NO-SOURCE
-> Task :app:generateDebugAndroidTestAssets UP-TO-DATE
-> Task :app:mergeDebugAndroidTestAssets
-> Task :app:compressDebugAndroidTestAssets FROM-CACHE
-> Task :app:desugarDebugAndroidTestFileDependencies FROM-CACHE
-> Task :app:checkDebugAndroidTestDuplicateClasses
-> Task :app:mergeDebugAndroidTestJniLibFolders
-> Task :app:mergeExtDexDebugAndroidTest FROM-CACHE
-> Task :app:mergeLibDexDebugAndroidTest FROM-CACHE
-> Task :app:mergeDebugAndroidTestNativeLibs NO-SOURCE
-> Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
-> Task :app:validateSigningDebugAndroidTest
-> Task :app:writeDebugAndroidTestSigningConfigVersions
+> Task :app:bundleStandardDebugClassesToCompileJar
+> Task :app:processStandardDebugAndroidTestManifest
+> Task :app:generateStandardDebugAndroidTestBuildConfig
+> Task :app:checkStandardDebugAndroidTestAarMetadata
+> Task :app:generateStandardDebugAndroidTestResValues FROM-CACHE
+> Task :app:mapStandardDebugAndroidTestSourceSetPaths
+> Task :app:generateStandardDebugAndroidTestResources
+> Task :app:javaPreCompileStandardDebugAndroidTest FROM-CACHE
+> Task :app:mergeStandardDebugAndroidTestShaders
+> Task :app:compileStandardDebugAndroidTestShaders NO-SOURCE
+> Task :app:generateStandardDebugAndroidTestAssets UP-TO-DATE
+> Task :app:mergeStandardDebugAndroidTestResources
+> Task :app:mergeStandardDebugAndroidTestAssets
+> Task :app:compressStandardDebugAndroidTestAssets FROM-CACHE
+> Task :app:checkStandardDebugAndroidTestDuplicateClasses
+> Task :app:processStandardDebugAndroidTestResources
+> Task :app:packageStandardDebug
+> Task :app:createStandardDebugApkListingFileRedirect
+> Task :app:assembleStandardDebug
+> Task :app:desugarStandardDebugAndroidTestFileDependencies FROM-CACHE
+> Task :app:mergeLibDexStandardDebugAndroidTest FROM-CACHE
+> Task :app:mergeStandardDebugAndroidTestJniLibFolders
+> Task :app:mergeStandardDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripStandardDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningStandardDebugAndroidTest
+> Task :app:writeStandardDebugAndroidTestSigningConfigVersions
 > Task :app:buildKotlinToolingMetadata
-> Task :app:preReleaseBuild UP-TO-DATE
-> Task :app:generateReleaseBuildConfig FROM-CACHE
-> Task :app:generateReleaseResValues FROM-CACHE
-> Task :app:checkReleaseAarMetadata
-> Task :app:mapReleaseSourceSetPaths
-> Task :app:generateReleaseResources FROM-CACHE
-> Task :app:mergeReleaseResources FROM-CACHE
-> Task :app:packageReleaseResources FROM-CACHE
-> Task :app:parseReleaseLocalResources FROM-CACHE
-> Task :app:createReleaseCompatibleScreenManifests
-> Task :app:extractDeepLinksRelease FROM-CACHE
-> Task :app:processReleaseMainManifest FROM-CACHE
-> Task :app:processReleaseManifest FROM-CACHE
-> Task :app:processReleaseManifestForPackage FROM-CACHE
-> Task :app:processReleaseResources FROM-CACHE
-> Task :app:javaPreCompileRelease FROM-CACHE
+> Task :app:preStandardReleaseBuild UP-TO-DATE
+> Task :app:generateStandardReleaseBuildConfig
+> Task :app:checkStandardReleaseAarMetadata
+> Task :app:generateStandardReleaseResValues FROM-CACHE
+> Task :app:mapStandardReleaseSourceSetPaths
+> Task :app:generateStandardReleaseResources
+> Task :app:mergeExtDexStandardDebugAndroidTest
+> Task :app:packageStandardReleaseResources
+> Task :app:createStandardReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksStandardRelease FROM-CACHE
+> Task :app:processStandardReleaseMainManifest
+> Task :app:processStandardReleaseManifest
+> Task :app:parseStandardReleaseLocalResources
+> Task :app:javaPreCompileStandardRelease FROM-CACHE
 > Task :app:extractProguardFiles
-> Task :app:mergeReleaseJniLibFolders
-> Task :app:mergeReleaseNativeLibs
+> Task :app:mergeStandardReleaseJniLibFolders
+> Task :app:processStandardReleaseManifestForPackage
+> Task :app:mergeStandardReleaseNativeLibs
 
-> Task :app:stripReleaseDebugSymbols
+> Task :app:stripStandardReleaseDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:checkReleaseDuplicateClasses
-> Task :app:extractReleaseNativeSymbolTables FROM-CACHE
-> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:desugarReleaseFileDependencies FROM-CACHE
-> Task :app:mergeReleaseStartupProfile
-> Task :app:mergeExtDexRelease FROM-CACHE
-> Task :app:mergeReleaseShaders
-> Task :app:mergeReleaseArtProfile
-> Task :app:compileReleaseShaders NO-SOURCE
-> Task :app:generateReleaseAssets UP-TO-DATE
-> Task :app:mergeReleaseAssets
-> Task :app:compressReleaseAssets FROM-CACHE
-> Task :app:extractReleaseVersionControlInfo
-> Task :app:optimizeReleaseResources FROM-CACHE
-> Task :app:collectReleaseDependencies
-> Task :app:sdkReleaseDependencyData
-> Task :app:validateSigningRelease
-> Task :app:writeReleaseAppMetadata
-> Task :app:writeReleaseSigningConfigVersions
-> Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:javaPreCompileDebugUnitTest FROM-CACHE
-> Task :app:compileReleaseKotlin
-> Task :app:compileDebugKotlin
-> Task :app:compileReleaseJavaWithJavac
-> Task :app:compileDebugJavaWithJavac
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics FROM-CACHE
-> Task :app:processDebugJavaRes
-> Task :app:bundleDebugClassesToCompileJar
-> Task :app:mergeProjectDexDebug
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:mergeDebugJavaResource
-> Task :app:dexBuilderRelease
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
-> Task :app:mergeReleaseGlobalSynthetics FROM-CACHE
-> Task :app:processReleaseJavaRes
-> Task :app:compileDebugAndroidTestKotlin
-> Task :app:mergeReleaseJavaResource
-> Task :app:compileDebugAndroidTestJavaWithJavac
-> Task :app:dexBuilderDebugAndroidTest
-> Task :app:mergeDebugAndroidTestGlobalSynthetics FROM-CACHE
-> Task :app:processDebugAndroidTestJavaRes
-> Task :app:mergeDebugAndroidTestJavaResource
-> Task :app:mergeProjectDexDebugAndroidTest
-> Task :app:bundleDebugClassesToRuntimeJar
-> Task :app:packageDebugAndroidTest
-> Task :app:createDebugAndroidTestApkListingFileRedirect
-> Task :app:assembleDebugAndroidTest
-> Task :app:generateDebugAndroidTestLintModel
-> Task :app:generateDebugLintReportModel
-> Task :app:generateDebugUnitTestLintModel
-> Task :app:compileDebugUnitTestKotlin
-> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes
-> Task :app:testDebugUnitTest
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintAnalyzeDebugAndroidTest
-> Task :app:lintAnalyzeDebugUnitTest
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
-> Task :app:lintAnalyzeDebug
+> Task :app:checkStandardReleaseDuplicateClasses
+> Task :app:compileStandardDebugAndroidTestKotlin
+> Task :app:extractStandardReleaseNativeSymbolTables
+> Task :app:mergeStandardReleaseResources
+> Task :app:compileStandardDebugAndroidTestJavaWithJavac
+> Task :app:dexBuilderStandardDebugAndroidTest
+> Task :app:mergeStandardDebugAndroidTestGlobalSynthetics FROM-CACHE
+> Task :app:mergeProjectDexStandardDebugAndroidTest
+> Task :app:processStandardDebugAndroidTestJavaRes
+> Task :app:mergeStandardDebugAndroidTestJavaResource
+> Task :app:mergeStandardReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:desugarStandardReleaseFileDependencies
+> Task :app:mergeStandardReleaseStartupProfile
+> Task :app:processStandardReleaseResources
+> Task :app:packageStandardDebugAndroidTest
+> Task :app:mergeStandardReleaseArtProfile
+> Task :app:createStandardDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleStandardDebugAndroidTest
+> Task :app:mergeStandardReleaseShaders
+> Task :app:compileStandardReleaseShaders NO-SOURCE
+> Task :app:generateStandardReleaseAssets UP-TO-DATE
+> Task :app:mergeStandardReleaseAssets
+> Task :app:compressStandardReleaseAssets
+> Task :app:extractStandardReleaseVersionControlInfo
+> Task :app:collectStandardReleaseDependencies
+> Task :app:sdkStandardReleaseDependencyData
+> Task :app:validateSigningStandardRelease
+> Task :app:writeStandardReleaseAppMetadata
+> Task :app:writeStandardReleaseSigningConfigVersions
+> Task :app:optimizeStandardReleaseResources
+> Task :app:bundleStandardDebugClassesToRuntimeJar
+> Task :app:preStandardDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileStandardDebugUnitTest FROM-CACHE
+> Task :app:compileStandardDebugUnitTestKotlin
+> Task :app:mergeExtDexStandardRelease
+> Task :app:generateStandardDebugAndroidTestLintModel
+> Task :app:compileStandardDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processStandardDebugUnitTestJavaRes
+> Task :app:testStandardDebugUnitTest
+> Task :app:generateStandardDebugLintReportModel
+> Task :app:generateStandardDebugUnitTestLintModel
+> Task :app:compileStandardReleaseKotlin
+> Task :app:compileStandardReleaseJavaWithJavac
+> Task :app:generateStandardReleaseLintVitalReportModel
+> Task :app:dexBuilderStandardRelease
+> Task :app:mergeStandardReleaseGlobalSynthetics
+> Task :app:processStandardReleaseJavaRes
+> Task :app:mergeStandardReleaseJavaResource
+> Task :app:mergeDexStandardRelease
+> Task :app:compileStandardReleaseArtProfile
+> Task :app:packageStandardRelease
+> Task :app:createStandardReleaseApkListingFileRedirect
+> Task :app:preAssistDebugBuild UP-TO-DATE
+> Task :app:mergeAssistDebugNativeDebugMetadata NO-SOURCE
+> Task :app:generateAssistDebugBuildConfig
+> Task :app:checkAssistDebugAarMetadata
+> Task :app:generateAssistDebugResValues FROM-CACHE
+> Task :app:mapAssistDebugSourceSetPaths
+> Task :app:generateAssistDebugResources
+> Task :app:mergeAssistDebugResources
+> Task :app:packageAssistDebugResources
+> Task :app:parseAssistDebugLocalResources
+> Task :app:createAssistDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksAssistDebug FROM-CACHE
+> Task :app:processAssistDebugMainManifest
+> Task :app:processAssistDebugManifest
+> Task :app:processAssistDebugManifestForPackage
+> Task :app:processAssistDebugResources
+> Task :app:lintAnalyzeStandardDebug
+> Task :app:compileAssistDebugKotlin
+> Task :app:javaPreCompileAssistDebug FROM-CACHE
+> Task :app:compileAssistDebugJavaWithJavac
+> Task :app:mergeAssistDebugShaders
+> Task :app:compileAssistDebugShaders NO-SOURCE
+> Task :app:generateAssistDebugAssets UP-TO-DATE
+> Task :app:mergeAssistDebugAssets
+> Task :app:compressAssistDebugAssets FROM-CACHE
+> Task :app:desugarAssistDebugFileDependencies FROM-CACHE
+> Task :app:lintVitalAnalyzeStandardRelease
+> Task :app:lintAnalyzeStandardDebugAndroidTest
+> Task :app:dexBuilderAssistDebug
+> Task :app:mergeAssistDebugGlobalSynthetics FROM-CACHE
+> Task :app:processAssistDebugJavaRes
+> Task :app:mergeAssistDebugJavaResource
+> Task :app:checkAssistDebugDuplicateClasses
+> Task :app:mergeExtDexAssistDebug FROM-CACHE
+> Task :app:mergeLibDexAssistDebug FROM-CACHE
+> Task :app:mergeProjectDexAssistDebug
+> Task :app:mergeAssistDebugJniLibFolders
+> Task :app:mergeAssistDebugNativeLibs
 
-> Task :app:lintReportDebug
-Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-debug.html
+> Task :app:stripAssistDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:lintDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795393579392.json
+> Task :app:validateSigningAssistDebug
+> Task :app:writeAssistDebugAppMetadata
+> Task :app:writeAssistDebugSigningConfigVersions
+> Task :app:packageAssistDebug
+> Task :app:createAssistDebugApkListingFileRedirect
+> Task :app:assembleAssistDebug
+> Task :app:bundleAssistDebugClassesToCompileJar
+> Task :app:preAssistDebugAndroidTestBuild SKIPPED
+> Task :app:processAssistDebugAndroidTestManifest
+> Task :app:generateAssistDebugAndroidTestBuildConfig
+> Task :app:checkAssistDebugAndroidTestAarMetadata
+> Task :app:generateAssistDebugAndroidTestResValues FROM-CACHE
+> Task :app:mapAssistDebugAndroidTestSourceSetPaths
+> Task :app:generateAssistDebugAndroidTestResources
+> Task :app:mergeAssistDebugAndroidTestResources
+> Task :app:processAssistDebugAndroidTestResources
+> Task :app:lintAnalyzeStandardDebugUnitTest
+> Task :app:javaPreCompileAssistDebugAndroidTest FROM-CACHE
+> Task :app:mergeAssistDebugAndroidTestShaders
+> Task :app:compileAssistDebugAndroidTestShaders NO-SOURCE
+> Task :app:generateAssistDebugAndroidTestAssets UP-TO-DATE
+> Task :app:mergeAssistDebugAndroidTestAssets
+> Task :app:compressAssistDebugAndroidTestAssets FROM-CACHE
+> Task :app:desugarAssistDebugAndroidTestFileDependencies FROM-CACHE
+> Task :app:checkAssistDebugAndroidTestDuplicateClasses
+> Task :app:mergeExtDexAssistDebugAndroidTest FROM-CACHE
+> Task :app:mergeLibDexAssistDebugAndroidTest FROM-CACHE
+> Task :app:mergeAssistDebugAndroidTestJniLibFolders
+> Task :app:mergeAssistDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripAssistDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningAssistDebugAndroidTest
+> Task :app:writeAssistDebugAndroidTestSigningConfigVersions
+> Task :app:preAssistReleaseBuild UP-TO-DATE
+> Task :app:generateAssistReleaseBuildConfig
+> Task :app:checkAssistReleaseAarMetadata
+> Task :app:generateAssistReleaseResValues FROM-CACHE
+> Task :app:mapAssistReleaseSourceSetPaths
+> Task :app:generateAssistReleaseResources
+> Task :app:compileAssistDebugAndroidTestKotlin
+> Task :app:compileAssistDebugAndroidTestJavaWithJavac
+> Task :app:mergeAssistReleaseResources
+> Task :app:dexBuilderAssistDebugAndroidTest
+> Task :app:mergeAssistDebugAndroidTestGlobalSynthetics FROM-CACHE
+> Task :app:processAssistDebugAndroidTestJavaRes
+> Task :app:mergeProjectDexAssistDebugAndroidTest
+> Task :app:packageAssistReleaseResources
+> Task :app:mergeAssistDebugAndroidTestJavaResource
+> Task :app:parseAssistReleaseLocalResources
+> Task :app:createAssistReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksAssistRelease FROM-CACHE
+> Task :app:processAssistReleaseMainManifest
+> Task :app:processAssistReleaseManifest
+> Task :app:packageAssistDebugAndroidTest
+> Task :app:createAssistDebugAndroidTestApkListingFileRedirect
+> Task :app:processAssistReleaseManifestForPackage
+> Task :app:assembleAssistDebugAndroidTest
+> Task :app:javaPreCompileAssistRelease FROM-CACHE
+> Task :app:mergeAssistReleaseJniLibFolders
+> Task :app:mergeAssistReleaseNativeLibs
 
-BUILD SUCCESSFUL in 56s
-129 actionable tasks: 82 executed, 47 from cache
+> Task :app:stripAssistReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
+
+> Task :app:extractAssistReleaseNativeSymbolTables FROM-CACHE
+> Task :app:mergeAssistReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:mergeAssistReleaseArtProfile
+> Task :app:desugarAssistReleaseFileDependencies FROM-CACHE
+> Task :app:checkAssistReleaseDuplicateClasses
+> Task :app:mergeAssistReleaseStartupProfile
+> Task :app:mergeExtDexAssistRelease FROM-CACHE
+> Task :app:processAssistReleaseResources
+> Task :app:mergeAssistReleaseShaders
+> Task :app:compileAssistReleaseShaders NO-SOURCE
+> Task :app:generateAssistReleaseAssets UP-TO-DATE
+> Task :app:mergeAssistReleaseAssets
+> Task :app:compressAssistReleaseAssets FROM-CACHE
+> Task :app:extractAssistReleaseVersionControlInfo
+> Task :app:optimizeAssistReleaseResources
+> Task :app:collectAssistReleaseDependencies
+> Task :app:sdkAssistReleaseDependencyData
+> Task :app:validateSigningAssistRelease
+> Task :app:writeAssistReleaseAppMetadata
+> Task :app:writeAssistReleaseSigningConfigVersions
+> Task :app:bundleAssistDebugClassesToRuntimeJar
+> Task :app:compileAssistDebugUnitTestKotlin
+> Task :app:preAssistDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileAssistDebugUnitTest FROM-CACHE
+> Task :app:compileAssistDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processAssistDebugUnitTestJavaRes
+> Task :app:testAssistDebugUnitTest
+> Task :app:generateAssistDebugAndroidTestLintModel
+> Task :app:generateAssistDebugLintReportModel
+> Task :app:generateAssistDebugUnitTestLintModel
+> Task :app:lintVitalReportStandardRelease
+> Task :app:lintVitalStandardRelease
+> Task :app:assembleStandardRelease
+> Task :app:compileAssistReleaseKotlin
+> Task :app:compileAssistReleaseJavaWithJavac
+> Task :app:generateAssistReleaseLintVitalReportModel
+> Task :app:dexBuilderAssistRelease
+> Task :app:mergeAssistReleaseGlobalSynthetics FROM-CACHE
+> Task :app:lintAnalyzeAssistDebugAndroidTest
+> Task :app:mergeDexAssistRelease
+> Task :app:compileAssistReleaseArtProfile
+> Task :app:processAssistReleaseJavaRes
+> Task :app:mergeAssistReleaseJavaResource
+> Task :app:packageAssistRelease
+> Task :app:createAssistReleaseApkListingFileRedirect
+
+> Task :app:lintReportStandardDebug
+Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-standardDebug.html
+
+> Task :app:lintStandardDebug
+> Task :app:lintVitalAnalyzeAssistRelease
+> Task :app:lintVitalReportAssistRelease
+> Task :app:lintVitalAssistRelease
+> Task :app:assembleAssistRelease
+> Task :app:lintAnalyzeAssistDebug
+> Task :app:lintAnalyzeAssistDebugUnitTest
+
+> Task :app:lintReportAssistDebug
+Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-assistDebug.html
+
+> Task :app:lintAssistDebug FAILED
+Lint found 2 errors, 20 warnings. First failure:
+
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:75: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
+        if (Build.VERSION.SDK_INT >= 34) startForeground(NOTIFICATION, notification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+                                         ~~~~~~~~~~~~~~~
+
+The full lint text report is located at:
+  /home/runner/work/lichboard/lichboard/app/build/intermediates/lint_intermediate_text_report/assistDebug/lintReportAssistDebug/lint-results-assistDebug.txt
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795402538591.json
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:lintAssistDebug'.
+> Lint found errors in the project; aborting build.
+  
+  Fix the issues identified by lint, or create a baseline to see only new errors.
+  To create a baseline, run `gradlew updateLintBaseline` after adding the following to the module's build.gradle file:
+  ```
+  android {
+      lint {
+          baseline = file("lint-baseline.xml")
+      }
+  }
+  ```
+  For more details, see https://developer.android.com/studio/write/lint#snapshot
+  
+  Lint found 2 errors, 20 warnings. First failure:
+  
+  /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:75: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
+          if (Build.VERSION.SDK_INT >= 34) startForeground(NOTIFICATION, notification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+                                           ~~~~~~~~~~~~~~~
+  
+  The full lint text report is located at:
+    /home/runner/work/lichboard/lichboard/app/build/intermediates/lint_intermediate_text_report/assistDebug/lintReportAssistDebug/lint-results-assistDebug.txt
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5m 3s
+256 actionable tasks: 222 executed, 34 from cache

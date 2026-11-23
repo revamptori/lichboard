@@ -23,9 +23,6 @@
 /home/runner/work/lichboard/lichboard/app/src/main/AndroidManifest.xml:19: Warning: Attribute enableOnBackInvokedCallback is only used in API level 33 and higher (current min is 30) [UnusedAttribute]
         android:enableOnBackInvokedCallback="true">
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/res/xml/accessibility_service.xml:10: Warning: Attribute isAccessibilityTool is only used in API level 31 and higher (current min is 30) [UnusedAttribute]
-    android:isAccessibilityTool="false" />
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    Explanation for issues of type "UnusedAttribute":
    This check finds attributes set in XML files that were introduced in a
@@ -44,25 +41,25 @@
    can be unused too, such as the new <tag> element in layouts introduced in
    API 21.
 
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:61: Warning: A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.19.1 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:77: Warning: A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.19.1 [GradleDependency]
     implementation("androidx.core:core-ktx:1.15.0")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:62: Warning: A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:78: Warning: A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0 [GradleDependency]
     implementation("androidx.activity:activity-compose:1.9.3")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:63: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.11.1 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:79: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.11.1 [GradleDependency]
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:71: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:87: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
     androidTestImplementation("androidx.test:runner:1.6.2")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:72: Warning: A newer version of androidx.test:rules than 1.6.1 is available: 1.7.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:88: Warning: A newer version of androidx.test:rules than 1.6.1 is available: 1.7.0 [GradleDependency]
     androidTestImplementation("androidx.test:rules:1.6.1")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:73: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:89: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:74: Warning: A newer version of androidx.test.uiautomator:uiautomator than 2.3.0 is available: 2.4.1 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:90: Warning: A newer version of androidx.test.uiautomator:uiautomator than 2.3.0 is available: 2.4.1 [GradleDependency]
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -138,4 +135,4 @@ class KeyboardPanel(
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 20 warnings
+0 errors, 19 warnings

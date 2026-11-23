@@ -1,12 +1,58 @@
 {
-  "sourceCommit": "817ca29520410efb0178284bad95d292e834a127",
-  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45088740213",
-  "timestampUtc": "2026-11-23T00:32:25.625645+00:00",
-  "buildUnitTestsLint": "success",
-  "android11Api30": "success",
-  "android15Api35": "success",
-  "signing": "Evaluation release; Android development certificate. Use your own keystore for production.",
-  "apkSha256": "9ac59587beb4561edce150f957031f6b1db3472b8c7686ad244965f3272cf475",
-  "apkBytes": 18438279,
-  "verifiedReleasePublished": true
+  "sourceCommit": "9d095106de6730f84d35503c384f3de9a79da0cc",
+  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45102905777",
+  "timestampUtc": "2026-11-23T03:00:30.162472+00:00",
+  "versionName": "1.1.0",
+  "buildUnitTestsLint": "failure",
+  "android11Api30": "skipped",
+  "android15Api35": "skipped",
+  "signing": "Non-debuggable evaluation releases; Android development certificate. Use your own private keystore for production and stable updates.",
+  "playProtectAcceptance": "Not verified. Stock Android emulator tests do not include Google Play Protect or OEM installation policy. Do not disable device protections.",
+  "variants": {
+    "standard": {
+      "deviceTests": {
+        "api30": {
+          "tests": 0,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": false,
+          "passed": false
+        },
+        "api35": {
+          "tests": 0,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": false,
+          "passed": false
+        }
+      },
+      "published": false,
+      "apkPath": null
+    },
+    "assist": {
+      "deviceTests": {
+        "api30": {
+          "tests": 0,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": false,
+          "passed": false
+        },
+        "api35": {
+          "tests": 0,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "releaseSmokePassed": false,
+          "passed": false
+        }
+      },
+      "published": false,
+      "apkPath": null
+    }
+  },
+  "verifiedReleasePublished": false
 }
