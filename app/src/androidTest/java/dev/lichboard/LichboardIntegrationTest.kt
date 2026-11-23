@@ -89,7 +89,12 @@ class LichboardIntegrationTest {
     private fun exportEvidence(file: File) {
         val values = ContentValues().apply {
             put(MediaStore.Downloads.DISPLAY_NAME, file.name)
-            put(MediaStore.Downloads.MIME_TYPE, if (file.extension == "png") "image/png" else "text/plain")
+            put(MediaStore.Downloads.MIME_TYPE, when (file.extension) {
+                "png" -> "image/png"
+                "json" -> "application/json"
+                "xml" -> "text/xml"
+                else -> "text/plain"
+            })
             put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests-${BuildConfig.FLAVOR}")
         }
         context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)?.let { uri ->
