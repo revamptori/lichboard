@@ -10,8 +10,8 @@ A real, native Android 11+ keyboard with a persistent draggable overlay button, 
 
 | Edition | Download after CI verification | What it includes |
 |---|---|---|
-| **Standard — recommended** | **[`Lichboard-1.1.0-standard.apk`](releases/Lichboard-1.1.0-standard.apk)** | Normal IME, floating keyboard/bubble, clipboard draft, themes and controls. **No AccessibilityService declaration, implementation, or service metadata.** Package `dev.lichboard`. |
-| **Assist — explicitly optional** | [`Lichboard-1.1.0-assist.apk`](releases/Lichboard-1.1.0-assist.apk) | All Standard features plus consent-based accessibility editing of supported non-password fields. Named **Lichboard Assist**, separate package `dev.lichboard.assist`. |
+| **Standard — recommended** | **[`Lichboard-1.2.0-standard.apk`](releases/Lichboard-1.2.0-standard.apk)** | Normal IME, floating keyboard/bubble, clipboard draft, themes and controls. **No AccessibilityService declaration, implementation, or service metadata.** Package `dev.lichboard`. |
+| **Assist — explicitly optional** | [`Lichboard-1.2.0-assist.apk`](releases/Lichboard-1.2.0-assist.apk) | All Standard features plus consent-based accessibility editing of supported non-password fields. Named **Lichboard Assist**, separate package `dev.lichboard.assist`. |
 
 The APKs are only published after both editions build, pass JVM tests/Lint, pass their Android 11 / Android 15 device tests, and launch as non-debuggable releases on both emulators. [`verification/latest.json`](verification/latest.json) records the tested source, outcomes, capabilities and each APK's SHA-256. [`releases/SHA256SUMS`](releases/SHA256SUMS) provides download checksums. Failed verification never publishes new APKs.
 
@@ -25,7 +25,7 @@ The APKs are only published after both editions build, pass JVM tests/Lint, pass
 For development on a dedicated test device with ADB (not as a workaround for a Play Protect block):
 
 ```sh
-adb install -r releases/Lichboard-1.1.0-standard.apk
+adb install -r releases/Lichboard-1.2.0-standard.apk
 adb shell am start -n dev.lichboard/dev.lichboard.MainActivity
 # Assist uses package dev.lichboard.assist and the same fully qualified activity class.
 ```
@@ -51,16 +51,26 @@ In **Standard**, automatic mode uses the active Lichboard IME or a draft; only A
 
 **Secure/fullscreen screens:** normal fullscreen apps can show the overlay where Android permits. Secure apps can suppress it, system permission dialogs can reject overlay-covered touches, and the lockscreen hides Lichboard. Nothing attempts to evade these restrictions.
 
+## 1.2 input improvements
+
+- **Immediate normal input:** an active IME connection receives each ready key on the calling Main turn. No per-key Main → CPU worker → Main round trip, debounce, or 64-key channel overflow. Only genuinely slow assist/clipboard work leaves Main.
+- **Less work while typing:** unchanged letter labels/modifier colors are left alone; status/preview rendering is coalesced to a frame, not rebuilt for every character. Clipboard actions update their preview without recreating the buttons. Backspace uses selection notifications rather than a blocking selected-text query per press.
+- **More reliable touches:** the space between painted keys is touchable, small edge drift is tolerated using Android's touch slop, and overlapping fingers preserve press order. Unambiguous keys activate on down; keys with long-press alternatives wait for release or the next key so holding still works without inserting an unwanted base letter. Per-key scale animations are gone.
+- **Ordered slow-target backlog:** only already-pending plain text is combined (up to 128 units per batch), never across edit commands, modifiers or input sessions. There is no batching delay on the normal IME path. The queue remains bounded and reports overload rather than silently accepting discarded actions.
+- **Session safety:** closing/detaching drops unsent actions. Both panels check editor/route sessions before queued work; Assist also invalidates pending input on focus/window notifications without reading event text. Already-sent Android actions cannot be retracted.
+
+[Input performance and test methodology](docs/INPUT-PERFORMANCE.md) explains the burst, multi-touch and latency checks. The fastest supported route is the **selected Lichboard IME with a focused compatible editor**; the floating board uses that same connection in Automatic mode. A draft is not direct typing, and optional accessibility replacement is not as capable or efficient as a real input connection. No phone-specific speedup or universal app compatibility is claimed.
+
 ## Features
 
 - Persistent circular logo button: draggable, saved normalized screen position, 40–84 dp size, 30–100% opacity, tap to toggle and hold for quick settings.
 - Independent draggable floating keyboard: 70–100% screen width, 240–480 dp preferred height (clamped in landscape), 55–100% opacity. IME height is also adjustable; IME opacity remains opaque for usability.
 - QWERTY, number row, two symbol pages, one-shot/caps Shift, Ctrl/Alt one-shot or locked, Unicode accents on long press, repeating backspace/delete, Space and Enter.
 - Navigation row, complete function/editing panel, emoji panel with three categories, explicit clipboard access, copy/cut/paste/select-all, volatile draft preview and clear action.
-- Midnight (default), AMOLED Black, Dracula, Nord, Light and validated custom background/accent colors, rounded keys, short press/open transitions.
+- Midnight (default), AMOLED Black, Dracula, Nord, Light and validated custom background/accent colors, rounded keys, immediate pressed-state colors and a short open transition.
 - First-run guidance, real editor test area, live service status, geometry reset, haptic and system key-click toggles, optional boot restore.
 - Auto-hide means **hide the floating button while either Lichboard keyboard is visible**. The keyboard can still be closed from its toolbar or service notification; the button then returns. It is not an idle timer.
-- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Input assist runs off the UI thread through an ordered, bounded input queue so a slow accessibility target cannot freeze the keyboard. Detaching/closing a panel drops its pending actions; the normal IME also drops them when its editor changes. Android calls already sent cannot be retracted. Discarded key pages do not remain in a global view registry.
+- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Ready IME/draft input executes inline; input assist runs off the UI thread through an ordered, bounded, text-coalescing input queue so a slow accessibility target cannot freeze the keyboard. Detaching/closing drops pending actions; both panels validate editor/route sessions before queued work. Android calls already sent cannot be retracted. Discarded key pages do not remain in a global view registry.
 
 ## Optional accessibility setup — Assist edition only
 
@@ -70,7 +80,7 @@ It is **not necessary** for the floating button or normal IME. In **Controls →
 
 For sideloaded apps on Android 13+, Android may block accessibility under **Restricted settings**. If you trust the build, open Android **App info → Lichboard → ⋮ → Allow restricted settings** before enabling it. OEM wording varies. This applies only to service activation **after installation** and does not resolve a Play Protect installation block. Do not disable Play Protect or system protections to install the app.
 
-The service does not inspect accessibility-event contents, record keystrokes, cache editable nodes, or read password fields. It only fetches the focused editable node in response to an explicit keyboard action. Clipboard contents are read only after an explicit Clipboard/Paste action, never in the background or into persistent history. In-memory drafts are not saved across process death. Android backs up neither app settings nor drafts (`allowBackup=false`).
+The service does not read accessibility-event text/source nodes, record keystrokes, cache editable nodes, or read password fields. Focus/window notifications only invalidate an opaque input-session token to discard stale pending input. It fetches the focused editable node only in response to an explicit keyboard action. Clipboard contents are read only after an explicit Clipboard/Paste action, never in the background or into persistent history. In-memory drafts are not saved across process death. Android backs up neither app settings nor drafts (`allowBackup=false`).
 
 ## Background behavior
 
@@ -110,7 +120,7 @@ Never commit keystores/passwords. The `*.jks`, `*.keystore`, `local.properties` 
 
 ### Complete project archive
 
-After successful CI verification and pulling its evidence commit, run `python3 scripts/package-project.py`. It checks both APK checksums and that all application/build/test scripts match the tested commit, then creates **`deliverables/Lichboard-1.1.0-AndroidStudio.zip`** and `deliverables/SHA256SUMS`. The archive contains all Kotlin sources, resources, manifests, wrapper, tests, CI scripts, README, verification reports/screenshots and both installable APKs, under a single `Lichboard/` folder. Extract it and open that folder in Android Studio. No SDK, local caches, Git history, credentials or private keys are bundled; first Gradle sync needs Internet access.
+After successful CI verification and pulling its evidence commit, run `python3 scripts/package-project.py`. It checks both APK checksums and that all application/build/test scripts match the tested commit, then creates **`deliverables/Lichboard-1.2.0-AndroidStudio.zip`** and `deliverables/SHA256SUMS`. The archive contains all Kotlin sources, resources, manifests, wrapper, tests, CI scripts, README, verification reports/screenshots and both installable APKs, under a single `Lichboard/` folder. Extract it and open that folder in Android Studio. No SDK, local caches, Git history, credentials or private keys are bundled; first Gradle sync needs Internet access.
 
 ## Testing and evidence
 
@@ -124,21 +134,25 @@ bash scripts/device-test.sh 30  # Use 35 for API 35, etc.
 
 The instrumentation suite sets overlay app-ops and selects the IME through the **test device’s ADB shell**, not inside the shipping app. Use a dedicated test emulator. It exercises a debug-only real `EditText`, a raw-key `InputConnection` target, and the actual overlay/IME service windows. The debug-only probe activity is not in the release APK.
 
-Both editions run the common key/window suite. Standard additionally checks installed service/class absence and rejection of assist preferences. Only Assist compiles/runs the accessibility suite, in a **separate instrumentation invocation** from key/window tests. For accessibility, UiAutomation is used only for the test shell with its event subscription disabled; this avoids Android 11’s same-process shared accessibility-node-cache contention. Actual field editing still goes through the real AccessibilityService and Android node actions, with consent, hint-text and password checks. All normal/floating key gestures are exercised by UiAutomator in the key/window suite.
+Both editions run the common key/window suite. Standard additionally checks installed service/class absence and rejection of assist preferences. Only Assist compiles/runs the accessibility suite, in a **separate instrumentation invocation** from key/window tests. For accessibility, UiAutomation is used only for the test shell with its event subscription disabled; this avoids Android 11’s same-process shared accessibility-node-cache contention. Actual field editing still goes through the real AccessibilityService and Android node actions, with consent, hint-text and password checks. End-to-end normal/floating gestures use UiAutomator. Separate native MotionEvent tests exercise edge drift, cancellation, hold/repeat and split-pointer rolling; burst/latency tests activate native keys directly through the actual IME into a real EditText. Timing ends at target commitText entry, not at pixels appearing on screen.
 
 Tests cover:
 
 - UTF-16/code-point-safe buffer editing, selections, limits, concurrent draft edits, snapshot-safe cuts, and all route-policy combinations.
+- Immediate ordered dispatch of 4,000 ready actions; 4,096 characters through a suspended backend; batching boundaries, explicit overload, failures, cancellation, reentrancy and editor-session changes.
+- Actual IME 520-character bursts followed by 128 rapid backspaces with no loss/reordering or per-backspace selected-text queries; 105 activation-to-target-commit latency samples per edition/API at an 8 ms requested cadence. See the JSON reports and their explicitly limited scope.
 - Real normal-IME typing, Shift, backspace, numbers and Space.
 - Floating typing without stealing editor focus, cursor movement, Ctrl+A replacement.
 - Automatic no-editor draft fallback, explicit clipboard draft/copy, emoji and close lifecycle.
-- Repeated native page rebuilds, cancellation of queued keys on detach, and fresh input after reattachment.
+- Repeated native page rebuilds, immediate 512-key draft input, ignored detached callbacks, and fresh input after reattachment. Separately tests cancellation of truly pending work, rather than incorrectly discarding keys that already completed inline.
+- Native hit-cell continuity, slight edge drift, canceled drags, down activation, accessibility clicks, hold/repeat disposal, overlapping pointers and one-shot Shift order.
+- Real editor switching without replay into the next field, Unicode code-point deletion and selected-text replacement.
 - Long-press accents, F1–F12/editing-key presence, rejection of unsupported draft special keys.
 - Actual raw F12 and Ctrl+F1 delivery to a receiving view.
 - Bubble drag/persistence, long-press controls, themes and geometry changes.
 - Compose Board/Style/Controls navigation and a real theme preference change, with native screenshots.
 - Standard: actual APK manifest/DEX/resource absence of the accessibility service, runtime absence, filtered UI/routes, and normalization of old assist preferences.
-- Assist: consent dialog cancellation and refusal without in-app opt-in, then text insertion/deletion/hint handling/password refusal using a real focused editor.
+- Assist: consent dialog cancellation and refusal without in-app opt-in, then text insertion/deletion/hint handling/password refusal, a 480-character queued burst and stale focus-token rejection using real focused editors.
 
 [The CI workflow](.github/workflows/android.yml) builds, runs JVM tests and Lint, boots **Android 11 (API 30)** and **Android 15 (API 35)** emulators, runs the device tests on each, then installs and launches **both non-debuggable release APKs** on each. It verifies flavor-specific APK signing/badging/manifest/DEX and records reports, screenshots and runtime crash logs in [`verification/`](verification/). A build is only marked verified when all stages succeed; inspect `latest.json` for the current result. CI publishes evidence/APK back to **this working branch only**, with `[skip ci]` to avoid loops, and retains the complete Actions artifact for 14 days.
 
@@ -173,6 +187,7 @@ verification/                      Machine-readable results, reports and screens
 ## Troubleshooting
 
 - **Play Protect blocks installation:** do not disable it. Try the verified Standard edition, which omits accessibility completely. Acceptance is not guaranteed; if Standard is also blocked, stop and record the Android version, install source, APK checksum and exact warning for investigation/review. [Details](docs/INSTALLATION-BLOCK.md).
+- **Input feels slow:** select Lichboard as the Android keyboard and use Automatic or IME-only routing with a focused editor. Look for **IME** in the route label; Assist is a slower compatibility fallback, and **DRAFT** is memory-only. Check [1.2 input changes and test scope](docs/INPUT-PERFORMANCE.md). If a particular app still drops text, report the edition, Android/OEM version, route label and receiving app.
 - **Keyboard appears but nothing reaches the app:** select Lichboard as the Android IME, focus a compatible editor and check the keyboard’s route label. A draft label means text is staying in memory. Use input assist where supported or explicit copy/paste.
 - **F-keys/shortcuts do nothing:** the receiving app must implement Android key events through its active input connection. Accessibility and the clipboard cannot synthesize arbitrary hardware input.
 - **Button missing while typing:** expected with Auto-hide enabled. Close the keyboard or use the notification. Secure screens and lockscreen intentionally hide overlays.

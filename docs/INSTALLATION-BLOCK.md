@@ -12,7 +12,7 @@ This is actual feature/capability separation, not renaming the sensitive service
 
 ## What to install
 
-Start with the verified **`releases/Lichboard-1.1.0-standard.apk`**. Confirm its checksum against `releases/SHA256SUMS` or `verification/latest.json`. Keep Play Protect enabled. After a permitted installation, enable/select Lichboard as the Android keyboard, then grant display-over-other-apps access if you want the floating feature.
+Start with the verified **`releases/Lichboard-1.2.0-standard.apk`**. Confirm its checksum against `releases/SHA256SUMS` or `verification/latest.json`. Keep Play Protect enabled. After a permitted installation, enable/select Lichboard as the Android keyboard, then grant display-over-other-apps access if you want the floating feature.
 
 If Play Protect still blocks Standard, stop rather than disabling the protection. Record:
 
