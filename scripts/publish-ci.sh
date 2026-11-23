@@ -21,7 +21,7 @@ report = {
     'sourceCommit': os.environ['GITHUB_SHA'],
     'runUrl': f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
     'timestampUtc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
-    'versionName': '1.1.0',
+    'versionName': '1.2.0',
     'buildUnitTestsLint': os.environ.get('BUILD_OUTCOME'),
     'android11Api30': os.environ.get('API30_OUTCOME'),
     'android15Api35': os.environ.get('API35_OUTCOME'),
@@ -35,6 +35,7 @@ verified = all(report[k] == 'success' for k in ('buildUnitTestsLint', 'android11
 for variant in ('standard', 'assist'):
     info = dict(capabilities.get(variant, {}))
     info['deviceTests'] = {}
+    info['inputPerformance'] = {}
     for api in (30, 35):
         directory = root / f'verification/api-{api}' / variant
         suites = ['keyboard-and-windows'] + (['accessibility'] if variant == 'assist' else [])
@@ -48,9 +49,24 @@ for variant in ('standard', 'assist'):
         launch = directory / 'release-launch.txt'
         pid = directory / 'release-pid.txt'
         smoke = launch.exists() and 'Status: ok' in launch.read_text() and pid.exists() and pid.read_text().strip().isdigit()
-        required_count = 13 if variant == 'standard' else 12
+        required_count = 22 if variant == 'standard' else 21
         passed = complete and counts['tests'] >= required_count and all(counts[k] == 0 for k in ('failures', 'errors', 'skipped')) and smoke
-        info['deviceTests'][f'api{api}'] = {**counts, 'releaseSmokePassed': smoke, 'passed': passed}
+        performance = {}
+        for name in ('input-burst', 'input-latency'):
+            path = directory / 'screenshots' / f'{name}.json'
+            if path.exists(): performance[name] = json.loads(path.read_text())
+        burst = performance.get('input-burst', {})
+        latency = performance.get('input-latency', {})
+        performance_passed = (
+            burst.get('characters') == 520 and burst.get('backspaces') == 128 and
+            burst.get('loss') == 0 and burst.get('orderMatches') is True and burst.get('selectedTextQueries') == 0 and
+            latency.get('samples', 0) >= 100 and latency.get('loss') == 0 and latency.get('orderMatches') is True and
+            0 <= latency.get('activationToCommitMs', {}).get('p95', 9999) < 100 and
+            all(p.get('apiLevel') == api and p.get('edition') == variant for p in performance.values())
+        )
+        passed = passed and performance_passed
+        info['inputPerformance'][f'api{api}'] = performance
+        info['deviceTests'][f'api{api}'] = {**counts, 'releaseSmokePassed': smoke, 'inputPerformancePassed': performance_passed, 'passed': passed}
         verified = verified and passed
     apk = root / f'app/build/outputs/apk/{variant}/release/app-{variant}-release.apk'
     valid_apk = apk.exists() and bool(info) and hashlib.sha256(apk.read_bytes()).hexdigest() == info.get('apkSha256')
@@ -61,13 +77,14 @@ for variant in ('standard', 'assist'):
 
 if verified:
     for variant, info in report['variants'].items():
-        destination = root / f'releases/Lichboard-1.1.0-{variant}.apk'
+        destination = root / f'releases/Lichboard-1.2.0-{variant}.apk'
         shutil.copy(root / f'app/build/outputs/apk/{variant}/release/app-{variant}-release.apk', destination)
         info['apkPath'] = destination.as_posix()
         info['published'] = True
-    # The superseded all-capabilities build caused an installation block on the user's phone.
-    # Keep history, but do not leave it next to the recommended current downloads.
-    (root / 'releases/Lichboard-1.0.0.apk').unlink(missing_ok=True)
+    # Keep historical builds in Git history, not alongside the current paired downloads.
+    for old in (root / 'releases').glob('Lichboard-*.apk'):
+        if old.name not in {pathlib.Path(info['apkPath']).name for info in report['variants'].values()}:
+            old.unlink()
     (root / 'releases/SHA256SUMS').write_text(''.join(
         f"{info['apkSha256']}  {pathlib.Path(info['apkPath']).name}\n" for info in report['variants'].values()
     ))

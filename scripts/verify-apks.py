@@ -11,6 +11,9 @@ import zipfile
 root = Path(__file__).resolve().parent.parent
 os.chdir(root)
 tools = Path(os.environ["ANDROID_HOME"]) / "build-tools/35.0.0"
+build_config = (root / "app/build.gradle.kts").read_text()
+expected_version = re.search(r'versionName = "([^"]+)"', build_config).group(1)
+expected_code = int(re.search(r'versionCode = (\d+)', build_config).group(1))
 results = {}
 for variant, package_name in (("standard", "dev.lichboard"), ("assist", "dev.lichboard.assist")):
     apk = root / f"app/build/outputs/apk/{variant}/release/app-{variant}-release.apk"
@@ -47,9 +50,13 @@ for variant, package_name in (("standard", "dev.lichboard"), ("assist", "dev.lic
         assert metadata == expected_assist, (variant, "unexpected accessibility metadata")
         assert b"Ldev/lichboard/ProbeActivity;" not in dex, "Debug-only probe leaked into release"
     version = re.search(r"versionName='([^']+)'", badging).group(1)
+    version_code = int(re.search(r"versionCode='(\d+)'", badging).group(1))
+    assert version == expected_version + ("-assist" if expected_assist else "")
+    assert version_code == expected_code
     result = {
         "applicationId": package_name,
         "versionName": version,
+        "versionCode": version_code,
         "accessibilityServiceDeclared": expected_assist,
         "accessibilityImplementationIncluded": implementation,
         "accessibilityMetadataIncluded": metadata,

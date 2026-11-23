@@ -17,16 +17,15 @@ import androidx.core.graphics.ColorUtils
 import dev.lichboard.data.BoardSettings
 import dev.lichboard.input.EditCommand
 import dev.lichboard.input.InputRouter
+import dev.lichboard.input.InputAction
+import dev.lichboard.input.InputQueue
 import dev.lichboard.lichboard
 import java.util.Locale
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
@@ -58,42 +57,51 @@ class KeyboardPanel(
     private lateinit var body: LinearLayout
     private var alternatives: List<String>? = null
     private val inputScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private val requests = Channel<suspend () -> String>(64)
-    private var inputJob: Job? = null
+    private val inputQueue = InputQueue(inputScope, router::session, router::execute, ::scheduleStatus)
+    private var clipboardJob: Job? = null
+    private var clipboardPreviewView: TextView? = null
+    private var pressedKey: KeyButton? = null
+    private var renderedModifiers = -1
+    private var pendingStatus: String? = null
+    private var statusScheduled = false
     private var disposed = false
+    private val audio by lazy { context.getSystemService(AudioManager::class.java) }
+    private val renderStatus = Runnable {
+        statusScheduled = false
+        val message = pendingStatus
+        pendingStatus = null
+        if (!disposed && isAttachedToWindow) {
+            refreshStatus(message ?: router.status())
+            refreshClipboardPreview()
+        }
+    }
 
     init {
         orientation = VERTICAL
+        isMotionEventSplittingEnabled = true
         contentDescription = if (floating) "Lichboard floating keyboard" else "Lichboard system keyboard"
         layoutDirection = View.LAYOUT_DIRECTION_LTR
         setPadding(dp(5), dp(4), dp(5), dp(5))
         build()
     }
-    private fun startInputQueue() {
-        if (disposed || inputJob?.isActive == true) return
-        inputJob = inputScope.launch {
-            for (request in requests) {
-                try {
-                    val result = withContext(Dispatchers.Default) { ensureActive(); request() }
-                    refreshStatus(result)
-                    if (page == Page.CLIPBOARD) buildBody()
-                } catch (cancelled: CancellationException) { throw cancelled }
-                catch (_: Exception) { refreshStatus("Input unavailable · try an editor or clipboard draft") }
-            }
-        }
-    }
-    private fun stopInputQueue() {
-        inputJob?.cancel()
-        inputJob = null
-        while (requests.tryReceive().isSuccess) { /* Never carry queued keys into another editor/session. */ }
-    }
     fun discardPendingInput() {
-        stopInputQueue()
-        if (isAttachedToWindow) startInputQueue()
+        inputQueue.stop()
+        removeCallbacks(renderStatus)
+        statusScheduled = false
+        pendingStatus = null
     }
-    private fun submit(request: suspend () -> String) {
-        if (disposed || !isAttachedToWindow) return
-        if (requests.trySend(request).isFailure) refreshStatus("Input queue busy · wait for the target app")
+    private fun submit(action: InputAction): Boolean {
+        if (disposed || !isAttachedToWindow) return false
+        if (inputQueue.offer(action)) return true
+        scheduleStatus("Input queue busy · the target is not keeping up; refocus it before retrying")
+        return false
+    }
+    private fun scheduleStatus(message: String) {
+        pendingStatus = message
+        if (!statusScheduled && isAttachedToWindow && !disposed) {
+            statusScheduled = true
+            postOnAnimation(renderStatus) // Coalesce rendering, never delay the actual input.
+        }
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
     private fun rounded(color: Int, radius: Int = 12) = GradientDrawable().apply {
@@ -103,6 +111,9 @@ class KeyboardPanel(
     fun updateSettings(value: BoardSettings) {
         val next = BoardPalette.from(value)
         val heightChanged = settings.keyboardHeight != value.keyboardHeight
+        if (settings.inputMode != value.inputMode || settings.accessibilityFallback != value.accessibilityFallback) {
+            discardPendingInput()
+        }
         settings = value
         if (heightChanged) requestLayout()
         if (palette != next) { palette = next; build() }
@@ -120,7 +131,7 @@ class KeyboardPanel(
         letters.clear(); modifiers.clear()
         removeAllViews()
         background = rounded(palette.background, if (floating) 18 else 0)
-        toolbar = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
+        toolbar = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL; isMotionEventSplittingEnabled = true }
         addView(toolbar, LayoutParams(LayoutParams.MATCH_PARENT, dp(36)))
         buildToolbar()
         status = TextView(context).apply {
@@ -131,7 +142,7 @@ class KeyboardPanel(
             gravity = Gravity.CENTER_VERTICAL
         }
         addView(status, LayoutParams(LayoutParams.MATCH_PARENT, dp(32)))
-        body = LinearLayout(context).apply { orientation = VERTICAL }
+        body = LinearLayout(context).apply { orientation = VERTICAL; isMotionEventSplittingEnabled = true }
         addView(body, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
         buildBody()
         refreshStatus()
@@ -142,9 +153,9 @@ class KeyboardPanel(
         val alternate = alternatives
         if (alternate != null) {
             alternate.forEach { char ->
-                toolbar.addView(key(char, "Alternative $char") {
+                toolbar.addView(key(char, "Alternative $char", onDown = true) {
                     sendText(char); alternatives = null; buildToolbar()
-                }, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) })
+                }, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
             }
             toolbar.addView(key("×", "Close alternatives", special = true) { alternatives = null; buildToolbar() }, LayoutParams(dp(34), LayoutParams.MATCH_PARENT))
             return
@@ -171,19 +182,34 @@ class KeyboardPanel(
         }
         toolbar.addView(title, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
         toolbar.addView(key("▤", "Clipboard", special = true) {
-            feedback(); clipboardPreview = router.clipboardText(); setPage(if (page == Page.CLIPBOARD) Page.LETTERS else Page.CLIPBOARD)
+            feedback(); setPage(if (page == Page.CLIPBOARD) Page.LETTERS else Page.CLIPBOARD)
         }, LayoutParams(dp(38), dp(32)))
         toolbar.addView(key("☺", "Emoji panel", special = true) { feedback(); setPage(if (page == Page.EMOJI) Page.LETTERS else Page.EMOJI) }, LayoutParams(dp(38), dp(32)))
         toolbar.addView(key("Fn", "Special keys", special = true) { feedback(); setPage(if (page == Page.SPECIAL) Page.LETTERS else Page.SPECIAL) }, LayoutParams(dp(38), dp(32)))
         toolbar.addView(key("⌄", if (floating) "Hide floating keyboard" else "Hide system keyboard", special = true) { feedback(); onClose() }, LayoutParams(dp(38), dp(32)))
     }
-    private fun setPage(value: Page) { alternatives = null; page = value; buildBody(); buildToolbar(); refreshStatus() }
+    private fun setPage(value: Page) {
+        clipboardJob?.cancel()
+        alternatives = null; page = value
+        buildBody(); buildToolbar(); refreshStatus()
+        if (page == Page.CLIPBOARD) loadClipboard()
+    }
+    private fun loadClipboard() {
+        clipboardJob?.cancel()
+        clipboardJob = inputScope.launch {
+            val value = withContext(Dispatchers.IO) { router.clipboardText() }
+            clipboardPreview = value
+            if (page == Page.CLIPBOARD) refreshClipboardPreview()
+        }
+    }
     private fun buildBody() {
         // Traverse the live hierarchy only: a key's parent row can itself be detached.
         // Retaining a global key registry would keep discarded rows and callbacks alive.
         disposeKeys(body)
         body.removeAllViews()
         letters.clear(); modifiers.clear()
+        clipboardPreviewView = null
+        renderedModifiers = -1
         when (page) {
             Page.LETTERS -> lettersPage()
             Page.SYMBOLS, Page.SYMBOLS_MORE -> symbolsPage()
@@ -195,30 +221,36 @@ class KeyboardPanel(
     }
     private fun row(): LinearLayout = LinearLayout(context).also { line ->
         line.gravity = Gravity.CENTER
+        line.isMotionEventSplittingEnabled = true
         body.addView(line, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
     }
     private fun LinearLayout.addKey(view: KeyButton, weight: Float = 1f) {
-        addView(view, LayoutParams(0, LayoutParams.MATCH_PARENT, weight).apply { setMargins(dp(2), dp(2), dp(2), dp(2)) })
+        addView(view, LayoutParams(0, LayoutParams.MATCH_PARENT, weight))
     }
     private fun key(label: String, description: String = "Key $label", special: Boolean = false,
-                    accent: Boolean = false, repeat: Boolean = false, hold: (() -> Unit)? = null,
+                    accent: Boolean = false, repeat: Boolean = false, onDown: Boolean = false, hold: (() -> Unit)? = null,
                     action: () -> Unit): KeyButton {
-        return KeyButton(context, label, description, action, hold, repeat).also {
+        return KeyButton(context, label, description, action, hold, repeat, onDown,
+            beforePress = { button ->
+                if (pressedKey !== button) pressedKey?.commitPendingTap()
+                pressedKey = button.takeIf { it.isAttachedToWindow }
+            }, afterRelease = { button -> if (pressedKey === button) pressedKey = null }).also {
             it.colors(if (accent) palette.accent else if (special) palette.special else palette.key,
                 if (accent) palette.onAccent else palette.text, ColorUtils.blendARGB(palette.key, palette.accent, .35f))
         }
     }
     private fun character(value: String): KeyButton {
         val choices = ALTERNATIVES[value]
-        val button = key(value, hold = if (choices == null) null else ({
+        val button = key(value, onDown = choices == null, hold = if (choices == null) null else ({
             feedback(); alternatives = choices.map { if (shift > 0) it.uppercase(Locale.ROOT) else it }; buildToolbar()
         })) { sendText(if (shift > 0) value.uppercase(Locale.ROOT) else value) }
         if (value.firstOrNull()?.isLetter() == true) letters[button] = value
         return button
     }
     private fun keyCode(label: String, code: Int, weight: Float = 1f, line: LinearLayout) {
-        line.addKey(key(label, special = true, repeat = code == KeyEvent.KEYCODE_DEL || code == KeyEvent.KEYCODE_FORWARD_DEL) {
-            feedback(); val modifiers = meta(); submit { router.key(code, modifiers) }; consumeModifiers()
+        line.addKey(key(label, special = true, onDown = true, repeat = code == KeyEvent.KEYCODE_DEL || code == KeyEvent.KEYCODE_FORWARD_DEL) {
+            if (submit(InputAction.Key(code, meta()))) consumeModifiers()
+            feedback()
         }, weight)
     }
     private fun modifier(label: String): KeyButton = key(label, special = true, hold = {
@@ -280,9 +312,12 @@ class KeyboardPanel(
             }, 1.25f)
             addKey(modifier("Ctrl"), .9f)
             addKey(modifier("Alt"), .9f)
-            addKey(key("space", "Key Space") { sendText(" ") }, 3.3f)
+            addKey(key("space", "Key Space", onDown = true) { sendText(" ") }, 3.3f)
             addKey(character("."), .7f)
-            addKey(key("↵", "Key Enter", accent = true) { feedback(); val modifiers = meta(); submit { router.key(KeyEvent.KEYCODE_ENTER, modifiers) }; consumeModifiers() }, 1.35f)
+            addKey(key("↵", "Key Enter", accent = true, onDown = true) {
+                if (submit(InputAction.Key(KeyEvent.KEYCODE_ENTER, meta()))) consumeModifiers()
+                feedback()
+            }, 1.35f)
         }
     }
     private fun navigationRow() {
@@ -315,14 +350,14 @@ class KeyboardPanel(
         }
         row().apply {
             listOf("Copy" to EditCommand.COPY, "Cut" to EditCommand.CUT, "Paste" to EditCommand.PASTE, "Select all" to EditCommand.SELECT_ALL).forEach { (label, command) ->
-                addKey(key(label, special = true) { feedback(); submit { router.edit(command) } })
+                addKey(key(label, special = true, onDown = true) { submit(InputAction.Edit(command)); feedback() })
             }
             keyCode("⌫", KeyEvent.KEYCODE_DEL, line = this)
         }
         row().apply {
             addKey(key("ABC", special = true) { setPage(Page.LETTERS) })
             addKey(modifier("Ctrl")); addKey(modifier("Alt")); addKey(modifier("Shift"))
-            addKey(key("space", "Key Space") { sendText(" ") }, 1.5f)
+            addKey(key("space", "Key Space", onDown = true) { sendText(" ") }, 1.5f)
             keyCode("↵", KeyEvent.KEYCODE_ENTER, line = this)
         }
     }
@@ -333,48 +368,63 @@ class KeyboardPanel(
             }
         }
         EMOJI[emojiCategory].chunked(8).forEach { values -> row().apply {
-            values.forEach { emoji -> addKey(key(emoji, "Emoji $emoji") { sendText(emoji) }) }
+            values.forEach { emoji -> addKey(key(emoji, "Emoji $emoji", onDown = true) { sendText(emoji) }) }
         } }
         row().apply {
             addKey(key("ABC", special = true) { setPage(Page.LETTERS) })
-            addKey(key("space", "Key Space") { sendText(" ") }, 2f)
+            addKey(key("space", "Key Space", onDown = true) { sendText(" ") }, 2f)
             keyCode("⌫", KeyEvent.KEYCODE_DEL, line = this)
             keyCode("↵", KeyEvent.KEYCODE_ENTER, line = this)
         }
     }
     private fun clipboardPage() {
         val preview = TextView(context).apply {
-            text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
             textSize = 12f; setTextColor(palette.text)
             setPadding(dp(10), dp(6), dp(10), dp(4))
             maxLines = 8
             setTextIsSelectable(false)
         }
+        clipboardPreviewView = preview
+        refreshClipboardPreview()
         body.addView(preview, LayoutParams(LayoutParams.MATCH_PARENT, 0, 3f))
         row().apply {
-            addKey(key("Paste", "Paste clipboard to target", accent = true) { feedback(); submit { router.edit(EditCommand.PASTE) } })
-            addKey(key("Copy draft", special = true) { feedback(); submit { router.copyDraft() } })
-            addKey(key("Clear draft", special = true) { submit { router.clearDraft() } })
+            addKey(key("Paste", "Paste clipboard to target", accent = true, onDown = true) { submit(InputAction.Edit(EditCommand.PASTE)); feedback() })
+            addKey(key("Copy draft", special = true, onDown = true) { submit(InputAction.CopyDraft); feedback() })
+            addKey(key("Clear draft", special = true, onDown = true) { submit(InputAction.ClearDraft) })
         }
         row().apply {
             addKey(key("ABC", special = true) { setPage(Page.LETTERS) })
-            addKey(key("Copy", special = true) { submit { router.edit(EditCommand.COPY) } })
-            addKey(key("Cut", special = true) { submit { router.edit(EditCommand.CUT) } })
-            addKey(key("Select all", special = true) { submit { router.edit(EditCommand.SELECT_ALL) } })
+            addKey(key("Copy", special = true, onDown = true) { submit(InputAction.Edit(EditCommand.COPY)) })
+            addKey(key("Cut", special = true, onDown = true) { submit(InputAction.Edit(EditCommand.CUT)) })
+            addKey(key("Select all", special = true, onDown = true) { submit(InputAction.Edit(EditCommand.SELECT_ALL)) })
         }
+    }
+    private fun refreshClipboardPreview() {
+        val preview = clipboardPreviewView ?: return
+        val text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
+        if (preview.text.toString() != text) preview.text = text
     }
     private fun meta(): Int = (if (shift > 0) KeyEvent.META_SHIFT_ON else 0) or
         (if (ctrl) KeyEvent.META_CTRL_ON else 0) or (if (alt) KeyEvent.META_ALT_ON else 0)
-    private fun sendText(value: String) { feedback(); val modifiers = meta(); submit { router.text(value, modifiers) }; consumeModifiers() }
+    private fun sendText(value: String) {
+        if (submit(InputAction.Text(value, meta()))) consumeModifiers()
+        feedback()
+    }
     private fun consumeModifiers() {
         if (shift == 1) shift = 0
         if (!ctrlLock) ctrl = false
         if (!altLock) alt = false
         updateModifiers()
     }
-    fun resetModifiers() { shift = 0; ctrl = false; alt = false; ctrlLock = false; altLock = false; updateModifiers() }
+    fun resetModifiers() { shift = 0; ctrl = false; alt = false; ctrlLock = false; altLock = false; lastShift = 0L; updateModifiers() }
     private fun updateModifiers() {
-        letters.forEach { (view, char) -> view.text = if (shift > 0) char.uppercase(Locale.ROOT) else char }
+        val state = shift or (if (ctrl) 4 else 0) or (if (alt) 8 else 0) or
+            (if (ctrlLock) 16 else 0) or (if (altLock) 32 else 0)
+        if (state == renderedModifiers) return
+        if (renderedModifiers < 0 || (renderedModifiers and 3 == 0) != (shift == 0)) {
+            letters.forEach { (view, char) -> view.text = if (shift > 0) char.uppercase(Locale.ROOT) else char }
+        }
+        renderedModifiers = state
         modifiers.forEach { (view, label) ->
             val active = when (label) { "Shift" -> shift > 0; "Ctrl" -> ctrl; else -> alt }
             val locked = when (label) { "Shift" -> shift == 2; "Ctrl" -> ctrlLock; else -> altLock }
@@ -385,11 +435,12 @@ class KeyboardPanel(
     }
     fun refreshStatus(message: String = router.status()) {
         if (!::status.isInitialized) return
-        status.text = if (message.startsWith("DRAFT")) "$message\n${router.draftPreview().replace('\n', ' ').takeLast(90)}" else message
+        val text = if (message.startsWith("DRAFT")) "$message\n${router.draftPreview().replace('\n', ' ').takeLast(90)}" else message
+        if (status.text.toString() != text) status.text = text
     }
     private fun feedback() {
         if (settings.vibration) performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-        if (settings.sound) context.getSystemService(AudioManager::class.java)?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, .3f)
+        if (settings.sound) audio?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, .3f)
     }
     private fun disposeKeys(container: ViewGroup) {
         for (index in 0 until container.childCount) {
@@ -400,12 +451,18 @@ class KeyboardPanel(
     }
     fun dispose() {
         disposed = true
-        stopInputQueue(); requests.cancel(); inputScope.cancel()
+        discardPendingInput(); clipboardJob?.cancel(); inputScope.cancel()
         disposeKeys(this); letters.clear(); modifiers.clear(); animate().cancel()
     }
-    override fun onAttachedToWindow() { super.onAttachedToWindow(); startInputQueue() }
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        refreshStatus()
+        if (page == Page.CLIPBOARD) loadClipboard()
+    }
     override fun onDetachedFromWindow() {
-        stopInputQueue()
+        discardPendingInput()
+        clipboardJob?.cancel()
+        pressedKey = null
         disposeKeys(this)
         super.onDetachedFromWindow()
     }

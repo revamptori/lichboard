@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import dev.lichboard.input.EditCommand
+import dev.lichboard.input.InputAction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -16,7 +17,11 @@ class LichboardAccessibilityService : AccessibilityService(), InputAssist {
     @Volatile override var lastFailure: String = "Focus an editable field"
         private set
     override fun onServiceConnected() { super.onServiceConnected(); AccessBridge.attach(this) }
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) { /* No screen monitoring. */ }
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        // Only invalidate an opaque token. Never read source nodes, text or event contents here.
+        if (event?.eventType == AccessibilityEvent.TYPE_VIEW_FOCUSED ||
+            event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) AccessBridge.focusChanged(this)
+    }
     override fun onInterrupt() = Unit // No ongoing work or speech to interrupt.
     override fun onDestroy() { AccessBridge.detach(this); super.onDestroy() }
 
@@ -41,7 +46,7 @@ class LichboardAccessibilityService : AccessibilityService(), InputAssist {
             when {
                 !target.refresh() -> { lastFailure = "Editor is no longer available"; default }
                 target.isPassword -> { lastFailure = "Password fields are excluded"; default }
-                !target.isEditable || !target.isEnabled -> { lastFailure = "Focus an enabled editable field"; default }
+                !target.isEditable || !target.isEnabled || !target.isFocused -> { lastFailure = "Focus an enabled editable field"; default }
                 else -> action(target)
             }
         } catch (cancelled: CancellationException) { throw cancelled }
@@ -59,35 +64,50 @@ class LichboardAccessibilityService : AccessibilityService(), InputAssist {
         }
     }
     override fun hasEditableTarget(): Boolean = withEditor(false) { true }
-    override suspend fun text(value: String, meta: Int): Boolean {
+    override suspend fun execute(action: InputAction, session: Any): AssistResult {
+        if (session !== AccessBridge.inputSession) return AssistResult.TargetChanged
+        val response = withActiveEditor<AssistResult>(AssistResult.NoTarget) { node ->
+            // One discovery/privacy validation per action or accumulated plain-text batch, not
+            // a separate hasEditableTarget probe followed by the same queries per character.
+            if (session !== AccessBridge.inputSession) return@withActiveEditor AssistResult.TargetChanged
+            lastFailure = "This field rejected the action or this key is unsupported"
+            val accepted = when (action) {
+                is InputAction.Text -> text(node, action.value, action.meta)
+                is InputAction.Key -> key(node, action.code, action.meta)
+                is InputAction.Edit -> edit(node, action.command)
+                else -> false
+            }
+            if (accepted) AssistResult.Applied else AssistResult.Rejected(lastFailure)
+        }
+        return if (session !== AccessBridge.inputSession) AssistResult.TargetChanged else response
+    }
+    private fun text(node: AccessibilityNodeInfo, value: String, meta: Int): Boolean {
         if (meta and KeyEvent.META_ALT_ON != 0) return false
         if (meta and KeyEvent.META_CTRL_ON != 0) {
             val command = when (value.lowercase()) {
                 "a" -> EditCommand.SELECT_ALL; "c" -> EditCommand.COPY
                 "x" -> EditCommand.CUT; "v" -> EditCommand.PASTE; else -> return false
             }
-            return edit(command)
+            return edit(node, command)
         }
-        return withActiveEditor(false) { replaceSelection(it, value) }
+        return replaceSelection(node, value)
     }
-    override suspend fun edit(command: EditCommand): Boolean = withActiveEditor(false) { node ->
-        when (command) {
+    private fun edit(node: AccessibilityNodeInfo, command: EditCommand): Boolean = when (command) {
             EditCommand.COPY -> node.performAction(AccessibilityNodeInfo.ACTION_COPY)
             EditCommand.CUT -> node.performAction(AccessibilityNodeInfo.ACTION_CUT)
             EditCommand.PASTE -> node.performAction(AccessibilityNodeInfo.ACTION_PASTE)
             EditCommand.SELECT_ALL -> setSelection(node, 0, editableText(node).length)
         }
-    }
-    override suspend fun key(code: Int, meta: Int): Boolean = withActiveEditor(false) { node ->
-        if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return@withActiveEditor false
+    private fun key(node: AccessibilityNodeInfo, code: Int, meta: Int): Boolean {
+        if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return false
         val text = editableText(node)
         val start = node.textSelectionStart
         val end = node.textSelectionEnd
-        if (start !in 0..text.length || end !in 0..text.length) return@withActiveEditor false
+        if (start !in 0..text.length || end !in 0..text.length) return false
         val low = minOf(start, end)
         val high = maxOf(start, end)
         val extend = meta and KeyEvent.META_SHIFT_ON != 0
-        when (code) {
+        return when (code) {
             KeyEvent.KEYCODE_DEL -> if (low != high) replaceSelection(node, "") else if (low > 0) {
                 replaceRange(node, text, Character.offsetByCodePoints(text, low, -1), high, "")
             } else true
@@ -138,7 +158,6 @@ class LichboardAccessibilityService : AccessibilityService(), InputAssist {
             lastFailure = "The field rejected Android’s text replacement action"
             return false
         }
-        node.refresh()
         setSelection(node, start + value.length, start + value.length)
         return true
     }

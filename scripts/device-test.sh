@@ -31,7 +31,7 @@ run_variant() (
     return 0
   }
   trap save_evidence EXIT
-  classes="dev.lichboard.LichboardIntegrationTest"
+  classes="dev.lichboard.LichboardIntegrationTest,dev.lichboard.KeyboardTouchTest"
   if [ "$variant" = standard ]; then classes="$classes,dev.lichboard.StandardCapabilitiesTest"; fi
   # Remove only generated results so the second invocation cannot copy an old suite.
   rm -rf app/build/outputs/androidTest-results/connected

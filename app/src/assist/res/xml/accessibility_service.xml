@@ -3,7 +3,7 @@
     android:summary="@string/accessibility_summary"
     android:accessibilityEventTypes="typeViewFocused|typeWindowStateChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:notificationTimeout="100"
+    android:notificationTimeout="0"
     android:canRetrieveWindowContent="true"
     android:accessibilityFlags="flagRetrieveInteractiveWindows"
     android:settingsActivity="dev.lichboard.MainActivity"

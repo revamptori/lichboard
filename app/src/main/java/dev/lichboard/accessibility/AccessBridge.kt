@@ -9,8 +9,16 @@ object AccessBridge {
     private val mutable = MutableStateFlow(false)
     val connected = mutable.asStateFlow()
     val service get() = reference.get()
-    fun attach(service: InputAssist) { reference = WeakReference(service); mutable.value = true }
+    @Volatile var inputSession: Any = Any()
+        private set
+    fun attach(service: InputAssist) {
+        reference = WeakReference(service); inputSession = Any(); mutable.value = true
+    }
+    /** A focus/window notification invalidates pending input without retaining event contents. */
+    fun focusChanged(service: InputAssist) {
+        if (reference.get() === service) inputSession = Any()
+    }
     fun detach(service: InputAssist) {
-        if (reference.get() === service) { reference.clear(); mutable.value = false }
+        if (reference.get() === service) { reference.clear(); inputSession = Any(); mutable.value = false }
     }
 }

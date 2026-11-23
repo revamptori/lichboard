@@ -10,13 +10,19 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.lichboard.accessibility.AccessBridge
+import dev.lichboard.accessibility.AssistResult
 import dev.lichboard.accessibility.LichboardAccessibilityService
 import dev.lichboard.ime.LichboardImeService
 import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.InputMode
 import dev.lichboard.input.InputRouter
+import dev.lichboard.input.InputAction
+import dev.lichboard.input.InputQueue
 import dev.lichboard.overlay.FloatingService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Test
@@ -95,6 +101,26 @@ class AccessibilityIntegrationTest {
             val deletion = runBlocking(Dispatchers.Default) { router.key(KeyEvent.KEYCODE_DEL, 0) }
             assertEquals(deletion, "h", text())
             assertEquals("", app.draft.snapshot.text)
+
+            val burst = "abcdefghijklmnopqrstuvwx".repeat(20)
+            val inputScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+            lateinit var queue: InputQueue
+            try {
+                instrumentation.runOnMainSync {
+                    queue = InputQueue(inputScope, router::session, router::execute, {})
+                    burst.forEach { assertTrue(queue.offer(InputAction.Text(it.toString()))) }
+                }
+                condition("480 queued assist characters reach the real field in order") { text() == "h" + burst }
+            } finally { instrumentation.runOnMainSync { inputScope.cancel() } }
+
+            val oldTarget = AccessBridge.inputSession
+            host.onActivity { it.focusOtherEditor() }
+            condition("A focus notification invalidates the assist input session") { AccessBridge.inputSession !== oldTarget }
+            val stale = runBlocking(Dispatchers.IO) { requireNotNull(AccessBridge.service).execute(InputAction.Text("stale"), oldTarget) }
+            assertEquals(AssistResult.TargetChanged, stale)
+            host.onActivity { assertEquals("", it.otherEditor.text.toString()) }
+            val fresh = runBlocking(Dispatchers.Default) { router.text("fresh", 0) }
+            host.onActivity { assertEquals(fresh, "fresh", it.otherEditor.text.toString()) }
 
             host.onActivity {
                 it.editor.setText("")
