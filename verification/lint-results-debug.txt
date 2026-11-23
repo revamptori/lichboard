@@ -95,10 +95,10 @@ class KeyboardPanel(
    to see if View#isInEditMode() is false, since that method will return false
    at runtime but true within a user interface editor.
 
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:256: Warning: Custom view `LinearLayout` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:257: Warning: Custom view `LinearLayout` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
         box.setOnTouchListener { _, event -> if (event.actionMasked == MotionEvent.ACTION_OUTSIDE) { hideQuick(); true } else false }
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:256: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:257: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
         box.setOnTouchListener { _, event -> if (event.actionMasked == MotionEvent.ACTION_OUTSIDE) { hideQuick(); true } else false }
                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:145: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]

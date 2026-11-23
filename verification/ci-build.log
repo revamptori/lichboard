@@ -28,14 +28,14 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeDebugJniLibFolders
 > Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugNativeLibs
-> Task :app:validateSigningDebug
 > Task :app:mergeExtDexDebug FROM-CACHE
 > Task :app:mergeLibDexDebug FROM-CACHE
-> Task :app:writeDebugAppMetadata
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:preDebugAndroidTestBuild SKIPPED
 > Task :app:processDebugAndroidTestManifest
@@ -91,8 +91,8 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:desugarReleaseFileDependencies FROM-CACHE
 > Task :app:mergeReleaseStartupProfile
 > Task :app:mergeExtDexRelease FROM-CACHE
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
+> Task :app:mergeReleaseArtProfile
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -108,39 +108,57 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:javaPreCompileDebugUnitTest FROM-CACHE
 > Task :app:compileDebugKotlin
 > Task :app:compileReleaseKotlin
-> Task :app:compileDebugJavaWithJavac
+> Task :app:compileDebugJavaWithJavac FROM-CACHE
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics FROM-CACHE
 > Task :app:processDebugJavaRes
+> Task :app:compileReleaseJavaWithJavac FROM-CACHE
 > Task :app:bundleDebugClassesToCompileJar
-> Task :app:compileReleaseJavaWithJavac
 > Task :app:mergeProjectDexDebug
-> Task :app:mergeDebugJavaResource
 > Task :app:generateReleaseLintVitalReportModel
+> Task :app:mergeDebugJavaResource
+> Task :app:compileDebugAndroidTestKotlin
+> Task :app:dexBuilderRelease
+> Task :app:compileDebugAndroidTestJavaWithJavac
+> Task :app:dexBuilderDebugAndroidTest
+> Task :app:mergeDebugAndroidTestGlobalSynthetics FROM-CACHE
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-
-> Task :app:compileDebugAndroidTestKotlin
-e: file:///home/runner/work/lichboard/lichboard/app/src/androidTest/java/dev/lichboard/LichboardIntegrationTest.kt:240:97 Unresolved reference 'disconnect'.
-
-> Task :app:compileDebugAndroidTestKotlin FAILED
-> Task :app:dexBuilderRelease
+> Task :app:processDebugAndroidTestJavaRes
+> Task :app:mergeDebugAndroidTestJavaResource
+> Task :app:mergeReleaseGlobalSynthetics FROM-CACHE
+> Task :app:mergeProjectDexDebugAndroidTest
+> Task :app:processReleaseJavaRes
+> Task :app:packageDebugAndroidTest
+> Task :app:createDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleDebugAndroidTest
+> Task :app:mergeReleaseJavaResource
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:generateDebugAndroidTestLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:generateDebugUnitTestLintModel
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+> Task :app:testDebugUnitTest
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebugUnitTest
 > Task :app:lintVitalAnalyzeRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795391916473.json
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:assembleRelease
+> Task :app:lintAnalyzeDebug
 
-FAILURE: Build failed with an exception.
+> Task :app:lintReportDebug
+Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-debug.html
 
-* What went wrong:
-Execution failed for task ':app:compileDebugAndroidTestKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+> Task :app:lintDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795392130535.json
 
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 1m 12s
-100 actionable tasks: 55 executed, 45 from cache
+BUILD SUCCESSFUL in 1m 39s
+129 actionable tasks: 80 executed, 49 from cache

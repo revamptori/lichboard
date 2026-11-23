@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.AccessibilityIntegrationTest" tests="1" failures="1" errors="0" skipped="0" time="4.491" timestamp="2026-11-23T00:09:40" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 15" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="focusedInputAssistHonorsConsentHintsDeletionAndPasswords" classname="dev.lichboard.AccessibilityIntegrationTest" time="3.375">
+    <failure>org.junit.ComparisonFailure: Field rejected input · use clipboard draft / Field rejected input · use clipboard draft; draft=DraftSnapshot(text=, cursor=0, anchor=0) expected:&lt;[hi]&gt; but was:&lt;[]&gt;
+at org.junit.Assert.assertEquals(Assert.java:117)
+at dev.lichboard.AccessibilityIntegrationTest.focusedInputAssistHonorsConsentHintsDeletionAndPasswords(AccessibilityIntegrationTest.kt:87)
+</failure>
+  </testcase>
+</testsuite>
