@@ -26,6 +26,9 @@ for variant, package_name in (("standard", "dev.lichboard"), ("assist", "dev.lic
     assert "sdkVersion:'30'" in badging and "targetSdkVersion:'35'" in badging
     assert "application-debuggable" not in badging
     assert "android.permission.INTERNET" not in manifest
+    for component in ("LichboardApplication", "MainActivity", "ime.LichboardImeService", "overlay.FloatingService", "overlay.BootReceiver"):
+        assert f"dev.lichboard.{component}" in manifest, (variant, "incorrect component namespace", component)
+    assert "android:foregroundServiceType" in manifest
     markers = ("android.permission.BIND_ACCESSIBILITY_SERVICE", "android.accessibilityservice.AccessibilityService", "dev.lichboard.accessibility.LichboardAccessibilityService")
     expected_assist = variant == "assist"
     for marker in markers:

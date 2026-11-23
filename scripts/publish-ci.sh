@@ -83,3 +83,12 @@ if ! git diff --cached --quiet; then
   git pull --rebase origin "$GITHUB_REF_NAME"
   git push origin "HEAD:$GITHUB_REF_NAME"
 fi
+
+python3 - <<'PY_CHECK'
+import json
+from pathlib import Path
+report = json.loads(Path('verification/latest.json').read_text())
+stages = ('buildUnitTestsLint', 'android11Api30', 'android15Api35')
+if all(report.get(stage) == 'success' for stage in stages) and not report['verifiedReleasePublished']:
+    raise SystemExit('Verification/publication integrity checks failed; see verification/latest.json.')
+PY_CHECK
