@@ -79,17 +79,17 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedDebugAndroidTest
-Starting 10 tests on emulator-5554 - 11
+Starting 11 tests on emulator-5554 - 11
 
-emulator-5554 - 11 Tests 1/10 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 3/10 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 4/10 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 7/10 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 8/10 completed. (0 skipped) (0 failed)
-Finished 10 tests on emulator-5554 - 11
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795392933034.json
+emulator-5554 - 11 Tests 1/11 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 4/11 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 5/11 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 8/11 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 9/11 completed. (0 skipped) (0 failed)
+Finished 11 tests on emulator-5554 - 11
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795393704753.json
 
-BUILD SUCCESSFUL in 1m 21s
+BUILD SUCCESSFUL in 1m 13s
 67 actionable tasks: 1 executed, 66 up-to-date
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
@@ -175,7 +175,7 @@ Daemon will be stopped at the end of the build
 Starting 1 tests on emulator-5554 - 11
 
 Finished 1 tests on emulator-5554 - 11
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795393012294.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795393777187.json
 
-BUILD SUCCESSFUL in 20s
+BUILD SUCCESSFUL in 17s
 67 actionable tasks: 1 executed, 66 up-to-date

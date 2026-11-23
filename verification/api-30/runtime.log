@@ -1,29 +1,31 @@
---------- beginning of kernel
---------- beginning of system
 --------- beginning of main
-11-23 00:15:49.317  2445  2465 I TestRunner: run started: 10 tests
-11-23 00:15:49.318  2445  2465 I TestRunner: started: independentOverlayHasHonestClipboardDraft(dev.lichboard.LichboardIntegrationTest)
-11-23 00:15:58.936  2445  2465 I TestRunner: finished: independentOverlayHasHonestClipboardDraft(dev.lichboard.LichboardIntegrationTest)
-11-23 00:15:58.941  2445  2465 I TestRunner: started: specialKeysReachRealRawInputTarget(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:03.403  2445  2465 I TestRunner: finished: specialKeysReachRealRawInputTarget(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:03.404  2445  2465 I TestRunner: started: composeSettingsNavigateAndApplyTheme(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:08.814  2445  2465 I TestRunner: finished: composeSettingsNavigateAndApplyTheme(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:08.822  2445  2465 I TestRunner: started: overlaySurvivesSwitchingToAnotherApplication(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:15.150  2445  2465 I TestRunner: finished: overlaySurvivesSwitchingToAnotherApplication(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:15.151  2445  2465 I TestRunner: started: overlayKeepsEditorFocusAndUsesInputConnection(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:21.298  2445  2465 I TestRunner: finished: overlayKeepsEditorFocusAndUsesInputConnection(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:21.299  2445  2465 I TestRunner: started: bubbleDragsPersistsAndLongPressOpensControls(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:26.842  2445  2465 I TestRunner: finished: bubbleDragsPersistsAndLongPressOpensControls(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:26.843  2445  2465 I TestRunner: started: automaticWithoutAnEditorUsesDraftNotInjection(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:28.875  2445  2465 I TestRunner: finished: automaticWithoutAnEditorUsesDraftNotInjection(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:28.877  2445  2465 I TestRunner: started: everyThemeAndResizeRendersWithoutLosingDraft(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:35.603  2445  2465 I TestRunner: finished: everyThemeAndResizeRendersWithoutLosingDraft(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:35.605  2445  2465 I TestRunner: started: normalImeTypesEditsAndCapitalizes(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:41.027  2445  2465 I TestRunner: finished: normalImeTypesEditsAndCapitalizes(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:41.029  2445  2465 I TestRunner: started: longPressAlternativesAndAllFunctionKeysExist(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:46.114  2445  2465 I TestRunner: finished: longPressAlternativesAndAllFunctionKeysExist(dev.lichboard.LichboardIntegrationTest)
-11-23 00:16:46.116  2445  2465 I TestRunner: run finished: 10 tests, 0 failed, 0 ignored
-11-23 00:17:04.496  3118  3138 I TestRunner: run started: 1 tests
-11-23 00:17:04.496  3118  3138 I TestRunner: started: focusedInputAssistHonorsConsentHintsDeletionAndPasswords(dev.lichboard.AccessibilityIntegrationTest)
-11-23 00:17:07.335  3118  3138 I TestRunner: finished: focusedInputAssistHonorsConsentHintsDeletionAndPasswords(dev.lichboard.AccessibilityIntegrationTest)
-11-23 00:17:07.338  3118  3138 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored
+--------- beginning of system
+--------- beginning of kernel
+11-23 00:28:36.891  2405  2425 I TestRunner: run started: 11 tests
+11-23 00:28:36.891  2405  2425 I TestRunner: started: independentOverlayHasHonestClipboardDraft(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:46.277  2405  2425 I TestRunner: finished: independentOverlayHasHonestClipboardDraft(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:46.278  2405  2425 I TestRunner: started: specialKeysReachRealRawInputTarget(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:50.235  2405  2425 I TestRunner: finished: specialKeysReachRealRawInputTarget(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:50.247  2405  2425 I TestRunner: started: composeSettingsNavigateAndApplyTheme(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:55.117  2405  2425 I TestRunner: finished: composeSettingsNavigateAndApplyTheme(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:55.118  2405  2425 I TestRunner: started: pageRebuildsAndReattachmentDiscardStaleQueuedKeys(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:56.819  2405  2425 I TestRunner: finished: pageRebuildsAndReattachmentDiscardStaleQueuedKeys(dev.lichboard.LichboardIntegrationTest)
+11-23 00:28:56.827  2405  2425 I TestRunner: started: overlaySurvivesSwitchingToAnotherApplication(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:03.297  2405  2425 I TestRunner: finished: overlaySurvivesSwitchingToAnotherApplication(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:03.302  2405  2425 I TestRunner: started: overlayKeepsEditorFocusAndUsesInputConnection(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:09.174  2405  2425 I TestRunner: finished: overlayKeepsEditorFocusAndUsesInputConnection(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:09.181  2405  2425 I TestRunner: started: bubbleDragsPersistsAndLongPressOpensControls(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:14.310  2405  2425 I TestRunner: finished: bubbleDragsPersistsAndLongPressOpensControls(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:14.315  2405  2425 I TestRunner: started: automaticWithoutAnEditorUsesDraftNotInjection(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:16.273  2405  2425 I TestRunner: finished: automaticWithoutAnEditorUsesDraftNotInjection(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:16.274  2405  2425 I TestRunner: started: everyThemeAndResizeRendersWithoutLosingDraft(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:22.585  2405  2425 I TestRunner: finished: everyThemeAndResizeRendersWithoutLosingDraft(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:22.591  2405  2425 I TestRunner: started: normalImeTypesEditsAndCapitalizes(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:28.086  2405  2425 I TestRunner: finished: normalImeTypesEditsAndCapitalizes(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:28.141  2405  2425 I TestRunner: started: longPressAlternativesAndAllFunctionKeysExist(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:32.851  2405  2425 I TestRunner: finished: longPressAlternativesAndAllFunctionKeysExist(dev.lichboard.LichboardIntegrationTest)
+11-23 00:29:32.852  2405  2425 I TestRunner: run finished: 11 tests, 0 failed, 0 ignored
+11-23 00:29:48.445  3165  3185 I TestRunner: run started: 1 tests
+11-23 00:29:48.446  3165  3185 I TestRunner: started: focusedInputAssistHonorsConsentHintsDeletionAndPasswords(dev.lichboard.AccessibilityIntegrationTest)
+11-23 00:29:51.012  3165  3185 I TestRunner: finished: focusedInputAssistHonorsConsentHintsDeletionAndPasswords(dev.lichboard.AccessibilityIntegrationTest)
+11-23 00:29:51.013  3165  3185 I TestRunner: run finished: 1 tests, 0 failed, 0 ignored
