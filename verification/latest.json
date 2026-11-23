@@ -1,11 +1,11 @@
 {
-  "sourceCommit": "100d22186c711f4e8d8673ae811f49e14d9d3e57",
-  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45110730632",
-  "timestampUtc": "2026-11-23T04:19:53.170139+00:00",
+  "sourceCommit": "df136737007f736578edbd34028c6d1b56d70001",
+  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45109305898",
+  "timestampUtc": "2026-11-23T04:12:09.356126+00:00",
   "versionName": "1.2.0",
   "buildUnitTestsLint": "success",
-  "android11Api30": "cancelled",
-  "android15Api35": "skipped",
+  "android11Api30": "success",
+  "android15Api35": "failure",
   "signing": "Non-debuggable evaluation releases; Android development certificate. Use your own private keystore for production and stable updates.",
   "playProtectAcceptance": "Not verified. Stock Android emulator tests do not include Google Play Protect or OEM installation policy. Do not disable device protections.",
   "variants": {
@@ -18,21 +18,21 @@
       "accessibilityMetadataIncluded": false,
       "debuggable": false,
       "internetPermission": false,
-      "apkSha256": "3a351d9226cae09a2ef3e198fac171775db620c2a47f6cb7465147b40d8b86b0",
+      "apkSha256": "30866d648d37e0fa2b01521ffe4edc4292f2baf389d4788531c85c884170be60",
       "apkBytes": 18452243,
       "deviceTests": {
         "api30": {
-          "tests": 0,
+          "tests": 22,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
-          "releaseSmokePassed": false,
+          "releaseSmokePassed": true,
           "inputPerformancePassed": false,
           "passed": false
         },
         "api35": {
-          "tests": 0,
-          "failures": 0,
+          "tests": 22,
+          "failures": 1,
           "errors": 0,
           "skipped": 0,
           "releaseSmokePassed": false,
@@ -56,24 +56,24 @@
       "accessibilityMetadataIncluded": true,
       "debuggable": false,
       "internetPermission": false,
-      "apkSha256": "2b9e1f56e0fb95954f9c1989088a91399a1043a4182d589e5d07e75041267cce",
+      "apkSha256": "c4c5fd9f2c53fe32533d69632e38515731544ac62c50c7f1b49b5714bbbf51d0",
       "apkBytes": 18471063,
       "deviceTests": {
         "api30": {
-          "tests": 0,
+          "tests": 21,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
-          "releaseSmokePassed": false,
+          "releaseSmokePassed": true,
           "inputPerformancePassed": false,
           "passed": false
         },
         "api35": {
-          "tests": 0,
+          "tests": 21,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
-          "releaseSmokePassed": false,
+          "releaseSmokePassed": true,
           "inputPerformancePassed": false,
           "passed": false
         }
