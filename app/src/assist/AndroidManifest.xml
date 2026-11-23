@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
+        <!-- Keep the typed overlay owner explicit here as well: AGP 8.7 foreground-service
+             lint inspects this source manifest rather than the fully merged main manifest.
+             Main still supplies exported=false, stopWithTask and the special-use subtype. -->
+        <service android:name="dev.lichboard.overlay.FloatingService"
+            android:foregroundServiceType="specialUse" />
         <!-- Intentionally absent from Standard's manifest, resources, and compiled sources. -->
         <service android:name="dev.lichboard.accessibility.LichboardAccessibilityService"
             android:label="@string/accessibility_label"
