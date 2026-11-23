@@ -1,76 +1,90 @@
 {
-  "sourceCommit": "79ccb35f001fada98747e6a0753fe8481a102645",
-  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45104816276",
-  "timestampUtc": "2026-11-23T03:26:26.403393+00:00",
-  "versionName": "1.1.0",
+  "sourceCommit": "df136737007f736578edbd34028c6d1b56d70001",
+  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45109305898",
+  "timestampUtc": "2026-11-23T04:12:09.356126+00:00",
+  "versionName": "1.2.0",
   "buildUnitTestsLint": "success",
   "android11Api30": "success",
-  "android15Api35": "success",
+  "android15Api35": "failure",
   "signing": "Non-debuggable evaluation releases; Android development certificate. Use your own private keystore for production and stable updates.",
   "playProtectAcceptance": "Not verified. Stock Android emulator tests do not include Google Play Protect or OEM installation policy. Do not disable device protections.",
   "variants": {
     "standard": {
       "applicationId": "dev.lichboard",
-      "versionName": "1.1.0",
+      "versionName": "1.2.0",
+      "versionCode": 3,
       "accessibilityServiceDeclared": false,
       "accessibilityImplementationIncluded": false,
       "accessibilityMetadataIncluded": false,
       "debuggable": false,
       "internetPermission": false,
-      "apkSha256": "35cc853cf983e384714b26614b3f37170556d70b334a5533dfc3aa8ca7e39363",
-      "apkBytes": 18435859,
+      "apkSha256": "30866d648d37e0fa2b01521ffe4edc4292f2baf389d4788531c85c884170be60",
+      "apkBytes": 18452243,
       "deviceTests": {
         "api30": {
-          "tests": 13,
+          "tests": 22,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
           "releaseSmokePassed": true,
-          "passed": true
+          "inputPerformancePassed": false,
+          "passed": false
         },
         "api35": {
-          "tests": 13,
-          "failures": 0,
+          "tests": 22,
+          "failures": 1,
           "errors": 0,
           "skipped": 0,
-          "releaseSmokePassed": true,
-          "passed": true
+          "releaseSmokePassed": false,
+          "inputPerformancePassed": false,
+          "passed": false
         }
       },
-      "published": true,
-      "apkPath": "releases/Lichboard-1.1.0-standard.apk"
+      "inputPerformance": {
+        "api30": {},
+        "api35": {}
+      },
+      "published": false,
+      "apkPath": null
     },
     "assist": {
       "applicationId": "dev.lichboard.assist",
-      "versionName": "1.1.0-assist",
+      "versionName": "1.2.0-assist",
+      "versionCode": 3,
       "accessibilityServiceDeclared": true,
       "accessibilityImplementationIncluded": true,
       "accessibilityMetadataIncluded": true,
       "debuggable": false,
       "internetPermission": false,
-      "apkSha256": "6713b6899f827c39ef4a0d9be1f608d97826d64e26facaf054283d4b4460a418",
-      "apkBytes": 18454683,
+      "apkSha256": "c4c5fd9f2c53fe32533d69632e38515731544ac62c50c7f1b49b5714bbbf51d0",
+      "apkBytes": 18471063,
       "deviceTests": {
         "api30": {
-          "tests": 12,
+          "tests": 21,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
           "releaseSmokePassed": true,
-          "passed": true
+          "inputPerformancePassed": false,
+          "passed": false
         },
         "api35": {
-          "tests": 12,
+          "tests": 21,
           "failures": 0,
           "errors": 0,
           "skipped": 0,
           "releaseSmokePassed": true,
-          "passed": true
+          "inputPerformancePassed": false,
+          "passed": false
         }
       },
-      "published": true,
-      "apkPath": "releases/Lichboard-1.1.0-assist.apk"
+      "inputPerformance": {
+        "api30": {},
+        "api35": {}
+      },
+      "published": false,
+      "apkPath": null
     }
   },
-  "verifiedReleasePublished": true
+  "verifiedReleasePublished": false
 }

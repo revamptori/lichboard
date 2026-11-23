@@ -2,6 +2,6 @@ Starting: Intent { cmp=dev.lichboard.assist/dev.lichboard.MainActivity }
 Status: ok
 LaunchState: COLD
 Activity: dev.lichboard.assist/dev.lichboard.MainActivity
-TotalTime: 689
-WaitTime: 691
+TotalTime: 448
+WaitTime: 451
 Complete

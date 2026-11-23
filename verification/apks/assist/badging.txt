@@ -1,4 +1,4 @@
-package: name='dev.lichboard.assist' versionCode='2' versionName='1.1.0-assist' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'
+package: name='dev.lichboard.assist' versionCode='3' versionName='1.2.0-assist' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'
 sdkVersion:'30'
 targetSdkVersion:'35'
 uses-permission: name='android.permission.SYSTEM_ALERT_WINDOW'

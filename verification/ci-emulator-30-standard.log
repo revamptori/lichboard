@@ -79,16 +79,17 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedStandardDebugAndroidTest
-Starting 13 tests on emulator-5554 - 11
+Starting 22 tests on emulator-5554 - 11
 
-emulator-5554 - 11 Tests 1/13 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 2/13 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 4/13 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 6/13 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 8/13 completed. (0 skipped) (0 failed)
-emulator-5554 - 11 Tests 10/13 completed. (0 skipped) (0 failed)
-Finished 13 tests on emulator-5554 - 11
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795403879427.json
+emulator-5554 - 11 Tests 1/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 2/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 5/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 7/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 10/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 11/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 11 Tests 14/22 completed. (0 skipped) (0 failed)
+Finished 22 tests on emulator-5554 - 11
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api30-1795406650895.json
 
-BUILD SUCCESSFUL in 1m 38s
+BUILD SUCCESSFUL in 1m 33s
 67 actionable tasks: 1 executed, 66 up-to-date

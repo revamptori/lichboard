@@ -50,16 +50,16 @@
 /home/runner/work/lichboard/lichboard/app/build.gradle.kts:79: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.11.1 [GradleDependency]
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:87: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:88: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
     androidTestImplementation("androidx.test:runner:1.6.2")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:88: Warning: A newer version of androidx.test:rules than 1.6.1 is available: 1.7.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:89: Warning: A newer version of androidx.test:rules than 1.6.1 is available: 1.7.0 [GradleDependency]
     androidTestImplementation("androidx.test:rules:1.6.1")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:89: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:90: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/build.gradle.kts:90: Warning: A newer version of androidx.test.uiautomator:uiautomator than 2.3.0 is available: 2.4.1 [GradleDependency]
+/home/runner/work/lichboard/lichboard/app/build.gradle.kts:91: Warning: A newer version of androidx.test.uiautomator:uiautomator than 2.3.0 is available: 2.4.1 [GradleDependency]
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -73,10 +73,10 @@
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/BubbleView.kt:15: Warning: Custom view BubbleView is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
 class BubbleView(
       ~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyButton.kt:14: Warning: Custom view KeyButton is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyButton.kt:15: Warning: Custom view KeyButton is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
 class KeyButton(
       ~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:35: Warning: Custom view KeyboardPanel is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:34: Warning: Custom view KeyboardPanel is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
 class KeyboardPanel(
       ~~~~~~~~~~~~~
 
@@ -98,7 +98,7 @@ class KeyboardPanel(
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:257: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
         box.setOnTouchListener { _, event -> if (event.actionMasked == MotionEvent.ACTION_OUTSIDE) { hideQuick(); true } else false }
                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:163: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:174: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
             title.setOnTouchListener { view, event ->
             ^
 
@@ -109,16 +109,7 @@ class KeyboardPanel(
    actions should ideally be placed in View#performClick as some accessibility
    services invoke performClick when a click action should occur.
 
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:347: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
-            text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:347: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
-            text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
-                    ~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:347: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
-            text = "CLIPBOARD\n${clipboardPreview?.take(180) ?: "Empty or unavailable. Android restricts background clipboard access."}\n\nDRAFT (MEMORY ONLY)\n${router.draftPreview().take(160)}"
-                                                                                                                                           ~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/debug/java/dev/lichboard/ProbeActivity.kt:30: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/home/runner/work/lichboard/lichboard/app/src/debug/java/dev/lichboard/ProbeActivity.kt:37: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         plain = TextView(this).apply { id = R.id.probe_plain; text = "No editor target"; isFocusableInTouchMode = true }
                                                                       ~~~~~~~~~~~~~~~~
 
@@ -135,4 +126,4 @@ class KeyboardPanel(
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 19 warnings
+0 errors, 16 warnings

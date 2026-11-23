@@ -79,16 +79,17 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedAssistDebugAndroidTest
-Starting 11 tests on emulator-5554 - 15
+Starting 20 tests on emulator-5554 - 15
 
-emulator-5554 - 15 Tests 0/11 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 2/11 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 5/11 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 7/11 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 9/11 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 10/11 completed. (0 skipped) (0 failed)
-Finished 11 tests on emulator-5554 - 15
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795404264640.json
+emulator-5554 - 15 Tests 1/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 2/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 4/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 7/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 9/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 11/20 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 13/20 completed. (0 skipped) (0 failed)
+Finished 20 tests on emulator-5554 - 15
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795407016031.json
 
 BUILD SUCCESSFUL in 1m 33s
 67 actionable tasks: 1 executed, 66 up-to-date
@@ -176,7 +177,7 @@ Daemon will be stopped at the end of the build
 Starting 1 tests on emulator-5554 - 15
 
 Finished 1 tests on emulator-5554 - 15
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795404358388.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795407109660.json
 
-BUILD SUCCESSFUL in 25s
+BUILD SUCCESSFUL in 16s
 67 actionable tasks: 1 executed, 66 up-to-date

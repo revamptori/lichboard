@@ -1,7 +1,0 @@
-Starting: Intent { cmp=dev.lichboard/.MainActivity }
-Status: ok
-LaunchState: COLD
-Activity: dev.lichboard/.MainActivity
-TotalTime: 1040
-WaitTime: 1042
-Complete
