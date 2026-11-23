@@ -7,6 +7,9 @@ import android.content.ContentValues
 import android.provider.MediaStore
 import android.os.Environment
 import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,6 +22,8 @@ import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.BoardTheme
 import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
+import dev.lichboard.input.InputRouter
+import dev.lichboard.keyboard.KeyboardPanel
 import dev.lichboard.overlay.FloatingService
 import org.junit.After
 import org.junit.Assert.*
@@ -218,6 +223,45 @@ class LichboardIntegrationTest {
             requireNotNull(device.findObject(By.text("Controls"))).click()
             assertNotNull(device.wait(Until.findObject(By.textContains("At your")), 8_000))
         }
+    }
+    @Test fun pageRebuildsAndReattachmentDiscardStaleQueuedKeys() {
+        lateinit var panel: KeyboardPanel
+        lateinit var host: FrameLayout
+        fun views(root: View): List<View> = listOf(root) + if (root is ViewGroup) {
+            (0 until root.childCount).flatMap { views(root.getChildAt(it)) }
+        } else emptyList()
+        fun press(description: String) {
+            requireNotNull(views(panel).firstOrNull { it.contentDescription == description }).performClick()
+        }
+        scenario!!.onActivity { activity ->
+            app.settings.update { it.copy(inputMode = InputMode.CLIPBOARD) }
+            host = FrameLayout(activity)
+            activity.setContentView(host)
+            panel = KeyboardPanel(activity, InputRouter(activity), floating = true, onClose = {})
+            host.addView(panel)
+        }
+        instrumentation.runOnMainSync {
+            assertTrue(panel.isAttachedToWindow)
+            val initialViews = views(panel).size
+            repeat(24) {
+                press("Special keys"); press("Key ABC")
+                press("Emoji panel"); press("Key ABC")
+                press("Key ?123"); press("Key ABC")
+            }
+            assertEquals("Only the current page belongs to the view hierarchy", initialViews, views(panel).size)
+            // Keep Main busy while requests are queued. Their route cannot query the IME
+            // until Main is released, so removing the panel must cancel all of them first.
+            repeat(50) { press("Key q") }
+            host.removeView(panel)
+        }
+        instrumentation.waitForIdleSync()
+        assertEquals("Detached keys never reach the draft", "", app.draft.snapshot.text)
+        scenario!!.onActivity {
+            host.addView(panel)
+            press("Key w")
+        }
+        condition("A reattached panel accepts fresh input only") { app.draft.snapshot.text == "w" }
+        scenario!!.onActivity { panel.dispose(); host.removeView(panel) }
     }
     @Test fun everyThemeAndResizeRendersWithoutLosingDraft() {
         overlay(InputMode.CLIPBOARD)

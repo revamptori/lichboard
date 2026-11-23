@@ -54,5 +54,6 @@ class DraftBuffer(private val limit: Int = 20_000) {
 }
 
 data class DraftSnapshot(val text: String = "", val cursor: Int = 0, val anchor: Int = 0) {
+    val selectedText get() = text.substring(minOf(cursor, anchor), maxOf(cursor, anchor))
     fun preview(): String = text.take(cursor) + "│" + text.drop(cursor)
 }

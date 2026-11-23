@@ -10,6 +10,7 @@ import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.ColorUtils
@@ -21,9 +22,11 @@ import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
@@ -48,7 +51,6 @@ class KeyboardPanel(
     private var lastShift = 0L
     private var emojiCategory = 0
     private var clipboardPreview: String? = null
-    private val buttons = mutableListOf<KeyButton>()
     private val letters = mutableMapOf<KeyButton, String>()
     private val modifiers = mutableMapOf<KeyButton, String>()
     private lateinit var toolbar: LinearLayout
@@ -57,6 +59,8 @@ class KeyboardPanel(
     private var alternatives: List<String>? = null
     private val inputScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val requests = Channel<suspend () -> String>(64)
+    private var inputJob: Job? = null
+    private var disposed = false
 
     init {
         orientation = VERTICAL
@@ -64,10 +68,13 @@ class KeyboardPanel(
         layoutDirection = View.LAYOUT_DIRECTION_LTR
         setPadding(dp(5), dp(4), dp(5), dp(5))
         build()
-        inputScope.launch {
+    }
+    private fun startInputQueue() {
+        if (disposed || inputJob?.isActive == true) return
+        inputJob = inputScope.launch {
             for (request in requests) {
                 try {
-                    val result = withContext(Dispatchers.Default) { request() }
+                    val result = withContext(Dispatchers.Default) { ensureActive(); request() }
                     refreshStatus(result)
                     if (page == Page.CLIPBOARD) buildBody()
                 } catch (cancelled: CancellationException) { throw cancelled }
@@ -75,7 +82,17 @@ class KeyboardPanel(
             }
         }
     }
+    private fun stopInputQueue() {
+        inputJob?.cancel()
+        inputJob = null
+        while (requests.tryReceive().isSuccess) { /* Never carry queued keys into another editor/session. */ }
+    }
+    fun discardPendingInput() {
+        stopInputQueue()
+        if (isAttachedToWindow) startInputQueue()
+    }
     private fun submit(request: suspend () -> String) {
+        if (disposed || !isAttachedToWindow) return
         if (requests.trySend(request).isFailure) refreshStatus("Input queue busy · wait for the target app")
     }
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
@@ -99,7 +116,8 @@ class KeyboardPanel(
         } else super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
     private fun build() {
-        disposeButtons()
+        disposeKeys(this)
+        letters.clear(); modifiers.clear()
         removeAllViews()
         background = rounded(palette.background, if (floating) 18 else 0)
         toolbar = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
@@ -119,8 +137,8 @@ class KeyboardPanel(
         refreshStatus()
     }
     private fun buildToolbar() {
+        disposeKeys(toolbar)
         toolbar.removeAllViews()
-        buttons.removeAll { it.parent == null }
         val alternate = alternatives
         if (alternate != null) {
             alternate.forEach { char ->
@@ -161,9 +179,10 @@ class KeyboardPanel(
     }
     private fun setPage(value: Page) { alternatives = null; page = value; buildBody(); buildToolbar(); refreshStatus() }
     private fun buildBody() {
-        // Remove only body-owned keys; detached key views cancel their own callbacks.
+        // Traverse the live hierarchy only: a key's parent row can itself be detached.
+        // Retaining a global key registry would keep discarded rows and callbacks alive.
+        disposeKeys(body)
         body.removeAllViews()
-        buttons.removeAll { it.parent == null }
         letters.clear(); modifiers.clear()
         when (page) {
             Page.LETTERS -> lettersPage()
@@ -187,7 +206,6 @@ class KeyboardPanel(
         return KeyButton(context, label, description, action, hold, repeat).also {
             it.colors(if (accent) palette.accent else if (special) palette.special else palette.key,
                 if (accent) palette.onAccent else palette.text, ColorUtils.blendARGB(palette.key, palette.accent, .35f))
-            buttons.add(it)
         }
     }
     private fun character(value: String): KeyButton {
@@ -373,11 +391,22 @@ class KeyboardPanel(
         if (settings.vibration) performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
         if (settings.sound) context.getSystemService(AudioManager::class.java)?.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, .3f)
     }
-    private fun disposeButtons() { buttons.forEach { it.dispose() }; buttons.clear(); letters.clear(); modifiers.clear() }
-    fun dispose() { requests.close(); inputScope.cancel(); disposeButtons(); animate().cancel() }
+    private fun disposeKeys(container: ViewGroup) {
+        for (index in 0 until container.childCount) {
+            val child = container.getChildAt(index)
+            if (child is KeyButton) child.dispose()
+            if (child is ViewGroup) disposeKeys(child)
+        }
+    }
+    fun dispose() {
+        disposed = true
+        stopInputQueue(); requests.cancel(); inputScope.cancel()
+        disposeKeys(this); letters.clear(); modifiers.clear(); animate().cancel()
+    }
+    override fun onAttachedToWindow() { super.onAttachedToWindow(); startInputQueue() }
     override fun onDetachedFromWindow() {
-        buttons.forEach { it.dispose() }
-        while (requests.tryReceive().isSuccess) { /* Drop queued keys when their keyboard is hidden. */ }
+        stopInputQueue()
+        disposeKeys(this)
         super.onDetachedFromWindow()
     }
 

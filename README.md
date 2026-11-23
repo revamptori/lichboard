@@ -48,7 +48,7 @@ Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, in
 - Midnight (default), AMOLED Black, Dracula, Nord, Light and validated custom background/accent colors, rounded keys, short press/open transitions.
 - First-run guidance, real editor test area, live service status, geometry reset, haptic and system key-click toggles, optional boot restore.
 - Auto-hide means **hide the floating button while either Lichboard keyboard is visible**. The keyboard can still be closed from its toolbar or service notification; the button then returns. It is not an idle timer.
-- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Input assist runs off the UI thread through an ordered, bounded input queue so a slow accessibility target cannot freeze the keyboard.
+- A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Input assist runs off the UI thread through an ordered, bounded input queue so a slow accessibility target cannot freeze the keyboard. Detaching/closing a panel drops its pending actions; the normal IME also drops them when its editor changes. Android calls already sent cannot be retracted. Discarded key pages do not remain in a global view registry.
 
 ## Optional accessibility setup
 
@@ -91,6 +91,10 @@ export LICHBOARD_KEY_PASSWORD='your-key-password'
 
 Never commit keystores/passwords. The `*.jks`, `*.keystore`, `local.properties` and build directories are ignored. For Play distribution, review current foreground `specialUse`, accessibility, privacy-disclosure and signing policies. The project is not a claim of Play approval.
 
+### Complete project archive
+
+After successful CI verification and pulling its evidence commit, run `python3 scripts/package-project.py`. It checks the APK checksum and that all application/build sources match the tested commit, then creates **`deliverables/Lichboard-1.0.0-AndroidStudio.zip`** and `deliverables/SHA256SUMS`. The archive contains all Kotlin sources, resources, manifests, wrapper, tests, CI scripts, README, verification reports/screenshots and the installable APK, under a single `Lichboard/` folder. Extract it and open that folder in Android Studio. No SDK, local caches, Git history, credentials or private keys are bundled; first Gradle sync needs Internet access.
+
 ## Testing and evidence
 
 ```sh
@@ -106,13 +110,15 @@ The key/window suite and accessibility suite run in **separate instrumentation i
 
 Tests cover:
 
-- UTF-16/code-point-safe buffer editing, selections, limits, and all route-policy combinations.
+- UTF-16/code-point-safe buffer editing, selections, limits, concurrent draft edits, snapshot-safe cuts, and all route-policy combinations.
 - Real normal-IME typing, Shift, backspace, numbers and Space.
 - Floating typing without stealing editor focus, cursor movement, Ctrl+A replacement.
 - Automatic no-editor draft fallback, explicit clipboard draft/copy, emoji and close lifecycle.
+- Repeated native page rebuilds, cancellation of queued keys on detach, and fresh input after reattachment.
 - Long-press accents, F1–F12/editing-key presence, rejection of unsupported draft special keys.
 - Actual raw F12 and Ctrl+F1 delivery to a receiving view.
 - Bubble drag/persistence, long-press controls, themes and geometry changes.
+- Compose Board/Style/Controls navigation and a real theme preference change, with native screenshots.
 - Accessibility refusal without in-app opt-in, then text insertion/deletion using a real focused editor.
 
 [The CI workflow](.github/workflows/android.yml) builds, runs JVM tests and Lint, boots **Android 11 (API 30)** and **Android 15 (API 35)** emulators, runs the device tests on each, then installs and launches the **non-debuggable release APK** on each. It verifies APK signing/badging and records reports, screenshots and runtime crash logs in [`verification/`](verification/). A build is only marked verified when all stages succeed; inspect `latest.json` for the current result. CI publishes evidence/APK back to **this working branch only**, with `[skip ci]` to avoid loops, and retains the complete Actions artifact for 14 days.

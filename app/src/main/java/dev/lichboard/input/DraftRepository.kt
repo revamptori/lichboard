@@ -12,5 +12,10 @@ class DraftRepository {
         buffer.action()
         mutable.value = buffer.snapshot()
     }
-    @Synchronized fun selectedText(): String = buffer.selectedText
+    /** A clipboard round trip must not delete newer text typed from another keyboard/UI. */
+    @Synchronized fun editIfUnchanged(expected: DraftSnapshot, action: DraftBuffer.() -> Unit): Boolean {
+        if (buffer.snapshot() != expected) return false
+        edit(action)
+        return true
+    }
 }

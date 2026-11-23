@@ -7,6 +7,9 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import dev.lichboard.input.EditCommand
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 /** Explicit user-triggered focused text editing only. Never caches nodes, reads passwords, or polls. */
 class LichboardAccessibilityService : AccessibilityService() {
@@ -41,11 +44,22 @@ class LichboardAccessibilityService : AccessibilityService() {
                 !target.isEditable || !target.isEnabled -> { lastFailure = "Focus an enabled editable field"; default }
                 else -> action(target)
             }
-        } catch (_: IllegalStateException) { lastFailure = "Editor changed during input"; default }
+        } catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: IllegalStateException) { lastFailure = "Editor changed during input"; default }
         finally { node?.recycle(); root.recycle() }
     }
+    private suspend inline fun <T> withActiveEditor(default: T, action: (AccessibilityNodeInfo) -> T): T {
+        val requestContext = currentCoroutineContext()
+        requestContext.ensureActive()
+        return withEditor(default) { target ->
+            // Cancellation cannot retract an Android action already sent, but must prevent a
+            // queued key from being sent after its panel was hidden during node discovery.
+            requestContext.ensureActive()
+            action(target)
+        }
+    }
     fun hasEditableTarget(): Boolean = withEditor(false) { true }
-    fun text(value: String, meta: Int): Boolean {
+    suspend fun text(value: String, meta: Int): Boolean {
         if (meta and KeyEvent.META_ALT_ON != 0) return false
         if (meta and KeyEvent.META_CTRL_ON != 0) {
             val command = when (value.lowercase()) {
@@ -54,9 +68,9 @@ class LichboardAccessibilityService : AccessibilityService() {
             }
             return edit(command)
         }
-        return withEditor(false) { replaceSelection(it, value) }
+        return withActiveEditor(false) { replaceSelection(it, value) }
     }
-    fun edit(command: EditCommand): Boolean = withEditor(false) { node ->
+    suspend fun edit(command: EditCommand): Boolean = withActiveEditor(false) { node ->
         when (command) {
             EditCommand.COPY -> node.performAction(AccessibilityNodeInfo.ACTION_COPY)
             EditCommand.CUT -> node.performAction(AccessibilityNodeInfo.ACTION_CUT)
@@ -64,12 +78,12 @@ class LichboardAccessibilityService : AccessibilityService() {
             EditCommand.SELECT_ALL -> setSelection(node, 0, editableText(node).length)
         }
     }
-    fun key(code: Int, meta: Int): Boolean = withEditor(false) { node ->
-        if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return@withEditor false
+    suspend fun key(code: Int, meta: Int): Boolean = withActiveEditor(false) { node ->
+        if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return@withActiveEditor false
         val text = editableText(node)
         val start = node.textSelectionStart
         val end = node.textSelectionEnd
-        if (start !in 0..text.length || end !in 0..text.length) return@withEditor false
+        if (start !in 0..text.length || end !in 0..text.length) return@withActiveEditor false
         val low = minOf(start, end)
         val high = maxOf(start, end)
         val extend = meta and KeyEvent.META_SHIFT_ON != 0

@@ -9,6 +9,8 @@ import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
 import dev.lichboard.lichboard
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 /** Routes on every explicit key action; never assumes an overlay confers injection privileges. */
@@ -21,8 +23,11 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
         if (forceIme) return if (hasIme) InputRoute.IME else InputRoute.DRAFT
         val allowAssist = settings.accessibilityFallback && (settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.ACCESSIBILITY)
         val shouldProbeAssist = allowAssist && (settings.inputMode == InputMode.ACCESSIBILITY || !hasIme)
-        return InputPolicy.choose(settings.inputMode, hasIme, allowAssist,
+        val result = InputPolicy.choose(settings.inputMode, hasIme, allowAssist,
             shouldProbeAssist && AccessBridge.service?.hasEditableTarget() == true)
+        // A hidden/destroyed panel may have been cancelled during a slow node query.
+        currentCoroutineContext().ensureActive()
+        return result
     }
     // Status never performs accessibility IPC on the rendering thread.
     fun status(): String {
@@ -42,9 +47,11 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
         }
     }
     private suspend fun fallbackText(value: String, meta: Int): String {
+        currentCoroutineContext().ensureActive()
         val s = app.settings.current
         if (!forceIme && s.inputMode == InputMode.AUTO && s.accessibilityFallback &&
             AccessBridge.service?.text(value, meta) == true) return "ASSIST · focused text field"
+        currentCoroutineContext().ensureActive()
         return draftText(value, meta)
     }
     private fun draftText(value: String, meta: Int): String {
@@ -93,15 +100,16 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
     private fun draftEdit(command: EditCommand): String {
         when (command) {
             EditCommand.COPY -> {
-                val text = app.draft.selectedText().ifEmpty { app.draft.snapshot.text }
-                return copy(text)
+                val draft = app.draft.snapshot
+                return copy(draft.selectedText.ifEmpty { draft.text })
             }
             EditCommand.CUT -> {
-                val selected = app.draft.selectedText()
-                if (selected.isEmpty()) return "Select draft text first (Ctrl+A selects all)"
-                val result = copy(selected)
-                if (result.startsWith("Copied")) app.draft.edit { insert("") }
-                return result
+                val draft = app.draft.snapshot
+                if (draft.selectedText.isEmpty()) return "Select draft text first (Ctrl+A selects all)"
+                val result = copy(draft.selectedText)
+                if (!result.startsWith("Copied")) return result
+                return if (app.draft.editIfUnchanged(draft) { insert("") }) result
+                    else "Copied · draft changed, so nothing was cut"
             }
             EditCommand.PASTE -> {
                 val value = clipboardText() ?: return "Clipboard is empty or unavailable"

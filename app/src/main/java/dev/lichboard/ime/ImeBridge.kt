@@ -3,7 +3,7 @@ package dev.lichboard.ime
 import java.lang.ref.WeakReference
 
 object ImeBridge {
-    private var reference = WeakReference<LichboardImeService>(null)
+    @Volatile private var reference = WeakReference<LichboardImeService>(null)
     val service: LichboardImeService? get() = reference.get()
     val hasEditor get() = service?.hasEditor == true
     fun attach(service: LichboardImeService) { reference = WeakReference(service) }

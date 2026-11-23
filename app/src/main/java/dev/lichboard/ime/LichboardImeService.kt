@@ -68,6 +68,7 @@ class LichboardImeService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         editorStarted = true
+        panel?.discardPendingInput()
         panel?.resetModifiers()
     }
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
@@ -76,15 +77,21 @@ class LichboardImeService : InputMethodService() {
         panel?.refreshStatus()
     }
     override fun onFinishInputView(finishingInput: Boolean) {
+        panel?.discardPendingInput()
         lichboard.imeVisible.value = false
         super.onFinishInputView(finishingInput)
     }
     override fun onFinishInput() {
+        panel?.discardPendingInput()
         editorStarted = false
         lichboard.imeVisible.value = false
         super.onFinishInput()
     }
-    override fun onWindowHidden() { lichboard.imeVisible.value = false; super.onWindowHidden() }
+    override fun onWindowHidden() {
+        panel?.discardPendingInput()
+        lichboard.imeVisible.value = false
+        super.onWindowHidden()
+    }
 
     private val rawEditor get() = currentInputEditorInfo?.inputType == InputType.TYPE_NULL
     fun text(value: String, meta: Int): Boolean {

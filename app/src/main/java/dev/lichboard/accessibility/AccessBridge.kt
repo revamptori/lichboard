@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 object AccessBridge {
-    private var reference = WeakReference<LichboardAccessibilityService>(null)
+    @Volatile private var reference = WeakReference<LichboardAccessibilityService>(null)
     private val mutable = MutableStateFlow(false)
     val connected = mutable.asStateFlow()
     val service get() = reference.get()
