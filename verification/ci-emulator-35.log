@@ -79,42 +79,17 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedDebugAndroidTest
-Starting 9 tests on emulator-5554 - 15
+Starting 10 tests on emulator-5554 - 15
 
-emulator-5554 - 15 Tests 0/9 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 0/10 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 2/10 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 4/10 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 7/10 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 8/10 completed. (0 skipped) (0 failed)
+Finished 10 tests on emulator-5554 - 15
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795393099419.json
 
-> Task :app:connectedDebugAndroidTest
-
-dev.lichboard.LichboardIntegrationTest > independentOverlayHasHonestClipboardDraft[emulator-5554 - 15] [31mFAILED [0m
-	java.lang.AssertionError
-	at org.junit.Assert.fail(Assert.java:87)
-
-emulator-5554 - 15 Tests 1/9 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 3/9 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 4/9 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 6/9 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 8/9 completed. (0 skipped) (1 failed)
-Finished 9 tests on emulator-5554 - 15
-
-> Task :app:connectedDebugAndroidTest
-Tests on emulator-5554 - 15 failed: There was 1 failure(s).
-
-> Task :app:connectedDebugAndroidTest FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795392469609.json
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:connectedDebugAndroidTest'.
-> There were failing tests. See the report at: file:///home/runner/work/lichboard/lichboard/app/build/reports/androidTests/connected/debug/index.html
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 1m 32s
+BUILD SUCCESSFUL in 1m 15s
 67 actionable tasks: 1 executed, 66 up-to-date
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
@@ -199,27 +174,8 @@ Daemon will be stopped at the end of the build
 > Task :app:connectedDebugAndroidTest
 Starting 1 tests on emulator-5554 - 15
 
-dev.lichboard.AccessibilityIntegrationTest > focusedInputAssistHonorsConsentHintsDeletionAndPasswords[emulator-5554 - 15] [31mFAILED [0m
-	org.junit.ComparisonFailure: Field rejected input · use clipboard draft / Field rejected input · use clipboard draft; draft=DraftSnapshot(text=, cursor=0, anchor=0) expected:<[hi]> but was:<[]>
-	at org.junit.Assert.assertEquals(Assert.java:117)
-Tests on emulator-5554 - 15 failed: There was 1 failure(s).
-
 Finished 1 tests on emulator-5554 - 15
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795393173684.json
 
-> Task :app:connectedDebugAndroidTest FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795392558599.json
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:connectedDebugAndroidTest'.
-> There were failing tests. See the report at: file:///home/runner/work/lichboard/lichboard/app/build/reports/androidTests/connected/debug/index.html
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 27s
+BUILD SUCCESSFUL in 21s
 67 actionable tasks: 1 executed, 66 up-to-date

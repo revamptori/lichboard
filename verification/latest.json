@@ -1,10 +1,12 @@
 {
-  "sourceCommit": "1182f9936de885c68a67d3c8aaa2b2e60fa6ae73",
-  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45086382410",
-  "timestampUtc": "2026-11-23T00:09:44.311569+00:00",
+  "sourceCommit": "eb5ad3db2264cd6c845c1fa01772af4503c6dbb5",
+  "runUrl": "https://github.com/revamptori/lichboard/actions/runs/45087403554",
+  "timestampUtc": "2026-11-23T00:19:57.552399+00:00",
   "buildUnitTestsLint": "success",
-  "android11Api30": "failure",
-  "android15Api35": "failure",
+  "android11Api30": "success",
+  "android15Api35": "success",
   "signing": "Evaluation release; Android development certificate. Use your own keystore for production.",
-  "verifiedReleasePublished": false
+  "apkSha256": "b3a520bb935bb703252a36fd962e69c21c493297fb6682bcf8f949f90e78c5b5",
+  "apkBytes": 18438279,
+  "verifiedReleasePublished": true
 }

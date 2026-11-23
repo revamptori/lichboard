@@ -91,8 +91,8 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:desugarReleaseFileDependencies FROM-CACHE
 > Task :app:mergeReleaseStartupProfile
 > Task :app:mergeExtDexRelease FROM-CACHE
-> Task :app:mergeReleaseShaders
 > Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -106,29 +106,29 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:writeReleaseSigningConfigVersions
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
 > Task :app:javaPreCompileDebugUnitTest FROM-CACHE
-> Task :app:compileDebugKotlin
 > Task :app:compileReleaseKotlin
-> Task :app:compileDebugJavaWithJavac FROM-CACHE
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics FROM-CACHE
 > Task :app:processDebugJavaRes
-> Task :app:compileReleaseJavaWithJavac FROM-CACHE
+> Task :app:compileReleaseJavaWithJavac
 > Task :app:bundleDebugClassesToCompileJar
 > Task :app:mergeProjectDexDebug
-> Task :app:generateReleaseLintVitalReportModel
 > Task :app:mergeDebugJavaResource
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
 > Task :app:compileDebugAndroidTestKotlin
 > Task :app:dexBuilderRelease
 > Task :app:compileDebugAndroidTestJavaWithJavac
 > Task :app:dexBuilderDebugAndroidTest
 > Task :app:mergeDebugAndroidTestGlobalSynthetics FROM-CACHE
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
 > Task :app:processDebugAndroidTestJavaRes
+> Task :app:mergeProjectDexDebugAndroidTest
 > Task :app:mergeDebugAndroidTestJavaResource
 > Task :app:mergeReleaseGlobalSynthetics FROM-CACHE
-> Task :app:mergeProjectDexDebugAndroidTest
 > Task :app:processReleaseJavaRes
 > Task :app:packageDebugAndroidTest
 > Task :app:createDebugAndroidTestApkListingFileRedirect
@@ -158,7 +158,7 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-debug.html
 
 > Task :app:lintDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795392130535.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795392772406.json
 
-BUILD SUCCESSFUL in 1m 39s
-129 actionable tasks: 80 executed, 49 from cache
+BUILD SUCCESSFUL in 1m 19s
+129 actionable tasks: 82 executed, 47 from cache

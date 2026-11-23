@@ -7,11 +7,11 @@ Verified using v4 scheme (APK Signature Scheme v4): false
 Verified for SourceStamp: false
 Number of signers: 1
 Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
-Signer #1 certificate SHA-256 digest: 1956dfadb53d831fecfef600999d70fd7e1a82c18bae0bfa7794d50977b5a57c
-Signer #1 certificate SHA-1 digest: 9e163a96c311223a8db26c3fac5c1f3530ea9854
-Signer #1 certificate MD5 digest: 1e8b183bfdfe4cc722c0c7e8762b80d1
+Signer #1 certificate SHA-256 digest: cb9bf4d1cd3f844a5c6f817a3687362e9874eace931a92f770349abcb5d7070c
+Signer #1 certificate SHA-1 digest: 5b01e8d90b2a91886daa9b5b07746f99eaa5a183
+Signer #1 certificate MD5 digest: 04a43ff0ed574df8cfaad97b977f05c3
 Signer #1 key algorithm: RSA
 Signer #1 key size (bits): 2048
-Signer #1 public key SHA-256 digest: 5519dd3876be1a07b942b98605f78b993c64fc42b3605f18a873bf7be2ff9c0d
-Signer #1 public key SHA-1 digest: 9e5c5f15932d058f807a5e56f69f3ed89a37597e
-Signer #1 public key MD5 digest: 0c58a735d4f4e7f2e4bcfa2e1498876e
+Signer #1 public key SHA-256 digest: 463d09a54c408aa7eb8b2f9ed45b045d9c15484bae0d8779e4d3cf870f487c26
+Signer #1 public key SHA-1 digest: 420d917a5a3ac306cfbd5736821ccfa324fd8fe7
+Signer #1 public key MD5 digest: bf6a7ba2d85a9181f51dfabebd05e7b1
