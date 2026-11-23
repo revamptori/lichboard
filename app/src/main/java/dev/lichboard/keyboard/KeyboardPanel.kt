@@ -157,7 +157,7 @@ class KeyboardPanel(
         }, LayoutParams(dp(38), dp(32)))
         toolbar.addView(key("☺", "Emoji panel", special = true) { feedback(); setPage(if (page == Page.EMOJI) Page.LETTERS else Page.EMOJI) }, LayoutParams(dp(38), dp(32)))
         toolbar.addView(key("Fn", "Special keys", special = true) { feedback(); setPage(if (page == Page.SPECIAL) Page.LETTERS else Page.SPECIAL) }, LayoutParams(dp(38), dp(32)))
-        toolbar.addView(key("⌄", "Hide keyboard", special = true) { feedback(); onClose() }, LayoutParams(dp(38), dp(32)))
+        toolbar.addView(key("⌄", if (floating) "Hide floating keyboard" else "Hide system keyboard", special = true) { feedback(); onClose() }, LayoutParams(dp(38), dp(32)))
     }
     private fun setPage(value: Page) { alternatives = null; page = value; buildBody(); buildToolbar(); refreshStatus() }
     private fun buildBody() {

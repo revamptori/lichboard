@@ -10,6 +10,8 @@ import dev.lichboard.input.EditCommand
 
 /** Explicit user-triggered focused text editing only. Never caches nodes, reads passwords, or polls. */
 class LichboardAccessibilityService : AccessibilityService() {
+    @Volatile var lastFailure: String = "Focus an editable field"
+        private set
     override fun onServiceConnected() { super.onServiceConnected(); AccessBridge.attach(this) }
     override fun onAccessibilityEvent(event: AccessibilityEvent?) { /* No screen monitoring. */ }
     override fun onInterrupt() = Unit // No ongoing work or speech to interrupt.
@@ -28,13 +30,18 @@ class LichboardAccessibilityService : AccessibilityService() {
 
     @Suppress("DEPRECATION")
     private inline fun <T> withEditor(default: T, action: (AccessibilityNodeInfo) -> T): T {
-        val root = focusedApplicationRoot() ?: return default
+        val root = focusedApplicationRoot() ?: run { lastFailure = "No focused application window"; return default }
         var node: AccessibilityNodeInfo? = null
         return try {
             node = root.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
-            val target = node ?: return default
-            if (!target.refresh() || !target.isEditable || target.isPassword || !target.isEnabled) default else action(target)
-        } catch (_: IllegalStateException) { default }
+            val target = node ?: run { lastFailure = "No focused text field"; return default }
+            when {
+                !target.refresh() -> { lastFailure = "Editor is no longer available"; default }
+                target.isPassword -> { lastFailure = "Password fields are excluded"; default }
+                !target.isEditable || !target.isEnabled -> { lastFailure = "Focus an enabled editable field"; default }
+                else -> action(target)
+            }
+        } catch (_: IllegalStateException) { lastFailure = "Editor changed during input"; default }
         finally { node?.recycle(); root.recycle() }
     }
     fun hasEditableTarget(): Boolean = withEditor(false) { true }
@@ -84,7 +91,7 @@ class LichboardAccessibilityService : AccessibilityService() {
             KeyEvent.KEYCODE_MOVE_HOME -> setSelection(node, if (extend) start else 0, 0)
             KeyEvent.KEYCODE_MOVE_END -> setSelection(node, if (extend) start else text.length, text.length)
             KeyEvent.KEYCODE_ENTER -> {
-                if (node.actionList.contains(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER)) {
+                if (node.actionList.any { it.id == AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id }) {
                     node.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id)
                 } else if (node.isMultiLine) replaceSelection(node, "\n") else false
             }
@@ -97,15 +104,26 @@ class LichboardAccessibilityService : AccessibilityService() {
 
     private fun replaceSelection(node: AccessibilityNodeInfo, value: String): Boolean {
         val old = editableText(node)
-        val a = node.textSelectionStart
-        val b = node.textSelectionEnd
-        if (a !in 0..old.length || b !in 0..old.length) return false
+        // Empty editors may expose hint text and selection -1 rather than a zero cursor.
+        // Replacing the empty value is unambiguous; never copy the hint into user content.
+        val a = if (old.isEmpty()) 0 else node.textSelectionStart
+        val b = if (old.isEmpty()) 0 else node.textSelectionEnd
+        if (a !in 0..old.length || b !in 0..old.length) {
+            lastFailure = "Editor did not expose a cursor ($a, $b; length ${old.length})"
+            return false
+        }
         return replaceRange(node, old, minOf(a, b), maxOf(a, b), value)
     }
     private fun replaceRange(node: AccessibilityNodeInfo, old: String, start: Int, end: Int, value: String): Boolean {
-        if (!node.actionList.contains(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT)) return false
+        if (node.actionList.none { it.id == AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_TEXT.id }) {
+            lastFailure = "This field does not support text replacement"
+            return false
+        }
         val args = Bundle().apply { putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, old.replaceRange(start, end, value)) }
-        if (!node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)) return false
+        if (!node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)) {
+            lastFailure = "The field rejected Android’s text replacement action"
+            return false
+        }
         node.refresh()
         setSelection(node, start + value.length, start + value.length)
         return true

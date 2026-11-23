@@ -83,7 +83,11 @@ class LichboardIntegrationTest {
             context.contentResolver.openOutputStream(uri)?.use { output -> file.inputStream().use { it.copyTo(output) } }
         }
     }
-    private fun click(description: String) { await(description).click(); instrumentation.waitForIdleSync() }
+    private fun click(description: String) {
+        val floating = device.findObject(By.desc("Lichboard floating keyboard"))
+        (floating?.findObject(By.desc(description)) ?: await(description)).click()
+        instrumentation.waitForIdleSync()
+    }
     private fun condition(message: String, test: () -> Boolean) {
         val until = System.currentTimeMillis() + 8_000
         while (System.currentTimeMillis() < until) { if (test()) return; Thread.sleep(80) }
@@ -142,7 +146,7 @@ class LichboardIntegrationTest {
         click("Key ABC")
         click("Emoji panel"); click("Emoji 😀")
         condition("Emoji committed to draft") { app.draft.snapshot.text.contains("😀") }
-        click("Hide keyboard")
+        click("Hide floating keyboard")
         assertTrue(device.wait(Until.gone(By.desc("Lichboard floating keyboard")), 8_000))
         assertTrue(app.overlayRunning.value)
     }
@@ -198,8 +202,22 @@ class LichboardIntegrationTest {
         // The launcher is another application. Do not assert overlays on protected Settings screens.
         click("Lichboard floating button")
         await("Lichboard floating keyboard")
-        click("Hide keyboard")
+        click("Hide floating keyboard")
         await("Lichboard floating button")
+    }
+    @Test fun composeSettingsNavigateAndApplyTheme() {
+        instrumentation.runOnMainSync { ImeBridge.service?.requestHideSelf(0) }
+        ActivityScenario.launch(MainActivity::class.java).use {
+            assertNotNull(device.wait(Until.findObject(By.text("Bring up keyboard")), 8_000))
+            val screenshot = File(context.cacheDir, "settings-board.png")
+            device.takeScreenshot(screenshot); exportEvidence(screenshot)
+            requireNotNull(device.findObject(By.text("Style"))).click()
+            val dracula = device.wait(Until.findObject(By.text("Dracula")), 8_000)
+            assertNotNull(dracula); requireNotNull(dracula).click()
+            condition("Compose theme control updates real preferences") { app.settings.current.theme == BoardTheme.DRACULA }
+            requireNotNull(device.findObject(By.text("Controls"))).click()
+            assertNotNull(device.wait(Until.findObject(By.textContains("At your")), 8_000))
+        }
     }
     @Test fun everyThemeAndResizeRendersWithoutLosingDraft() {
         overlay(InputMode.CLIPBOARD)

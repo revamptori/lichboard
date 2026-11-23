@@ -37,7 +37,7 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
     suspend fun text(value: String, meta: Int): String {
         return when (route()) {
             InputRoute.IME -> if (withContext(Dispatchers.Main.immediate) { ImeBridge.service?.text(value, meta) == true }) "IME · focused editor" else fallbackText(value, meta)
-            InputRoute.ACCESSIBILITY -> if (AccessBridge.service?.text(value, meta) == true) "ASSIST · focused text field" else "Field rejected input · use clipboard draft"
+            InputRoute.ACCESSIBILITY -> if (AccessBridge.service?.text(value, meta) == true) "ASSIST · focused text field" else "ASSIST · ${AccessBridge.service?.lastFailure ?: "Service disconnected"} · use draft"
             InputRoute.DRAFT -> draftText(value, meta)
         }
     }
