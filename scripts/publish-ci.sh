@@ -49,7 +49,7 @@ for variant in ('standard', 'assist'):
         launch = directory / 'release-launch.txt'
         pid = directory / 'release-pid.txt'
         smoke = launch.exists() and 'Status: ok' in launch.read_text() and pid.exists() and pid.read_text().strip().isdigit()
-        required_count = 22 if variant == 'standard' else 21
+        required_count = 23 if variant == 'standard' else 22
         passed = complete and counts['tests'] >= required_count and all(counts[k] == 0 for k in ('failures', 'errors', 'skipped')) and smoke
         performance = {}
         for name in ('input-burst', 'input-latency'):

@@ -86,6 +86,8 @@ class KeyboardPanel(
     }
     fun discardPendingInput() {
         inputQueue.stop()
+        disposeKeys(this) // Cancel fingers/holds as well as actions still waiting on a backend.
+        pressedKey = null
         removeCallbacks(renderStatus)
         statusScheduled = false
         pendingStatus = null
@@ -234,7 +236,8 @@ class KeyboardPanel(
             beforePress = { button ->
                 if (pressedKey !== button) pressedKey?.commitPendingTap()
                 pressedKey = button.takeIf { it.isAttachedToWindow }
-            }, afterRelease = { button -> if (pressedKey === button) pressedKey = null }).also {
+            }, afterRelease = { button -> if (pressedKey === button) pressedKey = null },
+            inputSession = router::session).also {
             it.colors(if (accent) palette.accent else if (special) palette.special else palette.key,
                 if (accent) palette.onAccent else palette.text, ColorUtils.blendARGB(palette.key, palette.accent, .35f))
         }

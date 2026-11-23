@@ -21,26 +21,31 @@ class KeyButton(
     private val repeat: Boolean = false,
     private val activateOnDown: Boolean = false,
     private val beforePress: ((KeyButton) -> Unit)? = null,
-    private val afterRelease: ((KeyButton) -> Unit)? = null
+    private val afterRelease: ((KeyButton) -> Unit)? = null,
+    private val inputSession: (() -> Any)? = null
 ) : TextView(context) {
     private val handler = Handler(Looper.getMainLooper())
     private val slop = ViewConfiguration.get(context).scaledTouchSlop
     private var held = false
     private var down = false
     private var pointer = -1
+    private var pressSession: Any? = null
     private var keyColor = 0
     private var pressedColor = 0
     private val shape = GradientDrawable().apply { cornerRadius = 8 * resources.displayMetrics.density }
     private val repeatTask = object : Runnable {
         override fun run() {
             if (!down) return
+            if (!validPress()) { release(); return }
             held = true
             activate()
-            handler.postDelayed(this, 40)
+            if (down) handler.postDelayed(this, 40)
         }
     }
     private val holdTask = Runnable {
-        if (down && !held && hold != null) { held = true; performLongClick() }
+        if (down && !held && hold != null) {
+            if (validPress()) { held = true; performLongClick() } else release()
+        }
     }
     init {
         text = label
@@ -73,6 +78,7 @@ class KeyButton(
     /** Preserve down-order when two fingers roll across keys before the first finger lifts. */
     fun commitPendingTap() {
         if (down && !held) {
+            if (!validPress()) { release(); return }
             held = true
             handler.removeCallbacksAndMessages(null)
             performClick()
@@ -83,21 +89,24 @@ class KeyButton(
             MotionEvent.ACTION_DOWN -> {
                 pointer = event.getPointerId(0)
                 down = true; held = false
+                pressSession = inputSession?.invoke()
                 parent?.requestDisallowInterceptTouchEvent(true)
                 shape.setColor(pressedColor)
                 beforePress?.invoke(this)
                 if (!down) return true // A preceding page key may have rebuilt this view.
+                if (!validPress()) { release(); return true }
                 if (repeat || (activateOnDown && hold == null)) {
                     held = true
                     performClick()
                 }
+                if (!down) return true
                 if (repeat) handler.postDelayed(repeatTask, ViewConfiguration.getLongPressTimeout().toLong())
                 else if (hold != null) handler.postDelayed(holdTask, ViewConfiguration.getLongPressTimeout().toLong())
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                 val index = event.actionIndex
                 if (event.getPointerId(index) == pointer) {
-                    val click = down && !held && inside(event.getX(index), event.getY(index))
+                    val click = down && !held && inside(event.getX(index), event.getY(index)) && validPress()
                     release()
                     if (click) performClick()
                 }
@@ -110,9 +119,10 @@ class KeyButton(
         }
         return true
     }
+    private fun validPress() = inputSession == null || pressSession == inputSession.invoke()
     private fun inside(x: Float, y: Float) = x >= -slop && x <= width + slop && y >= -slop && y <= height + slop
     private fun release() {
-        down = false; pointer = -1
+        down = false; pointer = -1; pressSession = null
         handler.removeCallbacksAndMessages(null)
         shape.setColor(keyColor)
         afterRelease?.invoke(this)

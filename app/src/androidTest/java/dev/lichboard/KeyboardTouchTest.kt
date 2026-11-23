@@ -131,6 +131,37 @@ class KeyboardTouchTest {
         Thread.sleep(130)
         instrumentation.runOnMainSync { assertEquals("No extra delete after release", released, clicks) }
     }
+    @Test fun editorSessionChangesDiscardHeldTapsAlternativesAndRepeatsButNotFreshClicks() {
+        var session = Any()
+        var taps = 0
+        var holds = 0
+        var repeats = 0
+        lateinit var letter: KeyButton
+        lateinit var delete: KeyButton
+        scenario.onActivity { activity ->
+            letter = KeyButton(activity, "a", "test", { taps++ }, hold = { holds++ }, inputSession = { session })
+            delete = KeyButton(activity, "⌫", "test", { repeats++ }, repeat = true, inputSession = { session })
+            host.addView(letter, FrameLayout.LayoutParams(180, 100)); letter.layout(0, 0, 180, 100)
+            host.addView(delete, FrameLayout.LayoutParams(180, 100)); delete.layout(0, 0, 180, 100)
+            event(letter, MotionEvent.ACTION_DOWN)
+            session = Any()
+            event(letter, MotionEvent.ACTION_UP)
+            assertEquals("A release must not carry an old field's tap into its replacement", 0, taps)
+            letter.performClick()
+            assertEquals("Fresh accessibility clicks are not tied to an old finger", 1, taps)
+            event(letter, MotionEvent.ACTION_DOWN)
+            event(delete, MotionEvent.ACTION_DOWN)
+            assertEquals(1, repeats)
+            session = Any()
+        }
+        Thread.sleep(ViewConfiguration.getLongPressTimeout() + 150L)
+        instrumentation.runOnMainSync {
+            event(letter, MotionEvent.ACTION_UP); event(delete, MotionEvent.ACTION_UP)
+            assertEquals(0, holds)
+            assertEquals(1, taps)
+            assertEquals("Only the first delete was sent, before the editor changed", 1, repeats)
+        }
+    }
     private fun descendants(root: View): List<View> = listOf(root) + if (root is ViewGroup) {
         (0 until root.childCount).flatMap { descendants(root.getChildAt(it)) }
     } else emptyList()
@@ -183,6 +214,14 @@ class KeyboardTouchTest {
             send(MotionEvent.ACTION_DOWN, listOf(0 to qCenter))
             send(MotionEvent.ACTION_UP, listOf(0 to qCenter))
             assertEquals("Modifier is captured once, not delayed until a later key", "Aq", app.draft.snapshot.text)
+            app.draft.edit { clear() }
+            send(MotionEvent.ACTION_DOWN, listOf(0 to a))
+            board.discardPendingInput() // E.g. IME hidden/restarted while a finger is still down.
+            send(MotionEvent.ACTION_UP, listOf(0 to a))
+            assertEquals("A hide/restart discards an uncommitted physical tap too", "", app.draft.snapshot.text)
+            send(MotionEvent.ACTION_DOWN, listOf(0 to qCenter))
+            send(MotionEvent.ACTION_UP, listOf(0 to qCenter))
+            assertEquals("q", app.draft.snapshot.text)
         }
     }
 }
