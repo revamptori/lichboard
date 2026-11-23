@@ -96,10 +96,13 @@ Never commit keystores/passwords. The `*.jks`, `*.keystore`, `local.properties` 
 ```sh
 ./gradlew :app:testDebugUnitTest :app:lintDebug
 # With an unlocked API 30+ emulator/device attached:
-./gradlew :app:connectedDebugAndroidTest
+./gradlew :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleRelease
+bash scripts/device-test.sh 30  # Use 35 for an API 35 device, etc.
 ```
 
 The instrumentation suite sets overlay app-ops and selects the IME through the **test device’s ADB shell**, not inside the shipping app. Use a dedicated test emulator. It exercises a debug-only real `EditText`, a raw-key `InputConnection` target, and the actual overlay/IME service windows. The debug-only probe activity is not in the release APK.
+
+The key/window suite and accessibility suite run in **separate instrumentation invocations**. For accessibility, UiAutomation is used only for the test shell with its event subscription disabled; this avoids Android 11’s same-process shared accessibility-node-cache contention. Actual field editing still goes through the real AccessibilityService and Android node actions, with consent, hint-text and password checks. All normal/floating key gestures are exercised by UiAutomator in the key/window suite.
 
 Tests cover:
 

@@ -33,7 +33,7 @@ class LichboardAccessibilityService : AccessibilityService() {
         return try {
             node = root.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
             val target = node ?: return default
-            if (!target.isEditable || target.isPassword || !target.isEnabled) default else action(target)
+            if (!target.refresh() || !target.isEditable || target.isPassword || !target.isEnabled) default else action(target)
         } catch (_: IllegalStateException) { default }
         finally { node?.recycle(); root.recycle() }
     }

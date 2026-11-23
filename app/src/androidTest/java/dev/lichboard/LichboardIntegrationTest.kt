@@ -6,10 +6,6 @@ import android.content.Intent
 import android.content.ContentValues
 import android.provider.MediaStore
 import android.os.Environment
-import dev.lichboard.input.InputRouter
-import dev.lichboard.input.InputPolicy
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import android.view.KeyEvent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,7 +15,6 @@ import androidx.test.uiautomator.Configurator
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
-import dev.lichboard.accessibility.AccessBridge
 import dev.lichboard.data.BoardSettings
 import dev.lichboard.data.BoardTheme
 import dev.lichboard.data.InputMode
@@ -43,8 +38,6 @@ class LichboardIntegrationTest {
         UiDevice.getInstance(instrumentation)
     }
     private var scenario: ActivityScenario<ProbeActivity>? = null
-    private var originalAccessibility: String? = null
-    private var changedAccessibility = false
     private val component = "dev.lichboard/.ime.LichboardImeService"
 
     @Before fun setup() {
@@ -70,13 +63,6 @@ class LichboardIntegrationTest {
             FloatingService.stop(context)
         }
         scenario?.close()
-        if (changedAccessibility) {
-            val original = originalAccessibility.orEmpty().trim().takeUnless { it == "null" }.orEmpty()
-            if (original.isEmpty()) {
-                device.executeShellCommand("settings delete secure enabled_accessibility_services")
-                device.executeShellCommand("settings put secure accessibility_enabled 0")
-            } else device.executeShellCommand("settings put secure enabled_accessibility_services $original")
-        }
     }
     private fun await(description: String): UiObject2 {
         device.wait(Until.findObject(By.desc(description)), 8_000)?.let { return it }
@@ -195,7 +181,10 @@ class LichboardIntegrationTest {
         val bounds = bubble.visibleBounds
         device.swipe(bounds.centerX(), bounds.centerY(), device.displayWidth / 3, device.displayHeight / 3, 35)
         condition("Position saved after drag") { app.settings.current.bubbleX != before }
-        await("Lichboard floating button").longClick()
+        // Inject the hold at the drag endpoint rather than querying Android 11's stale
+        // accessibility bounds for a just-moved overlay window.
+        device.swipe(device.displayWidth / 3, device.displayHeight / 3,
+            device.displayWidth / 3, device.displayHeight / 3, 140)
         await("Lichboard quick settings")
         click("Floating button opacity") // Seekbar receives a genuine user interaction.
     }
@@ -224,34 +213,5 @@ class LichboardIntegrationTest {
         val screenshot = File(context.getExternalFilesDir(null), "screenshots/floating-keyboard.png")
         device.takeScreenshot(screenshot)
         exportEvidence(screenshot)
-    }
-    @Test fun optionalAccessibilityEditsOnlyWithOptIn() {
-        originalAccessibility = device.executeShellCommand("settings get secure enabled_accessibility_services")
-        changedAccessibility = true
-        device.executeShellCommand("settings put secure enabled_accessibility_services dev.lichboard/.accessibility.LichboardAccessibilityService")
-        device.executeShellCommand("settings put secure accessibility_enabled 1")
-        condition("Optional service connected") { AccessBridge.connected.value }
-        scenario!!.onActivity { it.focusEditor() }
-        condition("Focused editable accessibility target") { AccessBridge.service?.hasEditableTarget() == true }
-        instrumentation.runOnMainSync { app.settings.update { it.copy(inputMode = InputMode.ACCESSIBILITY) } }
-        // Android 11 shares one AccessibilityCache across services in this instrumented process.
-        // Disconnect UiAutomation while verifying the real accessibility actions to avoid the
-        // framework's same-process cache contention. Other tests exercise actual key touch events.
-        instrumentation.getUiAutomation(UiAutomation.FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES).disconnect()
-        val router = InputRouter(context)
-        val refused = runBlocking(Dispatchers.Default) { router.text("z", 0) }
-        assertTrue(refused, refused.startsWith("DRAFT"))
-        assertEquals("", editorText())
-        assertEquals("z", app.draft.snapshot.text)
-        instrumentation.runOnMainSync {
-            app.draft.edit { clear() }
-            app.settings.update { it.copy(accessibilityFallback = true) }
-        }
-        val first = runBlocking(Dispatchers.Default) { router.text("h", 0) }
-        val second = runBlocking(Dispatchers.Default) { router.text("i", 0) }
-        assertEquals("$first / $second; draft=${app.draft.snapshot}", "hi", editorText())
-        val deletion = runBlocking(Dispatchers.Default) { router.key(KeyEvent.KEYCODE_DEL, 0) }
-        assertEquals(deletion, "h", editorText())
-        assertEquals("", app.draft.snapshot.text)
     }
 }
