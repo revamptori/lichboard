@@ -1,0 +1,2 @@
+      spec resource 0x7f0c0000 dev.lichboard.assist:xml/accessibility_service: flags=0x00000000
+        resource 0x7f0c0000 dev.lichboard.assist:xml/accessibility_service: t=0x03 d=0x00000016 (s=0x0008 r=0x00)

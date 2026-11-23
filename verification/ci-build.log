@@ -14,7 +14,7 @@ Daemon will be stopped at the end of the build
 > Task :app:parseStandardDebugLocalResources FROM-CACHE
 > Task :app:createStandardDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksStandardDebug FROM-CACHE
-> Task :app:processStandardDebugMainManifest
+> Task :app:processStandardDebugMainManifest FROM-CACHE
 > Task :app:processStandardDebugManifest FROM-CACHE
 > Task :app:processStandardDebugManifestForPackage FROM-CACHE
 > Task :app:processStandardDebugResources FROM-CACHE
@@ -39,12 +39,12 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeStandardDebugJavaResource
 > Task :app:validateSigningStandardDebug
 > Task :app:writeStandardDebugAppMetadata
+> Task :app:writeStandardDebugSigningConfigVersions
+> Task :app:preStandardDebugAndroidTestBuild SKIPPED
 
 > Task :app:stripStandardDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:writeStandardDebugSigningConfigVersions
-> Task :app:preStandardDebugAndroidTestBuild SKIPPED
 > Task :app:bundleStandardDebugClassesToCompileJar
 > Task :app:processStandardDebugAndroidTestManifest
 > Task :app:generateStandardDebugAndroidTestBuildConfig FROM-CACHE
@@ -54,13 +54,11 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateStandardDebugAndroidTestResources FROM-CACHE
 > Task :app:mergeStandardDebugAndroidTestResources FROM-CACHE
 > Task :app:processStandardDebugAndroidTestResources FROM-CACHE
-> Task :app:compileStandardDebugAndroidTestKotlin FROM-CACHE
+> Task :app:javaPreCompileStandardDebugAndroidTest FROM-CACHE
+> Task :app:mergeStandardDebugAndroidTestShaders
 > Task :app:packageStandardDebug
 > Task :app:createStandardDebugApkListingFileRedirect
 > Task :app:assembleStandardDebug
-> Task :app:javaPreCompileStandardDebugAndroidTest FROM-CACHE
-> Task :app:compileStandardDebugAndroidTestJavaWithJavac FROM-CACHE
-> Task :app:mergeStandardDebugAndroidTestShaders
 > Task :app:compileStandardDebugAndroidTestShaders NO-SOURCE
 > Task :app:generateStandardDebugAndroidTestAssets UP-TO-DATE
 > Task :app:mergeStandardDebugAndroidTestAssets
@@ -69,16 +67,11 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:desugarStandardDebugAndroidTestFileDependencies FROM-CACHE
 > Task :app:mergeExtDexStandardDebugAndroidTest FROM-CACHE
 > Task :app:mergeLibDexStandardDebugAndroidTest FROM-CACHE
-> Task :app:dexBuilderStandardDebugAndroidTest FROM-CACHE
-> Task :app:mergeProjectDexStandardDebugAndroidTest FROM-CACHE
-> Task :app:mergeStandardDebugAndroidTestGlobalSynthetics FROM-CACHE
-> Task :app:processStandardDebugAndroidTestJavaRes
 > Task :app:mergeStandardDebugAndroidTestJniLibFolders
 > Task :app:mergeStandardDebugAndroidTestNativeLibs NO-SOURCE
 > Task :app:stripStandardDebugAndroidTestDebugSymbols NO-SOURCE
 > Task :app:validateSigningStandardDebugAndroidTest
 > Task :app:writeStandardDebugAndroidTestSigningConfigVersions
-> Task :app:mergeStandardDebugAndroidTestJavaResource
 > Task :app:buildKotlinToolingMetadata
 > Task :app:preStandardReleaseBuild UP-TO-DATE
 > Task :app:generateStandardReleaseBuildConfig FROM-CACHE
@@ -91,7 +84,7 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:parseStandardReleaseLocalResources FROM-CACHE
 > Task :app:createStandardReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksStandardRelease FROM-CACHE
-> Task :app:processStandardReleaseMainManifest
+> Task :app:processStandardReleaseMainManifest FROM-CACHE
 > Task :app:processStandardReleaseManifest FROM-CACHE
 > Task :app:processStandardReleaseManifestForPackage FROM-CACHE
 > Task :app:processStandardReleaseResources FROM-CACHE
@@ -100,16 +93,14 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:compileStandardReleaseJavaWithJavac FROM-CACHE
 > Task :app:extractProguardFiles
 > Task :app:generateStandardReleaseLintVitalReportModel
+> Task :app:lintVitalAnalyzeStandardRelease FROM-CACHE
 > Task :app:mergeStandardReleaseJniLibFolders
 > Task :app:mergeStandardReleaseNativeLibs
-> Task :app:packageStandardDebugAndroidTest
-> Task :app:createStandardDebugAndroidTestApkListingFileRedirect
-> Task :app:assembleStandardDebugAndroidTest
+> Task :app:checkStandardReleaseDuplicateClasses
 
 > Task :app:stripStandardReleaseDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
 
-> Task :app:checkStandardReleaseDuplicateClasses
 > Task :app:dexBuilderStandardRelease FROM-CACHE
 > Task :app:extractStandardReleaseNativeSymbolTables FROM-CACHE
 > Task :app:mergeStandardReleaseNativeDebugMetadata NO-SOURCE
@@ -134,9 +125,9 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:writeStandardReleaseAppMetadata
 > Task :app:writeStandardReleaseSigningConfigVersions
 > Task :app:bundleStandardDebugClassesToRuntimeJar
+> Task :app:mergeStandardReleaseJavaResource
 > Task :app:compileStandardDebugUnitTestKotlin FROM-CACHE
 > Task :app:preStandardDebugUnitTestBuild UP-TO-DATE
-> Task :app:mergeStandardReleaseJavaResource
 > Task :app:javaPreCompileStandardDebugUnitTest FROM-CACHE
 > Task :app:compileStandardDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processStandardDebugUnitTestJavaRes
@@ -144,14 +135,17 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateStandardDebugAndroidTestLintModel
 > Task :app:generateStandardDebugLintReportModel
 > Task :app:generateStandardDebugUnitTestLintModel
-> Task :app:lintAnalyzeStandardDebugAndroidTest FROM-CACHE
+> Task :app:packageStandardRelease
+> Task :app:createStandardReleaseApkListingFileRedirect
+> Task :app:lintAnalyzeStandardDebug FROM-CACHE
 > Task :app:lintAnalyzeStandardDebugUnitTest FROM-CACHE
 > Task :app:preAssistDebugBuild UP-TO-DATE
 > Task :app:mergeAssistDebugNativeDebugMetadata NO-SOURCE
 > Task :app:generateAssistDebugBuildConfig FROM-CACHE
+> Task :app:lintVitalReportStandardRelease
 > Task :app:checkAssistDebugAarMetadata
-> Task :app:packageStandardRelease
-> Task :app:createStandardReleaseApkListingFileRedirect
+> Task :app:lintVitalStandardRelease
+> Task :app:assembleStandardRelease
 > Task :app:generateAssistDebugResValues FROM-CACHE
 > Task :app:mapAssistDebugSourceSetPaths
 > Task :app:generateAssistDebugResources FROM-CACHE
@@ -161,25 +155,18 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:createAssistDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksAssistDebug FROM-CACHE
 > Task :app:processAssistDebugMainManifest
-> Task :app:processAssistDebugManifest FROM-CACHE
-> Task :app:processAssistDebugManifestForPackage FROM-CACHE
-> Task :app:processAssistDebugResources FROM-CACHE
-> Task :app:compileAssistDebugKotlin FROM-CACHE
+> Task :app:processAssistDebugManifest
 > Task :app:javaPreCompileAssistDebug FROM-CACHE
-> Task :app:compileAssistDebugJavaWithJavac FROM-CACHE
 > Task :app:mergeAssistDebugShaders
+> Task :app:processAssistDebugManifestForPackage
 > Task :app:compileAssistDebugShaders NO-SOURCE
 > Task :app:generateAssistDebugAssets UP-TO-DATE
 > Task :app:mergeAssistDebugAssets
 > Task :app:compressAssistDebugAssets FROM-CACHE
 > Task :app:desugarAssistDebugFileDependencies FROM-CACHE
-> Task :app:dexBuilderAssistDebug FROM-CACHE
-> Task :app:mergeAssistDebugGlobalSynthetics FROM-CACHE
-> Task :app:processAssistDebugJavaRes
 > Task :app:checkAssistDebugDuplicateClasses
 > Task :app:mergeExtDexAssistDebug FROM-CACHE
 > Task :app:mergeLibDexAssistDebug FROM-CACHE
-> Task :app:mergeProjectDexAssistDebug FROM-CACHE
 > Task :app:mergeAssistDebugJniLibFolders
 > Task :app:mergeAssistDebugNativeLibs
 
@@ -189,9 +176,7 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:validateSigningAssistDebug
 > Task :app:writeAssistDebugAppMetadata
 > Task :app:writeAssistDebugSigningConfigVersions
-> Task :app:bundleAssistDebugClassesToCompileJar
 > Task :app:preAssistDebugAndroidTestBuild SKIPPED
-> Task :app:mergeAssistDebugJavaResource
 > Task :app:processAssistDebugAndroidTestManifest
 > Task :app:generateAssistDebugAndroidTestBuildConfig FROM-CACHE
 > Task :app:checkAssistDebugAndroidTestAarMetadata
@@ -200,25 +185,16 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:generateAssistDebugAndroidTestResources FROM-CACHE
 > Task :app:mergeAssistDebugAndroidTestResources FROM-CACHE
 > Task :app:processAssistDebugAndroidTestResources FROM-CACHE
-> Task :app:compileAssistDebugAndroidTestKotlin FROM-CACHE
 > Task :app:javaPreCompileAssistDebugAndroidTest FROM-CACHE
-> Task :app:compileAssistDebugAndroidTestJavaWithJavac FROM-CACHE
 > Task :app:mergeAssistDebugAndroidTestShaders
-> Task :app:packageAssistDebug
-> Task :app:createAssistDebugApkListingFileRedirect
-> Task :app:assembleAssistDebug
 > Task :app:compileAssistDebugAndroidTestShaders NO-SOURCE
 > Task :app:generateAssistDebugAndroidTestAssets UP-TO-DATE
 > Task :app:mergeAssistDebugAndroidTestAssets
 > Task :app:compressAssistDebugAndroidTestAssets FROM-CACHE
 > Task :app:desugarAssistDebugAndroidTestFileDependencies FROM-CACHE
-> Task :app:dexBuilderAssistDebugAndroidTest FROM-CACHE
-> Task :app:mergeAssistDebugAndroidTestGlobalSynthetics FROM-CACHE
-> Task :app:processAssistDebugAndroidTestJavaRes
 > Task :app:checkAssistDebugAndroidTestDuplicateClasses
 > Task :app:mergeExtDexAssistDebugAndroidTest FROM-CACHE
 > Task :app:mergeLibDexAssistDebugAndroidTest FROM-CACHE
-> Task :app:mergeProjectDexAssistDebugAndroidTest FROM-CACHE
 > Task :app:mergeAssistDebugAndroidTestJniLibFolders
 > Task :app:mergeAssistDebugAndroidTestNativeLibs NO-SOURCE
 > Task :app:stripAssistDebugAndroidTestDebugSymbols NO-SOURCE
@@ -226,29 +202,54 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:writeAssistDebugAndroidTestSigningConfigVersions
 > Task :app:preAssistReleaseBuild UP-TO-DATE
 > Task :app:generateAssistReleaseBuildConfig FROM-CACHE
-> Task :app:mergeAssistDebugAndroidTestJavaResource
 > Task :app:checkAssistReleaseAarMetadata
 > Task :app:generateAssistReleaseResValues FROM-CACHE
 > Task :app:mapAssistReleaseSourceSetPaths
 > Task :app:generateAssistReleaseResources FROM-CACHE
+> Task :app:processAssistDebugResources
 > Task :app:mergeAssistReleaseResources FROM-CACHE
+> Task :app:compileAssistDebugKotlin FROM-CACHE
+> Task :app:compileAssistDebugJavaWithJavac FROM-CACHE
+> Task :app:dexBuilderAssistDebug FROM-CACHE
+> Task :app:mergeAssistDebugGlobalSynthetics FROM-CACHE
+> Task :app:processAssistDebugJavaRes
+> Task :app:mergeProjectDexAssistDebug FROM-CACHE
+> Task :app:bundleAssistDebugClassesToCompileJar
+> Task :app:mergeAssistDebugJavaResource
+> Task :app:packageAssistDebug
+> Task :app:createAssistDebugApkListingFileRedirect
+> Task :app:assembleAssistDebug
 > Task :app:packageAssistReleaseResources FROM-CACHE
-> Task :app:packageAssistDebugAndroidTest
-> Task :app:createAssistDebugAndroidTestApkListingFileRedirect
-> Task :app:assembleAssistDebugAndroidTest
 > Task :app:parseAssistReleaseLocalResources FROM-CACHE
 > Task :app:createAssistReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksAssistRelease FROM-CACHE
 > Task :app:processAssistReleaseMainManifest
-> Task :app:processAssistReleaseManifest FROM-CACHE
-> Task :app:processAssistReleaseManifestForPackage FROM-CACHE
-> Task :app:processAssistReleaseResources FROM-CACHE
+> Task :app:processAssistReleaseManifest
+> Task :app:processAssistReleaseManifestForPackage
+> Task :app:processAssistReleaseResources
 > Task :app:compileAssistReleaseKotlin FROM-CACHE
 > Task :app:javaPreCompileAssistRelease FROM-CACHE
 > Task :app:compileAssistReleaseJavaWithJavac FROM-CACHE
 > Task :app:generateAssistReleaseLintVitalReportModel
+> Task :app:compileAssistDebugAndroidTestKotlin
+> Task :app:compileStandardDebugAndroidTestKotlin
+> Task :app:compileAssistDebugAndroidTestJavaWithJavac
+> Task :app:compileStandardDebugAndroidTestJavaWithJavac
+> Task :app:dexBuilderStandardDebugAndroidTest
+> Task :app:mergeStandardDebugAndroidTestGlobalSynthetics FROM-CACHE
+> Task :app:processStandardDebugAndroidTestJavaRes
+> Task :app:mergeProjectDexStandardDebugAndroidTest
+> Task :app:mergeStandardDebugAndroidTestJavaResource
+> Task :app:dexBuilderAssistDebugAndroidTest
+> Task :app:mergeAssistDebugAndroidTestGlobalSynthetics FROM-CACHE
+> Task :app:processAssistDebugAndroidTestJavaRes
+> Task :app:packageStandardDebugAndroidTest
+> Task :app:createStandardDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleStandardDebugAndroidTest
+> Task :app:mergeAssistDebugAndroidTestJavaResource
 > Task :app:mergeAssistReleaseJniLibFolders
 > Task :app:mergeAssistReleaseNativeLibs
+> Task :app:mergeProjectDexAssistDebugAndroidTest
 
 > Task :app:stripAssistReleaseDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
@@ -259,100 +260,59 @@ Unable to strip the following libraries, packaging them as they are: libandroidx
 > Task :app:desugarAssistReleaseFileDependencies FROM-CACHE
 > Task :app:dexBuilderAssistRelease FROM-CACHE
 > Task :app:mergeAssistReleaseGlobalSynthetics FROM-CACHE
-> Task :app:checkAssistReleaseDuplicateClasses
+> Task :app:packageAssistDebugAndroidTest
+> Task :app:createAssistDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleAssistDebugAndroidTest
 > Task :app:mergeAssistReleaseStartupProfile
+> Task :app:checkAssistReleaseDuplicateClasses
+> Task :app:mergeAssistReleaseShaders
 > Task :app:mergeExtDexAssistRelease FROM-CACHE
 > Task :app:mergeDexAssistRelease FROM-CACHE
 > Task :app:compileAssistReleaseArtProfile FROM-CACHE
-> Task :app:mergeAssistReleaseShaders
 > Task :app:compileAssistReleaseShaders NO-SOURCE
 > Task :app:generateAssistReleaseAssets UP-TO-DATE
 > Task :app:mergeAssistReleaseAssets
 > Task :app:compressAssistReleaseAssets FROM-CACHE
 > Task :app:extractAssistReleaseVersionControlInfo
 > Task :app:processAssistReleaseJavaRes
-> Task :app:mergeAssistReleaseJavaResource
-> Task :app:optimizeAssistReleaseResources FROM-CACHE
+> Task :app:optimizeAssistReleaseResources
 > Task :app:collectAssistReleaseDependencies
 > Task :app:sdkAssistReleaseDependencyData
 > Task :app:validateSigningAssistRelease
 > Task :app:writeAssistReleaseAppMetadata
 > Task :app:writeAssistReleaseSigningConfigVersions
-> Task :app:packageAssistRelease
-> Task :app:createAssistReleaseApkListingFileRedirect
 > Task :app:bundleAssistDebugClassesToRuntimeJar
 > Task :app:compileAssistDebugUnitTestKotlin FROM-CACHE
 > Task :app:preAssistDebugUnitTestBuild UP-TO-DATE
 > Task :app:javaPreCompileAssistDebugUnitTest FROM-CACHE
 > Task :app:compileAssistDebugUnitTestJavaWithJavac NO-SOURCE
 > Task :app:processAssistDebugUnitTestJavaRes
+> Task :app:mergeAssistReleaseJavaResource
 > Task :app:testAssistDebugUnitTest FROM-CACHE
 > Task :app:generateAssistDebugAndroidTestLintModel
 > Task :app:generateAssistDebugLintReportModel
 > Task :app:generateAssistDebugUnitTestLintModel
-> Task :app:lintVitalAnalyzeStandardRelease
-> Task :app:lintVitalAnalyzeAssistRelease
-> Task :app:lintVitalReportAssistRelease
-> Task :app:lintVitalReportStandardRelease
-> Task :app:lintVitalAssistRelease
-> Task :app:lintVitalStandardRelease
-> Task :app:assembleStandardRelease
-> Task :app:assembleAssistRelease
-> Task :app:lintAnalyzeAssistDebugAndroidTest FROM-CACHE
-> Task :app:lintAnalyzeAssistDebugUnitTest FROM-CACHE
-> Task :app:lintAnalyzeStandardDebug
+> Task :app:packageAssistRelease
+> Task :app:createAssistReleaseApkListingFileRedirect
+> Task :app:lintAnalyzeStandardDebugAndroidTest
 
 > Task :app:lintReportStandardDebug
 Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-standardDebug.html
 
 > Task :app:lintStandardDebug
+> Task :app:lintAnalyzeAssistDebugAndroidTest
+> Task :app:lintAnalyzeAssistDebugUnitTest
+> Task :app:lintVitalAnalyzeAssistRelease
+> Task :app:lintVitalReportAssistRelease
+> Task :app:lintVitalAssistRelease
+> Task :app:assembleAssistRelease
 > Task :app:lintAnalyzeAssistDebug
 
 > Task :app:lintReportAssistDebug
 Wrote HTML report to file:///home/runner/work/lichboard/lichboard/app/build/reports/lint-results-assistDebug.html
 
-> Task :app:lintAssistDebug FAILED
-Lint found 2 errors, 20 warnings. First failure:
+> Task :app:lintAssistDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795403722038.json
 
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:75: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
-        if (Build.VERSION.SDK_INT >= 34) startForeground(NOTIFICATION, notification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-                                         ~~~~~~~~~~~~~~~
-
-The full lint text report is located at:
-  /home/runner/work/lichboard/lichboard/app/build/intermediates/lint_intermediate_text_report/assistDebug/lintReportAssistDebug/lint-results-assistDebug.txt
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1795402932129.json
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:lintAssistDebug'.
-> Lint found errors in the project; aborting build.
-  
-  Fix the issues identified by lint, or create a baseline to see only new errors.
-  To create a baseline, run `gradlew updateLintBaseline` after adding the following to the module's build.gradle file:
-  ```
-  android {
-      lint {
-          baseline = file("lint-baseline.xml")
-      }
-  }
-  ```
-  For more details, see https://developer.android.com/studio/write/lint#snapshot
-  
-  Lint found 2 errors, 20 warnings. First failure:
-  
-  /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:75: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
-          if (Build.VERSION.SDK_INT >= 34) startForeground(NOTIFICATION, notification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-                                           ~~~~~~~~~~~~~~~
-  
-  The full lint text report is located at:
-    /home/runner/work/lichboard/lichboard/app/build/intermediates/lint_intermediate_text_report/assistDebug/lintReportAssistDebug/lint-results-assistDebug.txt
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 1m 16s
-256 actionable tasks: 132 executed, 124 from cache
+BUILD SUCCESSFUL in 1m 20s
+256 actionable tasks: 146 executed, 110 from cache

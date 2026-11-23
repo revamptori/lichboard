@@ -1,0 +1,11 @@
+{
+  "applicationId": "dev.lichboard.assist",
+  "versionName": "1.1.0-assist",
+  "accessibilityServiceDeclared": true,
+  "accessibilityImplementationIncluded": true,
+  "accessibilityMetadataIncluded": true,
+  "debuggable": false,
+  "internetPermission": false,
+  "apkSha256": "6713b6899f827c39ef4a0d9be1f608d97826d64e26facaf054283d4b4460a418",
+  "apkBytes": 18454683
+}

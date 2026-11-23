@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.LichboardIntegrationTest" tests="13" failures="0" errors="0" skipped="0" time="66.332" timestamp="2026-11-23T03:19:29" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 11" />
+    <property name="flavor" value="standard" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="independentOverlayHasHonestClipboardDraft" classname="dev.lichboard.LichboardIntegrationTest" time="9.985" />
+  <testcase name="specialKeysReachRealRawInputTarget" classname="dev.lichboard.LichboardIntegrationTest" time="4.648" />
+  <testcase name="composeSettingsNavigateAndApplyTheme" classname="dev.lichboard.LichboardIntegrationTest" time="9.396" />
+  <testcase name="pageRebuildsAndReattachmentDiscardStaleQueuedKeys" classname="dev.lichboard.LichboardIntegrationTest" time="2.644" />
+  <testcase name="overlaySurvivesSwitchingToAnotherApplication" classname="dev.lichboard.LichboardIntegrationTest" time="6.491" />
+  <testcase name="overlayKeepsEditorFocusAndUsesInputConnection" classname="dev.lichboard.LichboardIntegrationTest" time="6.031" />
+  <testcase name="bubbleDragsPersistsAndLongPressOpensControls" classname="dev.lichboard.LichboardIntegrationTest" time="5.647" />
+  <testcase name="automaticWithoutAnEditorUsesDraftNotInjection" classname="dev.lichboard.LichboardIntegrationTest" time="2.161" />
+  <testcase name="everyThemeAndResizeRendersWithoutLosingDraft" classname="dev.lichboard.LichboardIntegrationTest" time="6.871" />
+  <testcase name="normalImeTypesEditsAndCapitalizes" classname="dev.lichboard.LichboardIntegrationTest" time="5.703" />
+  <testcase name="longPressAlternativesAndAllFunctionKeysExist" classname="dev.lichboard.LichboardIntegrationTest" time="5.205" />
+  <testcase name="standardRejectsAssistInBothPreferenceWritesAndRestoredValues" classname="dev.lichboard.StandardCapabilitiesTest" time="0.085" />
+  <testcase name="installedStandardPackageHasNoAccessibilityServiceOrImplementation" classname="dev.lichboard.StandardCapabilitiesTest" time="0.003" />
+</testsuite>

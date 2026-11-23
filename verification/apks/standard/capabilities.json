@@ -1,0 +1,11 @@
+{
+  "applicationId": "dev.lichboard",
+  "versionName": "1.1.0",
+  "accessibilityServiceDeclared": false,
+  "accessibilityImplementationIncluded": false,
+  "accessibilityMetadataIncluded": false,
+  "debuggable": false,
+  "internetPermission": false,
+  "apkSha256": "35cc853cf983e384714b26614b3f37170556d70b334a5533dfc3aa8ca7e39363",
+  "apkBytes": 18435859
+}

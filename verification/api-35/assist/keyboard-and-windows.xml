@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="dev.lichboard.LichboardIntegrationTest" tests="11" failures="0" errors="0" skipped="0" time="71.225" timestamp="2026-11-23T03:25:53" hostname="localhost">
+  <properties>
+    <property name="device" value="emulator-5554 - 15" />
+    <property name="flavor" value="assist" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="independentOverlayHasHonestClipboardDraft" classname="dev.lichboard.LichboardIntegrationTest" time="12.711" />
+  <testcase name="specialKeysReachRealRawInputTarget" classname="dev.lichboard.LichboardIntegrationTest" time="3.948" />
+  <testcase name="composeSettingsNavigateAndApplyTheme" classname="dev.lichboard.LichboardIntegrationTest" time="14.922" />
+  <testcase name="pageRebuildsAndReattachmentDiscardStaleQueuedKeys" classname="dev.lichboard.LichboardIntegrationTest" time="2.224" />
+  <testcase name="overlaySurvivesSwitchingToAnotherApplication" classname="dev.lichboard.LichboardIntegrationTest" time="4.338" />
+  <testcase name="overlayKeepsEditorFocusAndUsesInputConnection" classname="dev.lichboard.LichboardIntegrationTest" time="5.422" />
+  <testcase name="bubbleDragsPersistsAndLongPressOpensControls" classname="dev.lichboard.LichboardIntegrationTest" time="6.166" />
+  <testcase name="automaticWithoutAnEditorUsesDraftNotInjection" classname="dev.lichboard.LichboardIntegrationTest" time="2.059" />
+  <testcase name="everyThemeAndResizeRendersWithoutLosingDraft" classname="dev.lichboard.LichboardIntegrationTest" time="7.18" />
+  <testcase name="normalImeTypesEditsAndCapitalizes" classname="dev.lichboard.LichboardIntegrationTest" time="5.499" />
+  <testcase name="longPressAlternativesAndAllFunctionKeysExist" classname="dev.lichboard.LichboardIntegrationTest" time="5.398" />
+</testsuite>

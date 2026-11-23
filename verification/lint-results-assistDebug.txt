@@ -44,18 +44,6 @@
    can be unused too, such as the new <tag> element in layouts introduced in
    API 21.
 
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:75: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
-        if (Build.VERSION.SDK_INT >= 34) startForeground(NOTIFICATION, notification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-                                         ~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:76: Error: To call Service.startForeground(), the <service> element of manifest file must have the foregroundServiceType attribute specified [ForegroundServiceType]
-        else startForeground(NOTIFICATION, notification())
-             ~~~~~~~~~~~~~~~
-
-   Explanation for issues of type "ForegroundServiceType":
-   For targetSdkVersion >= 34, to call Service.startForeground(), the
-   <service> element in the manifest file must have the foregroundServiceType
-   attribute specified.
-
 /home/runner/work/lichboard/lichboard/app/build.gradle.kts:77: Warning: A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.19.1 [GradleDependency]
     implementation("androidx.core:core-ktx:1.15.0")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,4 +138,4 @@ class KeyboardPanel(
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-2 errors, 20 warnings
+0 errors, 20 warnings

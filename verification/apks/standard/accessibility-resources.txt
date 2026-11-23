@@ -1,0 +1,1 @@
+No accessibility-service XML resource in the APK resource table.

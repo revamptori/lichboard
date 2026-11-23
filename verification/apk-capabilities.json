@@ -1,0 +1,24 @@
+{
+  "standard": {
+    "applicationId": "dev.lichboard",
+    "versionName": "1.1.0",
+    "accessibilityServiceDeclared": false,
+    "accessibilityImplementationIncluded": false,
+    "accessibilityMetadataIncluded": false,
+    "debuggable": false,
+    "internetPermission": false,
+    "apkSha256": "35cc853cf983e384714b26614b3f37170556d70b334a5533dfc3aa8ca7e39363",
+    "apkBytes": 18435859
+  },
+  "assist": {
+    "applicationId": "dev.lichboard.assist",
+    "versionName": "1.1.0-assist",
+    "accessibilityServiceDeclared": true,
+    "accessibilityImplementationIncluded": true,
+    "accessibilityMetadataIncluded": true,
+    "debuggable": false,
+    "internetPermission": false,
+    "apkSha256": "6713b6899f827c39ef4a0d9be1f608d97826d64e26facaf054283d4b4460a418",
+    "apkBytes": 18454683
+  }
+}
