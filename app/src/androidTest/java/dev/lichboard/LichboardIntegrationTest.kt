@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Configurator
+import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
@@ -43,11 +44,11 @@ class LichboardIntegrationTest {
         UiDevice.getInstance(instrumentation)
     }
     private var scenario: ActivityScenario<ProbeActivity>? = null
-    private val component = "dev.lichboard/.ime.LichboardImeService"
+    private val component get() = "${context.packageName}/dev.lichboard.ime.LichboardImeService"
 
     @Before fun setup() {
         device.executeShellCommand("wm dismiss-keyguard")
-        device.executeShellCommand("appops set dev.lichboard SYSTEM_ALERT_WINDOW allow")
+        device.executeShellCommand("appops set ${context.packageName} SYSTEM_ALERT_WINDOW allow")
         device.executeShellCommand("ime enable $component")
         device.executeShellCommand("ime set $component")
         device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
@@ -82,7 +83,7 @@ class LichboardIntegrationTest {
         val values = ContentValues().apply {
             put(MediaStore.Downloads.DISPLAY_NAME, file.name)
             put(MediaStore.Downloads.MIME_TYPE, if (file.extension == "png") "image/png" else "text/plain")
-            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests")
+            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/lichboard-tests-${BuildConfig.FLAVOR}")
         }
         context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)?.let { uri ->
             context.contentResolver.openOutputStream(uri)?.use { output -> file.inputStream().use { it.copyTo(output) } }
@@ -222,6 +223,24 @@ class LichboardIntegrationTest {
             condition("Compose theme control updates real preferences") { app.settings.current.theme == BoardTheme.DRACULA }
             requireNotNull(device.findObject(By.text("Controls"))).click()
             assertNotNull(device.wait(Until.findObject(By.textContains("At your")), 8_000))
+            val editionControl = if (BuildConfig.INPUT_ASSIST_AVAILABLE) "Input assist setup  ↗" else "Standard edition · no accessibility service"
+            for (attempt in 0 until 6) {
+                val candidate = device.findObject(By.text(editionControl))
+                if (candidate != null && !candidate.visibleBounds.isEmpty) break
+                requireNotNull(device.findObject(By.scrollable(true))).scroll(Direction.DOWN, .65f)
+            }
+            assertNotNull("Edition-specific controls are visible", device.findObject(By.text(editionControl)))
+            if (BuildConfig.INPUT_ASSIST_AVAILABLE) {
+                requireNotNull(device.findObject(By.text(editionControl))).click()
+                assertNotNull(device.wait(Until.findObject(By.text("Optional input assistance")), 8_000))
+                assertFalse("Consent is not granted by merely opening the dialog", app.settings.current.accessibilityFallback)
+                requireNotNull(device.findObject(By.text("Not now"))).click()
+            } else {
+                assertFalse(device.hasObject(By.text("Allow input assist")))
+                assertFalse(device.hasObject(By.text("Input assist")))
+            }
+            val controlsScreenshot = File(context.cacheDir, "settings-controls.png")
+            device.takeScreenshot(controlsScreenshot); exportEvidence(controlsScreenshot)
         }
     }
     @Test fun pageRebuildsAndReattachmentDiscardStaleQueuedKeys() {

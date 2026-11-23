@@ -12,9 +12,25 @@ android {
         applicationId = "dev.lichboard"
         minSdk = 30
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    flavorDimensions += "capabilities"
+    productFlavors {
+        create("standard") {
+            dimension = "capabilities"
+            isDefault = true
+            buildConfigField("boolean", "INPUT_ASSIST_AVAILABLE", "false")
+            buildConfigField("String", "EDITION_NAME", "\"Standard\"")
+        }
+        create("assist") {
+            dimension = "capabilities"
+            applicationIdSuffix = ".assist"
+            versionNameSuffix = "-assist"
+            buildConfigField("boolean", "INPUT_ASSIST_AVAILABLE", "true")
+            buildConfigField("String", "EDITION_NAME", "\"Assist\"")
+        }
     }
     signingConfigs {
         create("distribution") {

@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 openFloating = { requestFloating(true) },
-                openAccessibility = { openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
+                openAccessibility = { if (BuildConfig.INPUT_ASSIST_AVAILABLE) openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
                 requestNotifications = { requestNotifications(force = true) })
         }
     }

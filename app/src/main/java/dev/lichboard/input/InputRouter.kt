@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.KeyEvent
+import dev.lichboard.BuildConfig
 import dev.lichboard.accessibility.AccessBridge
 import dev.lichboard.data.InputMode
 import dev.lichboard.ime.ImeBridge
@@ -21,7 +22,7 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
         val settings = app.settings.current
         val hasIme = withContext(Dispatchers.Main.immediate) { ImeBridge.hasEditor }
         if (forceIme) return if (hasIme) InputRoute.IME else InputRoute.DRAFT
-        val allowAssist = settings.accessibilityFallback && (settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.ACCESSIBILITY)
+        val allowAssist = BuildConfig.INPUT_ASSIST_AVAILABLE && settings.accessibilityFallback && (settings.inputMode == InputMode.AUTO || settings.inputMode == InputMode.ACCESSIBILITY)
         val shouldProbeAssist = allowAssist && (settings.inputMode == InputMode.ACCESSIBILITY || !hasIme)
         val result = InputPolicy.choose(settings.inputMode, hasIme, allowAssist,
             shouldProbeAssist && AccessBridge.service?.hasEditableTarget() == true)
@@ -34,7 +35,7 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
         val s = app.settings.current
         return when {
             (forceIme || s.inputMode == InputMode.AUTO || s.inputMode == InputMode.IME) && ImeBridge.hasEditor -> "IME · focused editor"
-            !forceIme && (s.inputMode == InputMode.AUTO || s.inputMode == InputMode.ACCESSIBILITY) &&
+            BuildConfig.INPUT_ASSIST_AVAILABLE && !forceIme && (s.inputMode == InputMode.AUTO || s.inputMode == InputMode.ACCESSIBILITY) &&
                 s.accessibilityFallback && AccessBridge.connected.value -> "ASSIST · supported focused fields only"
             else -> "DRAFT · copy to paste elsewhere"
         }
@@ -49,7 +50,7 @@ class InputRouter(private val context: Context, private val forceIme: Boolean = 
     private suspend fun fallbackText(value: String, meta: Int): String {
         currentCoroutineContext().ensureActive()
         val s = app.settings.current
-        if (!forceIme && s.inputMode == InputMode.AUTO && s.accessibilityFallback &&
+        if (BuildConfig.INPUT_ASSIST_AVAILABLE && !forceIme && s.inputMode == InputMode.AUTO && s.accessibilityFallback &&
             AccessBridge.service?.text(value, meta) == true) return "ASSIST · focused text field"
         currentCoroutineContext().ensureActive()
         return draftText(value, meta)

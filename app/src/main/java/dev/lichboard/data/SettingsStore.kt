@@ -2,6 +2,7 @@ package dev.lichboard.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import dev.lichboard.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -40,6 +41,15 @@ data class BoardSettings(
     val keyboardY: Float = 1f
 )
 
+/** Filter both writes and restored preferences; Standard cannot opt into an absent feature. */
+private fun BoardSettings.forEdition(): BoardSettings = if (BuildConfig.INPUT_ASSIST_AVAILABLE) this else copy(
+    accessibilityFallback = false,
+    inputMode = if (inputMode == InputMode.ACCESSIBILITY) InputMode.AUTO else inputMode
+)
+
+val availableInputModes: List<InputMode>
+    get() = InputMode.entries.filter { BuildConfig.INPUT_ASSIST_AVAILABLE || it != InputMode.ACCESSIBILITY }
+
 class SettingsStore(context: Context) {
     private val prefs = context.getSharedPreferences("lichboard_settings", Context.MODE_PRIVATE)
     private val mutable = MutableStateFlow(read())
@@ -49,7 +59,7 @@ class SettingsStore(context: Context) {
     init { prefs.registerOnSharedPreferenceChangeListener(listener) }
 
     fun update(transform: (BoardSettings) -> BoardSettings) {
-        val s = transform(current)
+        val s = transform(current).forEdition()
         prefs.edit().apply {
             putBoolean("onboarded", s.onboarded)
             putBoolean("floating", s.floatingEnabled)
@@ -103,5 +113,5 @@ class SettingsStore(context: Context) {
         bubbleY = prefs.getFloat("bubble_y", .42f).coerceIn(0f, 1f),
         keyboardX = prefs.getFloat("keyboard_x", .5f).coerceIn(0f, 1f),
         keyboardY = prefs.getFloat("keyboard_y", 1f).coerceIn(0f, 1f)
-    )
+    ).forEdition()
 }

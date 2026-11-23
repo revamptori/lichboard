@@ -12,8 +12,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
 /** Explicit user-triggered focused text editing only. Never caches nodes, reads passwords, or polls. */
-class LichboardAccessibilityService : AccessibilityService() {
-    @Volatile var lastFailure: String = "Focus an editable field"
+class LichboardAccessibilityService : AccessibilityService(), InputAssist {
+    @Volatile override var lastFailure: String = "Focus an editable field"
         private set
     override fun onServiceConnected() { super.onServiceConnected(); AccessBridge.attach(this) }
     override fun onAccessibilityEvent(event: AccessibilityEvent?) { /* No screen monitoring. */ }
@@ -58,8 +58,8 @@ class LichboardAccessibilityService : AccessibilityService() {
             action(target)
         }
     }
-    fun hasEditableTarget(): Boolean = withEditor(false) { true }
-    suspend fun text(value: String, meta: Int): Boolean {
+    override fun hasEditableTarget(): Boolean = withEditor(false) { true }
+    override suspend fun text(value: String, meta: Int): Boolean {
         if (meta and KeyEvent.META_ALT_ON != 0) return false
         if (meta and KeyEvent.META_CTRL_ON != 0) {
             val command = when (value.lowercase()) {
@@ -70,7 +70,7 @@ class LichboardAccessibilityService : AccessibilityService() {
         }
         return withActiveEditor(false) { replaceSelection(it, value) }
     }
-    suspend fun edit(command: EditCommand): Boolean = withActiveEditor(false) { node ->
+    override suspend fun edit(command: EditCommand): Boolean = withActiveEditor(false) { node ->
         when (command) {
             EditCommand.COPY -> node.performAction(AccessibilityNodeInfo.ACTION_COPY)
             EditCommand.CUT -> node.performAction(AccessibilityNodeInfo.ACTION_CUT)
@@ -78,7 +78,7 @@ class LichboardAccessibilityService : AccessibilityService() {
             EditCommand.SELECT_ALL -> setSelection(node, 0, editableText(node).length)
         }
     }
-    suspend fun key(code: Int, meta: Int): Boolean = withActiveEditor(false) { node ->
+    override suspend fun key(code: Int, meta: Int): Boolean = withActiveEditor(false) { node ->
         if (meta and (KeyEvent.META_CTRL_ON or KeyEvent.META_ALT_ON) != 0) return@withActiveEditor false
         val text = editableText(node)
         val start = node.textSelectionStart

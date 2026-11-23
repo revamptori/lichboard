@@ -1,7 +1,4 @@
 <resources>
     <string name="app_name">Lichboard</string>
     <string name="ime_subtype">English (QWERTY)</string>
-    <string name="accessibility_label">Lichboard input assist (optional)</string>
-    <string name="accessibility_description">Optional input assistance for the floating keyboard. Only when you press a key, Lichboard can read and replace text in the currently focused editable field of a supported app. Password fields are excluded. It does not record screen content, monitor typing, send data, or inject arbitrary key events. Enable input assist inside Lichboard as well. You can disable this service at any time.</string>
-    <string name="accessibility_summary">Edit focused text fields using your floating keyboard. Optional; not needed for normal keyboard input.</string>
 </resources>

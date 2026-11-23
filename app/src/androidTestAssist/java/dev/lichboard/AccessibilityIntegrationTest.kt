@@ -37,6 +37,8 @@ class AccessibilityIntegrationTest {
     }
 
     @Test fun focusedInputAssistHonorsConsentHintsDeletionAndPasswords() {
+        assertTrue(BuildConfig.INPUT_ASSIST_AVAILABLE)
+        assertEquals("dev.lichboard.assist", context.packageName)
         // Use UiAutomation only as the test device's shell, never as a second node-querying
         // accessibility client. Android 11 otherwise shares its node cache with the service
         // in this instrumented process and can deadlock when the target is this same process.
@@ -52,10 +54,10 @@ class AccessibilityIntegrationTest {
         var scenario: ActivityScenario<ProbeActivity>? = null
         try {
             shell("wm dismiss-keyguard")
-            shell("appops set dev.lichboard SYSTEM_ALERT_WINDOW allow")
-            shell("ime enable dev.lichboard/.ime.LichboardImeService")
-            shell("ime set dev.lichboard/.ime.LichboardImeService")
-            shell("settings put secure enabled_accessibility_services dev.lichboard/.accessibility.LichboardAccessibilityService")
+            shell("appops set ${context.packageName} SYSTEM_ALERT_WINDOW allow")
+            shell("ime enable ${context.packageName}/dev.lichboard.ime.LichboardImeService")
+            shell("ime set ${context.packageName}/dev.lichboard.ime.LichboardImeService")
+            shell("settings put secure enabled_accessibility_services ${context.packageName}/dev.lichboard.accessibility.LichboardAccessibilityService")
             shell("settings put secure accessibility_enabled 1")
             condition("Real accessibility service connected") { AccessBridge.connected.value }
             instrumentation.runOnMainSync {

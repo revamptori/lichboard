@@ -6,19 +6,31 @@ A real, native Android 11+ keyboard with a persistent draggable overlay button, 
 
 ## Install
 
-The verified, installable APK is published at **[`releases/Lichboard-1.0.0.apk`](releases/Lichboard-1.0.0.apk)** after the build, JVM tests, Lint, and Android 11 / Android 15 device tests pass. [`verification/latest.json`](verification/latest.json) records the tested source commit, run URL, checks, and APK SHA-256. If verification fails, CI records diagnostics and does **not** publish a new APK.
+### Choose an edition
 
-1. Download the APK onto an **Android 11 (API 30) or newer** device.
+| Edition | Download after CI verification | What it includes |
+|---|---|---|
+| **Standard — recommended** | **[`Lichboard-1.1.0-standard.apk`](releases/Lichboard-1.1.0-standard.apk)** | Normal IME, floating keyboard/bubble, clipboard draft, themes and controls. **No AccessibilityService declaration, implementation, or service metadata.** Package `dev.lichboard`. |
+| **Assist — explicitly optional** | [`Lichboard-1.1.0-assist.apk`](releases/Lichboard-1.1.0-assist.apk) | All Standard features plus consent-based accessibility editing of supported non-password fields. Named **Lichboard Assist**, separate package `dev.lichboard.assist`. |
+
+The APKs are only published after both editions build, pass JVM tests/Lint, pass their Android 11 / Android 15 device tests, and launch as non-debuggable releases on both emulators. [`verification/latest.json`](verification/latest.json) records the tested source, outcomes, capabilities and each APK's SHA-256. [`releases/SHA256SUMS`](releases/SHA256SUMS) provides download checksums. Failed verification never publishes new APKs.
+
+**Play Protect:** a user reported that the earlier combined-capability APK was blocked during installation. Standard now *removes* the optional accessibility component rather than merely disabling a switch. This is capability minimization, **not** an attempt to hide capabilities or bypass security. We cannot determine Google's exact classification from the warning, and removing accessibility or changing a signing certificate does **not** guarantee acceptance. Keep Play Protect enabled. See [installation blocks](docs/INSTALLATION-BLOCK.md). Stock emulator installation tests are **not** Play Protect approval.
+
+1. Download **Standard** unless you specifically need accessibility input assist, onto an **Android 11 (API 30) or newer** device.
 2. Allow “Install unknown apps” for the file manager/browser you use to open it, then install.
 3. Follow Lichboard’s setup: enable the input method, select Lichboard, allow **Display over other apps**, then start the floating button. Notification access on Android 13+ is recommended for the service controls, not needed for typing.
 4. Tap the button to show/hide the floating board. Drag the button or the keyboard’s `⠿ lichboard` title to reposition it. Hold the button for quick controls. Hold a letter for accents; tap an offered alternative. Tap Shift twice quickly or hold it for caps lock. Hold Ctrl/Alt to lock a modifier; a normal tap arms it for one keystroke.
 
-With ADB:
+For development on a dedicated test device with ADB (not as a workaround for a Play Protect block):
 
 ```sh
-adb install -r releases/Lichboard-1.0.0.apk
-adb shell am start -n dev.lichboard/.MainActivity
+adb install -r releases/Lichboard-1.1.0-standard.apk
+adb shell am start -n dev.lichboard/dev.lichboard.MainActivity
+# Assist uses package dev.lichboard.assist and the same fully qualified activity class.
 ```
+
+Both editions can coexist, with separate settings and keyboard-picker entries. Enable the floating button in only the edition you intend to use; you normally need only Standard. An existing development build may require uninstalling before updating because CI certificates can change; uninstalling erases that edition's settings.
 
 **Signing:** the supplied CI release is non-debuggable but signed with an Android **development/evaluation certificate**, not a production identity. It is suitable for local installation/testing, not Play distribution. A fresh runner may generate a different development certificate; uninstall the previous evaluation build if Android reports a signature mismatch (this erases settings). Keep and use your own private release keystore for stable updates or distribution. No private signing key is committed.
 
@@ -30,10 +42,10 @@ Android separates **drawing a keyboard** from **permission to deliver input**. L
 |---|---|---|
 | Normal system IME | `InputMethodService`, `InputConnection.commitText`, Unicode-aware deletion, editor actions, Android `KeyEvent` down/up pairs | Lichboard must be enabled/selected and an input connection must be active. |
 | Floating / automatic | The same key surface in a `TYPE_APPLICATION_OVERLAY` window with `FLAG_NOT_FOCUSABLE`; first tries the currently active Lichboard IME connection | Hiding the system keyboard does not create a connection. Apps can drop, reject, or ignore input. |
-| Optional input assist | Explicitly opted-in `AccessibilityService`; `ACTION_SET_TEXT`, selection, copy/cut/paste and supported editor actions on the focused editable node | No password fields, arbitrary hardware events, background screen collection, or bypass of custom editors. It replaces selected text and may interact with an editor’s formatting/undo behavior. |
+| Optional input assist (**Assist edition only**) | Explicitly opted-in `AccessibilityService`; `ACTION_SET_TEXT`, selection, copy/cut/paste and supported editor actions on the focused editable node | No password fields, arbitrary hardware events, background screen collection, or bypass of custom editors. It replaces selected text and may interact with an editor’s formatting/undo behavior. |
 | Clipboard draft | An in-memory editor (up to 20,000 UTF-16 units), explicit **Copy draft**, then the receiving app’s Paste action | No automatic clipboard replacement or paste into arbitrary apps. Android can block a background clipboard read. Copying explicitly shares draft text with the system clipboard. |
 
-Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, input-assist-only, and clipboard-draft modes are selectable. The **system IME always uses its own active connection**, regardless of the selected floating-input route. If an editor rejects an operation, the keyboard reports that rejection; an accepted Android input call is not a guarantee that a particular game or remote desktop understands it.
+In **Standard**, automatic mode uses the active Lichboard IME or a draft; only Automatic, IME-only and clipboard-draft routes are offered. Old preferences cannot activate accessibility. In **Assist**, automatic mode tries the active IME, then explicitly opted-in input assist, then a draft, and an assist-only route is also offered. The **system IME always uses its own active connection**, regardless of the selected floating-input route. If an editor rejects an operation, the keyboard reports that rejection; an accepted Android input call is not a guarantee that a particular game or remote desktop understands it.
 
 **Terminals, remote desktops, games:** Esc, Tab, Ctrl, Alt, Shift, arrows, Home, End, Page Up/Down, forward Delete, Insert and F1–F12 are real Android key events through the IME. The destination must expose an input connection and implement these key codes. Input assist cannot provide raw key injection. Unsupported special keys report that an IME connection is required rather than pretending they were delivered.
 
@@ -50,11 +62,13 @@ Automatic mode prefers IME, then opt-in input assist, then a draft. IME-only, in
 - Auto-hide means **hide the floating button while either Lichboard keyboard is visible**. The keyboard can still be closed from its toolbar or service notification; the button then returns. It is not an idle timer.
 - A low-priority foreground-service notification with keyboard, hide and stop actions. Service stops and all windows are removed when disabled. No polling/timers while idle; only key-hold timers exist during an actual press. Input assist runs off the UI thread through an ordered, bounded input queue so a slow accessibility target cannot freeze the keyboard. Detaching/closing a panel drops its pending actions; the normal IME also drops them when its editor changes. Android calls already sent cannot be retracted. Discarded key pages do not remain in a global view registry.
 
-## Optional accessibility setup
+## Optional accessibility setup — Assist edition only
+
+Standard contains no accessibility service and offers no assist toggle, consent dialog or setup action. Install **Lichboard Assist** separately only if you need this capability and accept the disclosure. The implementation and metadata are compiled only from `app/src/assist/`; this is not a disabled service hidden in Standard.
 
 It is **not necessary** for the floating button or normal IME. In **Controls → Allow input assist**, read the disclosure, explicitly agree, and enable **Lichboard input assist** in Android’s Accessibility settings. Both the OS service **and** the Lichboard opt-in must be enabled. Turn off the in-app switch to stop using assist immediately, and disable the OS service to revoke access entirely.
 
-For sideloaded apps on Android 13+, Android may block accessibility under **Restricted settings**. If you trust the build, open Android **App info → Lichboard → ⋮ → Allow restricted settings** before enabling it. OEM wording varies. Do not disable system protections globally.
+For sideloaded apps on Android 13+, Android may block accessibility under **Restricted settings**. If you trust the build, open Android **App info → Lichboard → ⋮ → Allow restricted settings** before enabling it. OEM wording varies. This applies only to service activation **after installation** and does not resolve a Play Protect installation block. Do not disable Play Protect or system protections to install the app.
 
 The service does not inspect accessibility-event contents, record keystrokes, cache editable nodes, or read password fields. It only fetches the focused editable node in response to an explicit keyboard action. Clipboard contents are read only after an explicit Clipboard/Paste action, never in the background or into persistent history. In-memory drafts are not saved across process death. Android backs up neither app settings nor drafts (`allowBackup=false`).
 
@@ -70,13 +84,16 @@ Use Android Studio Ladybug or newer, JDK **17**, Android SDK platform **35** and
 
 1. Open the repository root as a project; let Gradle sync.
 2. Set Android Studio’s Gradle JDK to 17 and install SDK 35 when prompted.
-3. Run the `app` configuration on API 30+ or use:
+3. Choose **standardDebug** in Build Variants by default; choose **assistDebug** explicitly for the optional edition. Run `app` on API 30+ or use:
 
 ```sh
 # Set ANDROID_HOME and JAVA_HOME as usual, or let Studio write local.properties.
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
-./gradlew :app:assembleRelease
-# APK: app/build/outputs/apk/release/app-release.apk
+./gradlew :app:assembleStandardDebug :app:testStandardDebugUnitTest :app:lintStandardDebug
+./gradlew :app:assembleStandardRelease
+# APK: app/build/outputs/apk/standard/release/app-standard-release.apk
+# Optional edition:
+./gradlew :app:assembleAssistDebug :app:testAssistDebugUnitTest :app:lintAssistDebug :app:assembleAssistRelease
+# APK: app/build/outputs/apk/assist/release/app-assist-release.apk
 ```
 
 For a privately signed distribution build:
@@ -86,27 +103,28 @@ export LICHBOARD_KEYSTORE=/absolute/path/to/your-private-release.jks
 export LICHBOARD_STORE_PASSWORD='your-keystore-password'
 export LICHBOARD_KEY_ALIAS=lichboard
 export LICHBOARD_KEY_PASSWORD='your-key-password'
-./gradlew :app:assembleRelease
+./gradlew :app:assembleStandardRelease :app:assembleAssistRelease
 ```
 
 Never commit keystores/passwords. The `*.jks`, `*.keystore`, `local.properties` and build directories are ignored. For Play distribution, review current foreground `specialUse`, accessibility, privacy-disclosure and signing policies. The project is not a claim of Play approval.
 
 ### Complete project archive
 
-After successful CI verification and pulling its evidence commit, run `python3 scripts/package-project.py`. It checks the APK checksum and that all application/build sources match the tested commit, then creates **`deliverables/Lichboard-1.0.0-AndroidStudio.zip`** and `deliverables/SHA256SUMS`. The archive contains all Kotlin sources, resources, manifests, wrapper, tests, CI scripts, README, verification reports/screenshots and the installable APK, under a single `Lichboard/` folder. Extract it and open that folder in Android Studio. No SDK, local caches, Git history, credentials or private keys are bundled; first Gradle sync needs Internet access.
+After successful CI verification and pulling its evidence commit, run `python3 scripts/package-project.py`. It checks both APK checksums and that all application/build/test scripts match the tested commit, then creates **`deliverables/Lichboard-1.1.0-AndroidStudio.zip`** and `deliverables/SHA256SUMS`. The archive contains all Kotlin sources, resources, manifests, wrapper, tests, CI scripts, README, verification reports/screenshots and both installable APKs, under a single `Lichboard/` folder. Extract it and open that folder in Android Studio. No SDK, local caches, Git history, credentials or private keys are bundled; first Gradle sync needs Internet access.
 
 ## Testing and evidence
 
 ```sh
-./gradlew :app:testDebugUnitTest :app:lintDebug
-# With an unlocked API 30+ emulator/device attached:
-./gradlew :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleRelease
-bash scripts/device-test.sh 30  # Use 35 for an API 35 device, etc.
+./gradlew :app:testStandardDebugUnitTest :app:lintStandardDebug :app:testAssistDebugUnitTest :app:lintAssistDebug
+./gradlew :app:assembleStandardDebug :app:assembleStandardDebugAndroidTest :app:assembleStandardRelease :app:assembleAssistDebug :app:assembleAssistDebugAndroidTest :app:assembleAssistRelease
+python3 scripts/verify-apks.py  # Requires ANDROID_HOME; checks actual release manifests/DEX/signatures.
+# With an unlocked dedicated API 30+ emulator/device attached; runs both editions:
+bash scripts/device-test.sh 30  # Use 35 for API 35, etc.
 ```
 
 The instrumentation suite sets overlay app-ops and selects the IME through the **test device’s ADB shell**, not inside the shipping app. Use a dedicated test emulator. It exercises a debug-only real `EditText`, a raw-key `InputConnection` target, and the actual overlay/IME service windows. The debug-only probe activity is not in the release APK.
 
-The key/window suite and accessibility suite run in **separate instrumentation invocations**. For accessibility, UiAutomation is used only for the test shell with its event subscription disabled; this avoids Android 11’s same-process shared accessibility-node-cache contention. Actual field editing still goes through the real AccessibilityService and Android node actions, with consent, hint-text and password checks. All normal/floating key gestures are exercised by UiAutomator in the key/window suite.
+Both editions run the common key/window suite. Standard additionally checks installed service/class absence and rejection of assist preferences. Only Assist compiles/runs the accessibility suite, in a **separate instrumentation invocation** from key/window tests. For accessibility, UiAutomation is used only for the test shell with its event subscription disabled; this avoids Android 11’s same-process shared accessibility-node-cache contention. Actual field editing still goes through the real AccessibilityService and Android node actions, with consent, hint-text and password checks. All normal/floating key gestures are exercised by UiAutomator in the key/window suite.
 
 Tests cover:
 
@@ -119,17 +137,18 @@ Tests cover:
 - Actual raw F12 and Ctrl+F1 delivery to a receiving view.
 - Bubble drag/persistence, long-press controls, themes and geometry changes.
 - Compose Board/Style/Controls navigation and a real theme preference change, with native screenshots.
-- Accessibility refusal without in-app opt-in, then text insertion/deletion using a real focused editor.
+- Standard: actual APK manifest/DEX/resource absence of the accessibility service, runtime absence, filtered UI/routes, and normalization of old assist preferences.
+- Assist: consent dialog cancellation and refusal without in-app opt-in, then text insertion/deletion/hint handling/password refusal using a real focused editor.
 
-[The CI workflow](.github/workflows/android.yml) builds, runs JVM tests and Lint, boots **Android 11 (API 30)** and **Android 15 (API 35)** emulators, runs the device tests on each, then installs and launches the **non-debuggable release APK** on each. It verifies APK signing/badging and records reports, screenshots and runtime crash logs in [`verification/`](verification/). A build is only marked verified when all stages succeed; inspect `latest.json` for the current result. CI publishes evidence/APK back to **this working branch only**, with `[skip ci]` to avoid loops, and retains the complete Actions artifact for 14 days.
+[The CI workflow](.github/workflows/android.yml) builds, runs JVM tests and Lint, boots **Android 11 (API 30)** and **Android 15 (API 35)** emulators, runs the device tests on each, then installs and launches **both non-debuggable release APKs** on each. It verifies flavor-specific APK signing/badging/manifest/DEX and records reports, screenshots and runtime crash logs in [`verification/`](verification/). A build is only marked verified when all stages succeed; inspect `latest.json` for the current result. CI publishes evidence/APK back to **this working branch only**, with `[skip ci]` to avoid loops, and retains the complete Actions artifact for 14 days.
 
-Emulators cannot validate physical vibration/audio, OEM power management, every secure/fullscreen policy, real reboot restoration, or the behavior of arbitrary third-party games/terminal/remote-desktop apps. Test those on intended physical devices. No such universal behavior is claimed.
+These stock AOSP emulators **do not include Google Play Protect**. No successful build, test, signature check, or ADB install is a guarantee of Play Protect acceptance on a phone. That remains a physical-device check. Emulators also cannot validate physical vibration/audio, OEM power management, every secure/fullscreen policy, real reboot restoration, or the behavior of arbitrary third-party games/terminal/remote-desktop apps. Test those on intended physical devices. No such universal behavior is claimed.
 
 ## Project map
 
 ```text
 app/src/main/
-  AndroidManifest.xml              Permissions, activity, IME, FGS, accessibility, boot receiver
+  AndroidManifest.xml              Shared permissions, activity, IME, FGS, boot receiver (no accessibility service)
   java/dev/lichboard/
     MainActivity.kt                 Public settings/permission entry points
     LichboardApplication.kt         Process-scoped preferences and volatile draft
@@ -137,19 +156,23 @@ app/src/main/
     keyboard/                      Native shared keyboard, key gestures, palettes
     ime/                           InputMethodService and weak active-connection bridge
     input/                         Routing policy, input router, Unicode-aware volatile draft
-    accessibility/                 Explicit focused-node editing and weak service bridge
+    accessibility/                 Backend contract and weak bridge; no Android service implementation
     overlay/                       Foreground owner, draggable button/board, boot receiver
   res/                             Vector logos, strings, styles, service metadata
+app/src/assist/                    Optional AccessibilityService/manifest/disclosure resources only
 app/src/debug/                     Test-only editor/raw key activity (excluded from release)
 app/src/test/                      JVM tests
-app/src/androidTest/               Real Android service/window integration tests
+app/src/androidTest/               Shared real Android service/window tests
+app/src/androidTestStandard/       Standard capability-absence and preference tests
+app/src/androidTestAssist/         Assist-only accessibility integration tests
 scripts/                           CI device test and evidence publication scripts
-releases/                          Verified installable APK
+releases/                          Verified Standard/Assist APKs and checksums
 verification/                      Machine-readable results, reports and screenshots
 ```
 
 ## Troubleshooting
 
+- **Play Protect blocks installation:** do not disable it. Try the verified Standard edition, which omits accessibility completely. Acceptance is not guaranteed; if Standard is also blocked, stop and record the Android version, install source, APK checksum and exact warning for investigation/review. [Details](docs/INSTALLATION-BLOCK.md).
 - **Keyboard appears but nothing reaches the app:** select Lichboard as the Android IME, focus a compatible editor and check the keyboard’s route label. A draft label means text is staying in memory. Use input assist where supported or explicit copy/paste.
 - **F-keys/shortcuts do nothing:** the receiving app must implement Android key events through its active input connection. Accessibility and the clipboard cannot synthesize arbitrary hardware input.
 - **Button missing while typing:** expected with Auto-hide enabled. Close the keyboard or use the notification. Secure screens and lockscreen intentionally hide overlays.
