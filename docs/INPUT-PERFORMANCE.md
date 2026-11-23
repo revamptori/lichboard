@@ -39,7 +39,7 @@ Publication requires the new evidence for **all four edition/API combinations**,
 
 ## Measurement limits and phone testing
 
-The latency measurement is **direct key activation → receiving InputConnection entry on a debug AOSP emulator**. It is not touch-sensor latency, animation/render time, touch-to-pixel latency, an on-phone measurement, or a quantified improvement over a measured 1.1 baseline. Runner load, JIT, debug instrumentation and emulation affect it. Burst tests intentionally keep Main busy and should not be interpreted as real-world typing latency. No "times faster" claim is made.
+The latency measurement is **direct key activation → receiving InputConnection entry on a debug AOSP emulator**. The debug probe and IME run in the instrumented app's process, so it does not establish cross-process delivery performance in a third-party app. It is not touch-sensor latency, animation/render time, touch-to-pixel latency, an on-phone measurement, or a quantified improvement over a measured 1.1 baseline. Runner load, JIT, debug instrumentation and emulation affect it. Burst tests intentionally keep Main busy and should not be interpreted as real-world typing latency. No "times faster" claim is made.
 
 For the fastest supported route, select **Lichboard as the current Android keyboard**, focus a compatible editor, and use Automatic or IME-only routing. The floating panel uses the same fast InputConnection when its label says **IME**. A **DRAFT** label means memory-only text; it does not send to an app. Optional Assist is compatibility editing via accessibility IPC/full-text replacement, not unrestricted injection or an equally fast substitute for an IME.
 
