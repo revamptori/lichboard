@@ -79,42 +79,18 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedStandardDebugAndroidTest
-Starting 22 tests on emulator-5554 - 15
+Starting 23 tests on emulator-5554 - 15
 
-emulator-5554 - 15 Tests 0/22 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 2/22 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 4/22 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 7/22 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 9/22 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 0/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 2/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 4/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 7/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 9/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 11/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 13/23 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 16/23 completed. (0 skipped) (0 failed)
+Finished 23 tests on emulator-5554 - 15
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795408064949.json
 
-> Task :app:connectedStandardDebugAndroidTest
-
-dev.lichboard.LichboardIntegrationTest > recordsActivationToRealInputConnectionLatencyAtRapidCadence[emulator-5554 - 15] [31mFAILED [0m
-	java.lang.AssertionError: Every rapidly activated key reaches the target in order
-	at org.junit.Assert.fail(Assert.java:89)
-
-emulator-5554 - 15 Tests 10/22 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 11/22 completed. (0 skipped) (1 failed)
-emulator-5554 - 15 Tests 14/22 completed. (0 skipped) (1 failed)
-Finished 22 tests on emulator-5554 - 15
-
-> Task :app:connectedStandardDebugAndroidTest
-Tests on emulator-5554 - 15 failed: There was 1 failure(s).
-
-> Task :app:connectedStandardDebugAndroidTest FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795406913100.json
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:connectedStandardDebugAndroidTest'.
-> There were failing tests. See the report at: file:///home/runner/work/lichboard/lichboard/app/build/reports/androidTests/connected/debug/flavors/standard/index.html
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 1m 44s
+BUILD SUCCESSFUL in 1m 53s
 67 actionable tasks: 1 executed, 66 up-to-date

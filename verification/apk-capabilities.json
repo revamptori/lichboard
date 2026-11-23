@@ -8,7 +8,7 @@
     "accessibilityMetadataIncluded": false,
     "debuggable": false,
     "internetPermission": false,
-    "apkSha256": "30866d648d37e0fa2b01521ffe4edc4292f2baf389d4788531c85c884170be60",
+    "apkSha256": "07b3d4ae485ab08d768d6b0e1b622c8133bdd74e2e94f4eed01a7cb720a7a154",
     "apkBytes": 18452243
   },
   "assist": {
@@ -20,7 +20,7 @@
     "accessibilityMetadataIncluded": true,
     "debuggable": false,
     "internetPermission": false,
-    "apkSha256": "c4c5fd9f2c53fe32533d69632e38515731544ac62c50c7f1b49b5714bbbf51d0",
+    "apkSha256": "db1c874a3f79042875023e527a2f0dcf91142ec65d481a00876d4bc8b63cde9c",
     "apkBytes": 18471063
   }
 }

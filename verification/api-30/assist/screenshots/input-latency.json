@@ -1,0 +1,23 @@
+{
+  "test": "actual-ime-activation-to-target-commit",
+  "samples": 105,
+  "cadenceMs": 8,
+  "loss": 0,
+  "orderMatches": true,
+  "dispatchCallMs": {
+    "p50": 3.311069,
+    "p95": 24.574284,
+    "max": 30.61965
+  },
+  "activationToCommitMs": {
+    "p50": 0.20792,
+    "p95": 0.319176,
+    "max": 5.956805
+  },
+  "regressionBudgetP95Ms": 100,
+  "sameProcessTarget": true,
+  "sessionChanges": 0,
+  "scope": "Debug AOSP emulator, actual IME and same-process real EditText. elapsedRealtimeNanos at direct key activation and target commitText entry. Not physical touch-to-display latency, cross-process delivery, or a phone speed guarantee.",
+  "apiLevel": 30,
+  "edition": "assist"
+}

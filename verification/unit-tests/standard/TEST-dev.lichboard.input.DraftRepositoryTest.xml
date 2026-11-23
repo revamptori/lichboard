@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dev.lichboard.input.DraftRepositoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-23T04:02:13" hostname="runnervmxfy6o" time="0.076">
+<testsuite name="dev.lichboard.input.DraftRepositoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-23T04:20:59" hostname="runnervmxfy6o" time="0.049">
   <properties/>
-  <testcase name="clipboardRoundTripCannotDeleteNewerDraftText" classname="dev.lichboard.input.DraftRepositoryTest" time="0.017"/>
-  <testcase name="conditionalCutRemovesTheCopiedSelection" classname="dev.lichboard.input.DraftRepositoryTest" time="0.001"/>
+  <testcase name="clipboardRoundTripCannotDeleteNewerDraftText" classname="dev.lichboard.input.DraftRepositoryTest" time="0.02"/>
+  <testcase name="conditionalCutRemovesTheCopiedSelection" classname="dev.lichboard.input.DraftRepositoryTest" time="0.0"/>
   <testcase name="snapshotsStayImmutableAfterLaterEdits" classname="dev.lichboard.input.DraftRepositoryTest" time="0.0"/>
-  <testcase name="concurrentEditsAreSerialized" classname="dev.lichboard.input.DraftRepositoryTest" time="0.058"/>
+  <testcase name="concurrentEditsAreSerialized" classname="dev.lichboard.input.DraftRepositoryTest" time="0.028"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

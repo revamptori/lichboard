@@ -79,19 +79,20 @@ Daemon will be stopped at the end of the build
 [EmulatorConsole]: Failed to start Emulator console for 5554
 
 > Task :app:connectedAssistDebugAndroidTest
-Starting 20 tests on emulator-5554 - 15
+Starting 21 tests on emulator-5554 - 15
 
-emulator-5554 - 15 Tests 1/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 2/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 4/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 7/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 9/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 11/20 completed. (0 skipped) (0 failed)
-emulator-5554 - 15 Tests 13/20 completed. (0 skipped) (0 failed)
-Finished 20 tests on emulator-5554 - 15
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795407016031.json
+emulator-5554 - 15 Tests 1/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 2/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 4/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 6/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 9/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 10/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 12/21 completed. (0 skipped) (0 failed)
+emulator-5554 - 15 Tests 17/21 completed. (0 skipped) (0 failed)
+Finished 21 tests on emulator-5554 - 15
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795408180159.json
 
-BUILD SUCCESSFUL in 1m 33s
+BUILD SUCCESSFUL in 1m 42s
 67 actionable tasks: 1 executed, 66 up-to-date
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
@@ -177,7 +178,7 @@ Daemon will be stopped at the end of the build
 Starting 1 tests on emulator-5554 - 15
 
 Finished 1 tests on emulator-5554 - 15
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795407109660.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/api35-1795408282561.json
 
-BUILD SUCCESSFUL in 16s
+BUILD SUCCESSFUL in 20s
 67 actionable tasks: 1 executed, 66 up-to-date

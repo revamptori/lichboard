@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<testsuite name="dev.lichboard.AccessibilityIntegrationTest" tests="1" failures="0" errors="0" skipped="0" time="3.419" timestamp="2026-11-23T04:12:03" hostname="localhost">
+<testsuite name="dev.lichboard.AccessibilityIntegrationTest" tests="1" failures="0" errors="0" skipped="0" time="4.52" timestamp="2026-11-23T04:31:39" hostname="localhost">
   <properties>
     <property name="device" value="emulator-5554 - 15" />
     <property name="flavor" value="assist" />
     <property name="project" value=":app" />
   </properties>
-  <testcase name="focusedInputAssistHonorsConsentHintsDeletionAndPasswords" classname="dev.lichboard.AccessibilityIntegrationTest" time="2.578" />
+  <testcase name="focusedInputAssistHonorsConsentHintsDeletionAndPasswords" classname="dev.lichboard.AccessibilityIntegrationTest" time="3.46" />
 </testsuite>

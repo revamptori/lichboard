@@ -98,7 +98,7 @@ class KeyboardPanel(
 /home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/overlay/FloatingService.kt:257: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
         box.setOnTouchListener { _, event -> if (event.actionMasked == MotionEvent.ACTION_OUTSIDE) { hideQuick(); true } else false }
                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:174: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+/home/runner/work/lichboard/lichboard/app/src/main/java/dev/lichboard/keyboard/KeyboardPanel.kt:176: Warning: Custom view `TextView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
             title.setOnTouchListener { view, event ->
             ^
 
